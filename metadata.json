@@ -1,0 +1,8 @@
+{
+  "name": "EduControl Pro - Online CRM",
+  "description": "O'quv markazlari uchun professional online boshqaruv tizimi.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduControl - O'quv Markazi CRM</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="O'quv markazi uchun CRM tizimi - o'quvchilar, guruhlar, to'lovlar va boshqalar">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EduControl">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        /* PWA Splash Screen Style */
+        #pwa-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        #pwa-splash.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #pwa-splash h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+        }
+
+        /* ========== MOBILE APK STYLES ========== */
+        .mobile-app {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Mobile Menu Container */
+        .mobile-menu-container {
+            min-height: 100vh;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Mobile Logo */
+        .mobile-menu-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding: 0 8px;
+        }
+
+        .mobile-logo-icon {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            padding: 12px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+        }
+
+        .mobile-logo-text h1 {
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            font-style: italic;
+        }
+
+        .mobile-logo-text p {
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* Mobile Menu Grid */
+        .mobile-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            flex: 1;
+            padding: 8px;
+            align-content: start;
+        }
+
+        .mobile-menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-item:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-menu-label {
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* Mobile Menu Footer */
+        .mobile-menu-footer {
+            margin-top: auto;
+            padding: 20px 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mobile-user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .mobile-user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-user-name {
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .mobile-user-role {
+            color: #818cf8;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .mobile-logout-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 14px;
+            color: #f87171;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-logout-btn:active {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-back-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-back-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+
+        .mobile-header-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .mobile-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-time-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .mobile-lang-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 2px;
+        }
+
+        .mobile-lang-btn {
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            color: #64748b;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-lang-btn.active {
+            background: #6366f1;
+            color: white;
+        }
+
+        /* Mobile Content */
+        .mobile-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .mobile-content>* {
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.45.4"
+  }
+}
+</script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+    <!-- PWA Splash Screen -->
+    <div id="pwa-splash">
+        <h1>EduControl Pro</h1>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="module" src="/index.tsx"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Splash screen yashirish
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('pwa-splash');
+                if (splash) splash.classList.add('hidden');
+            }, 500);
+        });
+
+        // Service Worker ro'yxatdan o'tkazish
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW muvaffaqiyatli ro\'yxatdan o\'tdi:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('SW ro\'yxatdan o\'tkazishda xato:', error);
+                    });
+            });
+        }
+
+        // PWA o'rnatish prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('PWA o\'rnatish mumkin!');
+        });
+    </script>
+</body>
+
+</html>

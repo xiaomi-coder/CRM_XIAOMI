@@ -1,0 +1,295 @@
+
+import React, { useState } from 'react';
+import { Payment, Student, SystemSettings } from '../types';
+import { CreditCard, DollarSign, ArrowUpRight, Plus, Search, Calendar, AlertCircle, Download, Trash2 } from 'lucide-react';
+import { sendTelegramMessage } from '../services/telegramService';
+
+interface PaymentsProps {
+  payments: Payment[];
+  students: Student[];
+  onAdd: (payment: Omit<Payment, 'id' | 'centerId'>, nextPaymentDate?: string) => void;
+  settings: SystemSettings;
+}
+
+interface PaymentsProps {
+  t: any;
+  payments: Payment[];
+  students: Student[];
+  onAdd: (payment: Omit<Payment, 'id' | 'centerId'>, nextPaymentDate?: string) => void;
+  onDelete: (id: string) => void;
+  settings: SystemSettings;
+}
+
+const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDelete, settings }) => {
+  const MONTHS = [
+    t.jan, t.feb, t.mar, t.apr, t.may, t.jun,
+    t.jul, t.aug, t.sep, t.oct, t.nov, t.dec
+  ];
+
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const currentMonthName = MONTHS[new Date().getMonth()];
+
+  const [newPayment, setNewPayment] = useState<{
+    studentId: string;
+    amount: number;
+    type: Payment['type'];
+    forMonth: string;
+    date: string;
+    nextPaymentDate: string;
+  }>({
+    studentId: '',
+    amount: 0,
+    type: 'CASH',
+    forMonth: currentMonthName,
+    date: new Date().toISOString().split('T')[0],
+    nextPaymentDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0]
+  });
+
+  const getStudent = (id: string) => students.find(s => s.id === id);
+  const getStudentName = (id: string) => getStudent(id)?.name || 'Unknown';
+
+  const filteredPayments = payments.filter(p =>
+    getStudentName(p.studentId).toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const exportPaymentsToExcel = () => {
+    const headers = [t.students, t.phone, t.attendance_date, t.month, t.amount, t.main];
+    const rows = filteredPayments.map(p => {
+      const student = getStudent(p.studentId);
+      return [
+        student?.name || "Unknown",
+        student?.phone || "",
+        p.date,
+        p.forMonth,
+        p.amount.toString(),
+        p.type
+      ];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF"
+      + [headers, ...rows].map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Payments_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSave = async () => {
+    if (!newPayment.studentId || newPayment.amount <= 0) return;
+
+    setLoading(true);
+
+    onAdd({
+      studentId: newPayment.studentId,
+      amount: newPayment.amount,
+      type: newPayment.type,
+      forMonth: newPayment.forMonth,
+      date: newPayment.date
+    }, newPayment.nextPaymentDate);
+
+    // Telegram orqali xabar yuborish
+    if (settings.notifyPayment && settings.botToken) {
+      const student = students.find(s => s.id === newPayment.studentId);
+      if (student && student.tgChatId) {
+        const message = `<b>${t.accept_payment}!</b>\n\n👤 ${t.students}: <b>${student.name}</b>\n💰 ${t.amount}: <b>${newPayment.amount.toLocaleString()} UZS</b>\n📅 ${t.for_month}: <b>${newPayment.forMonth}</b>\n⏳ ${t.next_payment_due}: <b>${newPayment.nextPaymentDate}</b>\n\n<i>${settings.centerName}</i>`;
+        await sendTelegramMessage(settings.botToken, student.tgChatId, message);
+      }
+    }
+
+    setLoading(false);
+    setShowModal(false);
+    setNewPayment({
+      studentId: '',
+      amount: 0,
+      type: 'CASH',
+      forMonth: currentMonthName,
+      date: new Date().toISOString().split('T')[0],
+      nextPaymentDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0]
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+            <div className="bg-green-50 text-green-600 p-2 rounded-lg">
+              <DollarSign size={18} />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-bold">{t.cash}</p>
+              <p className="font-bold">{(payments.filter(p => p.type === 'CASH').reduce((sum, p) => sum + p.amount, 0)).toLocaleString()} UZS</p>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
+            <div className="bg-blue-50 text-blue-600 p-2 rounded-lg">
+              <CreditCard size={18} />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-bold">{t.card}</p>
+              <p className="font-bold">{(payments.filter(p => p.type !== 'CASH').reduce((sum, p) => sum + p.amount, 0)).toLocaleString()} UZS</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-indigo-600 text-white p-4 rounded-xl shadow-md font-bold flex items-center justify-center space-x-2 hover:bg-indigo-700 transition-all"
+          >
+            <Plus size={20} />
+            <span>{t.accept_payment}</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+          <h3 className="font-bold text-gray-800">{t.last_payments}</h3>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={exportPaymentsToExcel}
+              className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[11px] font-black uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
+            >
+              <Download size={16} /> Excel
+            </button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <input
+                className="bg-gray-50 border-none rounded-lg pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-indigo-500"
+                placeholder={t.search}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                <th className="px-6 py-4">{t.students}</th>
+                <th className="px-6 py-4">{t.attendance_date}</th>
+                <th className="px-6 py-4">{t.month}</th>
+                <th className="px-6 py-4">{t.amount}</th>
+                <th className="px-6 py-4">{t.main}</th>
+                <th className="px-6 py-4">{t.actions}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredPayments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(payment => (
+                <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <span className="font-medium text-gray-800">{getStudentName(payment.studentId)}</span>
+                    <p className="text-[10px] text-gray-400 font-bold">{getStudent(payment.studentId)?.phone}</p>
+                  </td>
+                  <td className="px-6 py-4 text-gray-500 text-sm">
+                    {payment.date}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center space-x-2 text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded-lg w-fit text-xs">
+                      <Calendar size={12} />
+                      <span>{payment.forMonth}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-bold text-green-600">+{payment.amount.toLocaleString()} UZS</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${payment.type === 'CASH' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
+                      {payment.type === 'CASH' ? t.cash : t.card}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => {
+                        if (window.confirm(t.delete_confirm)) {
+                          onDelete(payment.id);
+                        }
+                      }}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                      title={t.delete_staff}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+              <DollarSign className="text-indigo-600" />
+              {t.accept_payment}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.select_student}</label>
+                <select
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none"
+                  value={newPayment.studentId}
+                  onChange={(e) => setNewPayment({ ...newPayment, studentId: e.target.value })}
+                >
+                  <option value="">{t.select_student}...</option>
+                  {students.map(s => <option key={s.id} value={s.id}>{s.name} (Next: {s.nextPaymentDate || 'Not set'})</option>)}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.amount}</label>
+                  <input type="number" className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={newPayment.amount || ''} onChange={(e) => setNewPayment({ ...newPayment, amount: Number(e.target.value) })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.for_month}</label>
+                  <select className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={newPayment.forMonth} onChange={(e) => setNewPayment({ ...newPayment, forMonth: e.target.value })}>
+                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.attendance_date}</label>
+                  <input type="date" className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={newPayment.date} onChange={(e) => setNewPayment({ ...newPayment, date: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.next_payment_due}</label>
+                  <input type="date" className="w-full px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-xl outline-none text-indigo-700 font-bold" value={newPayment.nextPaymentDate} onChange={(e) => setNewPayment({ ...newPayment, nextPaymentDate: e.target.value })} />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.payment_method}</label>
+                <div className="flex bg-gray-100 p-1 rounded-xl">
+                  <button onClick={() => setNewPayment({ ...newPayment, type: 'CASH' })} className={`flex-1 py-2 rounded-lg font-bold text-xs ${newPayment.type === 'CASH' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500'}`}>{t.cash}</button>
+                  <button onClick={() => setNewPayment({ ...newPayment, type: 'CARD' })} className={`flex-1 py-2 rounded-lg font-bold text-xs ${newPayment.type === 'CARD' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500'}`}>{t.card_transfer}</button>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 flex space-x-3">
+              <button onClick={() => setShowModal(false)} className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-50 rounded-xl">{t.cancel}</button>
+              <button
+                onClick={handleSave}
+                disabled={loading}
+                className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {loading ? t.sending : t.save}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Payments;
