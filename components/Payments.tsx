@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Payment, Student, SystemSettings } from '../types';
+import { Payment, Student, SystemSettings, Group } from '../types';
 import { CreditCard, DollarSign, ArrowUpRight, Plus, Search, Calendar, AlertCircle, Download, Trash2 } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
 
@@ -15,12 +15,13 @@ interface PaymentsProps {
   t: any;
   payments: Payment[];
   students: Student[];
+  groups: Group[];
   onAdd: (payment: Omit<Payment, 'id' | 'centerId'>, nextPaymentDate?: string) => void;
   onDelete: (id: string) => void;
   settings: SystemSettings;
 }
 
-const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDelete, settings }) => {
+const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAdd, onDelete, settings }) => {
   const MONTHS = [
     t.jan, t.feb, t.mar, t.apr, t.may, t.jun,
     t.jul, t.aug, t.sep, t.oct, t.nov, t.dec
@@ -33,6 +34,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
 
   const [newPayment, setNewPayment] = useState<{
     studentId: string;
+    groupId: string;
     amount: number;
     type: Payment['type'];
     forMonth: string;
@@ -40,6 +42,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
     nextPaymentDate: string;
   }>({
     studentId: '',
+    groupId: '',
     amount: 0,
     type: 'CASH',
     forMonth: currentMonthName,
@@ -49,6 +52,13 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
 
   const getStudent = (id: string) => students.find(s => s.id === id);
   const getStudentName = (id: string) => getStudent(id)?.name || 'Unknown';
+  const getGroup = (id: string) => groups.find(g => g.id === id);
+  const getGroupName = (id: string) => getGroup(id)?.name || '';
+
+  // Get groups that contain the selected student
+  const getStudentGroups = (studentId: string) => {
+    return groups.filter(g => g.studentIds.includes(studentId));
+  };
 
   const filteredPayments = payments.filter(p =>
     getStudentName(p.studentId).toLowerCase().includes(searchTerm.toLowerCase())
@@ -87,6 +97,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
 
     onAdd({
       studentId: newPayment.studentId,
+      groupId: newPayment.groupId || undefined,
       amount: newPayment.amount,
       type: newPayment.type,
       forMonth: newPayment.forMonth,
@@ -106,6 +117,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
     setShowModal(false);
     setNewPayment({
       studentId: '',
+      groupId: '',
       amount: 0,
       type: 'CASH',
       forMonth: currentMonthName,
@@ -172,6 +184,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
             <thead>
               <tr className="bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-wider">
                 <th className="px-6 py-4">{t.students}</th>
+                <th className="px-6 py-4">{t.groups}</th>
                 <th className="px-6 py-4">{t.attendance_date}</th>
                 <th className="px-6 py-4">{t.month}</th>
                 <th className="px-6 py-4">{t.amount}</th>
@@ -185,6 +198,15 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
                   <td className="px-6 py-4">
                     <span className="font-medium text-gray-800">{getStudentName(payment.studentId)}</span>
                     <p className="text-[10px] text-gray-400 font-bold">{getStudent(payment.studentId)?.phone}</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    {payment.groupId ? (
+                      <span className="text-xs font-bold px-2 py-1 rounded-full bg-purple-50 text-purple-600">
+                        {getGroupName(payment.groupId)}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400">—</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-gray-500 text-sm">
                     {payment.date}
@@ -236,12 +258,35 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, onAdd, onDel
                 <select
                   className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none"
                   value={newPayment.studentId}
-                  onChange={(e) => setNewPayment({ ...newPayment, studentId: e.target.value })}
+                  onChange={(e) => setNewPayment({ ...newPayment, studentId: e.target.value, groupId: '' })}
                 >
                   <option value="">{t.select_student}...</option>
                   {students.map(s => <option key={s.id} value={s.id}>{s.name} (Next: {s.nextPaymentDate || 'Not set'})</option>)}
                 </select>
               </div>
+
+              {newPayment.studentId && getStudentGroups(newPayment.studentId).length > 0 && (
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.groups}</label>
+                  <select
+                    className="w-full px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-xl outline-none text-indigo-700 font-bold"
+                    value={newPayment.groupId}
+                    onChange={(e) => {
+                      const group = getGroup(e.target.value);
+                      setNewPayment({
+                        ...newPayment,
+                        groupId: e.target.value,
+                        amount: group?.fee || newPayment.amount
+                      });
+                    }}
+                  >
+                    <option value="">{t.select_group || 'Guruhni tanlang'}...</option>
+                    {getStudentGroups(newPayment.studentId).map(g => (
+                      <option key={g.id} value={g.id}>{g.name} - {g.fee?.toLocaleString()} UZS</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

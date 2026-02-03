@@ -98,6 +98,7 @@ export interface Payment {
   id: string;
   centerId: string;
   studentId: string;
+  groupId?: string;
   amount: number;
   date: string;
   type: 'CASH' | 'CARD';

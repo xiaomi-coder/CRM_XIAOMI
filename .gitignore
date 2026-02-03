@@ -38,3 +38,5 @@ android/local.properties
 *.apk
 *.aab
 *.keystore
+
+.vercel
