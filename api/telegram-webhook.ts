@@ -35,25 +35,41 @@ export default async function handler(req: any, res: any) {
             await sendTelegramMessage(botToken, chatId,
                 `Assalomu alaykum, ${firstName}! 👋\n\n` +
                 `Farzandingizni tizimga ulash uchun o'quvchi kodini kiriting.\n\n` +
-                `📝 Misol: EDU-4CQ5\n\n` +
-                `O'quvchi kodini o'quv markazidan olishingiz mumkin.`
+                `📝 O'quvchi kodini o'quv markazidan so'rang.\n` +
+                `(Kod 3-4 ta harf/raqamdan iborat, masalan: A1B yoki 4CQ5)\n\n` +
+                `O'quvchi kodini kiriting:`
             );
             return res.status(200).json({ ok: true });
         }
 
-        // Handle student code input (format: XXX-XXXX or similar)
-        const studentCode = text.toUpperCase();
+        // Handle student code input
+        const studentCode = text.toUpperCase().trim();
 
         // Connect to Supabase
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // Find student by connection code
-        const { data: students, error: findError } = await supabase
+        // Find student by ID suffix (the code shown in UI is last 3 chars of id)
+        // Also try tgConnectionCode as fallback
+        const { data: allStudents, error: fetchError } = await supabase
             .from('students')
-            .select('*')
-            .eq('tgConnectionCode', studentCode);
+            .select('*');
 
-        if (findError || !students || students.length === 0) {
+        if (fetchError) {
+            console.error('Fetch error:', fetchError);
+            await sendTelegramMessage(botToken, chatId,
+                `⚠️ Tizim xatosi. Iltimos, keyinroq urinib ko'ring.`
+            );
+            return res.status(200).json({ ok: true });
+        }
+
+        // Search by ID suffix (last 3-4 characters) or tgConnectionCode
+        const student = allStudents?.find(s =>
+            s.id.slice(-3).toUpperCase() === studentCode ||
+            s.id.slice(-4).toUpperCase() === studentCode ||
+            s.tgConnectionCode?.toUpperCase() === studentCode
+        );
+
+        if (!student) {
             await sendTelegramMessage(botToken, chatId,
                 `❌ O'quvchi topilmadi!\n\n` +
                 `"${studentCode}" kodi bilan o'quvchi tizimda yo'q.\n\n` +
@@ -61,8 +77,6 @@ export default async function handler(req: any, res: any) {
             );
             return res.status(200).json({ ok: true });
         }
-
-        const student = students[0];
 
         // Check if already linked
         if (student.tgChatId && student.tgChatId === chatId) {
