@@ -1,26 +1,31 @@
 
 import React, { useState } from 'react';
-import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Hash, MessageSquare, Check } from 'lucide-react';
+import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Send, MessageSquare } from 'lucide-react';
 import { Student, Group, User, StudentStatus } from '../types';
 import { translations, Language } from '../services/languageContext';
+import { sendTelegramMessage } from '../services/telegramService';
 
 interface StudentsProps {
   t: any;
   students: Student[];
   groups: Group[];
   user: User;
+  settings: { botToken: string; centerName: string };
   onAdd: (student: Omit<Student, 'id' | 'centerId' | 'tgEnabled' | 'tgConnectionCode' | 'status'>, groupId?: string) => void;
   onDelete: (id: string) => void;
   onUpdateStatus: (id: string, status: StudentStatus, lastGroup?: string, lastTeacher?: string, exitNote?: string) => void;
   onUpdateStudent: (id: string, data: Partial<Student>) => void;
 }
 
-const Students: React.FC<StudentsProps> = ({ t, students, groups, user, onAdd, onDelete, onUpdateStatus, onUpdateStudent }) => {
+const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings, onAdd, onDelete, onUpdateStatus, onUpdateStudent }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [statusMenuId, setStatusMenuId] = useState<string | null>(null);
-  const [editingStudentTgId, setEditingStudentTgId] = useState<string | null>(null);
-  const [tempTgId, setTempTgId] = useState('');
+
+  // Send message modal state
+  const [sendMessageStudent, setSendMessageStudent] = useState<Student | null>(null);
+  const [messageText, setMessageText] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   // Arxivlash uchun modal state
   const [showExitModal, setShowExitModal] = useState<{ student: Student, status: StudentStatus } | null>(null);
@@ -63,13 +68,29 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, onAdd, o
     setExitNote('');
   };
 
-  const handleSaveTgId = async (studentId: string) => {
-    if (typeof onUpdateStudent === 'function') {
-      await onUpdateStudent(studentId, { tgChatId: tempTgId, tgEnabled: !!tempTgId });
-      setEditingStudentTgId(null);
+  const handleSendMessage = async () => {
+    if (!sendMessageStudent || !messageText.trim()) return;
+    if (!sendMessageStudent.tgChatId) {
+      alert(t.parent_not_linked || "Ota-ona hali Telegram botiga ulanmagan!");
+      return;
+    }
+    if (!settings.botToken) {
+      alert(t.bot_not_configured || "Bot token sozlanmagan!");
+      return;
+    }
+
+    setSendingMessage(true);
+    const fullMessage = `📢 <b>${settings.centerName}</b>\n\n👤 O'quvchi: <b>${sendMessageStudent.name}</b>\n\n${messageText}`;
+
+    const success = await sendTelegramMessage(settings.botToken, sendMessageStudent.tgChatId, fullMessage);
+
+    setSendingMessage(false);
+    if (success) {
+      alert(t.message_sent || "Xabar yuborildi!");
+      setSendMessageStudent(null);
+      setMessageText('');
     } else {
-      console.error("onUpdateStudent is not a function");
-      alert("System error: update function not found.");
+      alert(t.message_failed || "Xabar yuborishda xatolik!");
     }
   };
 
@@ -117,7 +138,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, onAdd, o
               <tr className="bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-[0.2em]">
                 <th className="px-8 py-5">{t.students}</th>
                 <th className="px-8 py-5">{t.parent}</th>
-                <th className="px-8 py-5">Telegram ID ({t.parent})</th>
+                <th className="px-8 py-5">{t.message || 'Xabar'}</th>
                 <th className="px-8 py-5">{t.balance}</th>
                 <th className="px-8 py-5 text-right">{t.main}</th>
               </tr>
@@ -164,27 +185,14 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, onAdd, o
                     <div className="text-[10px] text-slate-400 font-bold">{student.parentPhone}</div>
                   </td>
                   <td className="px-8 py-6">
-                    {editingStudentTgId === student.id ? (
-                      <div className="flex items-center gap-2 animate-in slide-in-from-left-2">
-                        <input
-                          autoFocus
-                          className="w-32 px-3 py-1.5 bg-slate-100 border rounded-xl text-[10px] font-bold outline-none border-indigo-200"
-                          value={tempTgId}
-                          onChange={e => setTempTgId(e.target.value)}
-                          placeholder={t.chat_id}
-                        />
-                        <button onClick={() => handleSaveTgId(student.id)} className="bg-emerald-500 text-white p-2 rounded-lg hover:bg-emerald-600 transition-colors shadow-sm"><Check size={14} /></button>
-                        <button onClick={() => setEditingStudentTgId(null)} className="bg-slate-300 text-white p-2 rounded-lg hover:bg-slate-400 transition-colors"><X size={14} /></button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => { setEditingStudentTgId(student.id); setTempTgId(student.tgChatId || ''); }}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[10px] font-black transition-all ${student.tgEnabled ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}
-                      >
-                        {student.tgEnabled ? <UserCheck size={14} /> : <MessageSquare size={14} />}
-                        {student.tgChatId || t.add_id}
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setSendMessageStudent(student)}
+                      disabled={!student.tgChatId}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black transition-all ${student.tgChatId ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+                    >
+                      <Send size={14} />
+                      {student.tgChatId ? (t.send_message || 'Xabar yuborish') : (t.not_linked || 'Ulanmagan')}
+                    </button>
                   </td>
                   <td className="px-8 py-6">
                     <div className={`font-black text-[11px] px-3 py-1 rounded-xl w-fit ${student.balance >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
@@ -254,6 +262,41 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, onAdd, o
                 <button onClick={() => setShowExitModal(null)} className="flex-1 py-4 font-black text-slate-400 uppercase text-[10px]">{t.cancel}</button>
                 <button onClick={handleStatusConfirm} className={`flex-1 py-4 text-white font-black rounded-2xl uppercase text-[10px] shadow-xl ${showExitModal.status === StudentStatus.GRADUATED ? 'bg-emerald-500 shadow-emerald-100 hover:bg-emerald-600' : 'bg-red-500 shadow-red-100 hover:bg-red-600'}`}>
                   {t.save}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Send Message Modal */}
+      {sendMessageStudent && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-indigo-100 text-indigo-600">
+                <Send size={32} />
+              </div>
+              <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter italic">{t.send_message || 'Xabar yuborish'}</h3>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">👤 {sendMessageStudent.name}</p>
+            </div>
+            <div className="space-y-4">
+              <textarea
+                autoFocus
+                className="w-full p-6 bg-slate-50 border border-slate-100 rounded-[2rem] outline-none font-bold text-sm min-h-[120px] resize-none focus:ring-4 focus:ring-indigo-500/5 transition-all"
+                placeholder={t.message_placeholder || "Xabaringizni yozing... (masalan: Bugun darsga kelmadi)"}
+                value={messageText}
+                onChange={e => setMessageText(e.target.value)}
+              />
+              <div className="flex gap-3">
+                <button onClick={() => { setSendMessageStudent(null); setMessageText(''); }} className="flex-1 py-4 font-black text-slate-400 uppercase text-[10px]">{t.cancel}</button>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={sendingMessage || !messageText.trim()}
+                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl uppercase text-[10px] shadow-xl hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {sendingMessage ? <MessageSquare className="animate-pulse" size={14} /> : <Send size={14} />}
+                  {sendingMessage ? (t.sending || 'Yuborilmoqda...') : (t.send || 'Yuborish')}
                 </button>
               </div>
             </div>

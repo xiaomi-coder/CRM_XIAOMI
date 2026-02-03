@@ -336,6 +336,7 @@ const App: React.FC = () => {
           students={students}
           groups={groups}
           user={currentUser}
+          settings={{ botToken: currentSettings?.botToken || '', centerName: currentSettings?.centerName || "O'quv markazi" }}
           onAdd={(s, gid) => {
             const id = crypto.randomUUID();
             const student = { ...s, id, "centerId": centerId, tgEnabled: false, status: StudentStatus.ACTIVE, tgConnectionCode: '' };
