@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { SystemSettings, Student, TestTemplate, Question, UserRole } from '../types';
-import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2 } from 'lucide-react';
+import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
 import { db } from '../services/supabase';
+import { setTelegramWebhook, getTelegramBotInfo } from '../services/telegramService';
 
 import { translations, Language } from '../services/languageContext';
 
@@ -28,6 +29,11 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
     durationMinutes: 30,
     questions: []
   });
+
+  // Bot status states
+  const [botStatus, setBotStatus] = useState<'idle' | 'checking' | 'success' | 'error'>('idle');
+  const [botUsername, setBotUsername] = useState<string>('');
+  const [botError, setBotError] = useState<string>('');
 
   const optionLetters = ['A', 'B', 'C', 'D'];
 
@@ -144,12 +150,97 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
               <div className="bg-indigo-600 p-4 rounded-3xl shadow-lg"><Building2 className="text-white" size={24} /></div>
               <h3 className="text-2xl font-black text-slate-800 uppercase italic">{t.settings}</h3>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); onSave(formData); alert(t.save); }} className="space-y-6">
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+
+              // Save settings first
+              onSave(formData);
+
+              // If bot token exists, setup webhook
+              if (formData.botToken) {
+                setBotStatus('checking');
+                setBotError('');
+
+                // Get bot info
+                const botInfo = await getTelegramBotInfo(formData.botToken);
+                if (botInfo.success && botInfo.username) {
+                  setBotUsername(botInfo.username);
+
+                  // Setup webhook
+                  const webhookResult = await setTelegramWebhook(formData.botToken);
+                  if (webhookResult.success) {
+                    setBotStatus('success');
+                  } else {
+                    setBotStatus('error');
+                    setBotError(webhookResult.error || 'Webhook xatosi');
+                  }
+                } else {
+                  setBotStatus('error');
+                  setBotError(botInfo.error || 'Bot topilmadi');
+                }
+              }
+
+              alert(t.save);
+            }} className="space-y-6">
               <input className="w-full px-6 py-4 bg-slate-50 border rounded-2xl font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder={t.center_name} />
+
+              {/* Telegram Bot Section */}
               <div className="p-6 bg-slate-900 rounded-[2rem] text-white space-y-4">
-                <div className="flex items-center gap-2"><Bot size={18} className="text-indigo-400" /> <span className="text-[10px] font-black uppercase tracking-widest">Telegram Bot Token</span></div>
-                <input className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none" value={formData.botToken} onChange={e => setFormData({ ...formData, botToken: e.target.value })} />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bot size={18} className="text-indigo-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Telegram Bot</span>
+                  </div>
+                  {botStatus === 'checking' && <Loader2 size={16} className="animate-spin text-indigo-400" />}
+                  {botStatus === 'success' && <CheckCircle2 size={16} className="text-emerald-400" />}
+                  {botStatus === 'error' && <AlertCircle size={16} className="text-red-400" />}
+                </div>
+
+                <input
+                  className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none"
+                  value={formData.botToken}
+                  onChange={e => setFormData({ ...formData, botToken: e.target.value })}
+                  placeholder="Bot tokenini kiriting (@BotFather dan oling)"
+                />
+
+                {botStatus === 'error' && botError && (
+                  <p className="text-red-400 text-xs">❌ {botError}</p>
+                )}
+
+                {botStatus === 'success' && botUsername && (
+                  <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl p-4 space-y-3">
+                    <p className="text-emerald-400 text-xs font-bold">✅ Bot ulandi!</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-white/70">Bot:</span>
+                      <a
+                        href={`https://t.me/${botUsername}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-400 font-bold text-sm flex items-center gap-1 hover:underline"
+                      >
+                        @{botUsername} <ExternalLink size={12} />
+                      </a>
+                    </div>
+                    <div className="border-t border-white/10 pt-3 mt-3">
+                      <p className="text-[10px] text-white/50 uppercase font-bold mb-2">Ota-onalar uchun yo'riqnoma:</p>
+                      <p className="text-xs text-white/80">1. <a href={`https://t.me/${botUsername}`} target="_blank" className="text-indigo-400">@{botUsername}</a> botini oching</p>
+                      <p className="text-xs text-white/80">2. /start buyrug'ini yuboring</p>
+                      <p className="text-xs text-white/80">3. O'quvchi kodini kiriting (masalan: EDU-4CQ5)</p>
+                    </div>
+                  </div>
+                )}
+
+                {!formData.botToken && (
+                  <div className="bg-white/5 rounded-xl p-4">
+                    <p className="text-[10px] text-white/50 uppercase font-bold mb-2">Bot yaratish:</p>
+                    <p className="text-xs text-white/70">1. Telegramda <a href="https://t.me/BotFather" target="_blank" className="text-indigo-400">@BotFather</a> ga yozing</p>
+                    <p className="text-xs text-white/70">2. /newbot buyrug'ini yuboring</p>
+                    <p className="text-xs text-white/70">3. Bot nomini kiriting</p>
+                    <p className="text-xs text-white/70">4. Olingan tokenni shu yerga qo'ying</p>
+                  </div>
+                )}
               </div>
+
               <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase shadow-xl">{t.save}</button>
             </form>
           </div>
