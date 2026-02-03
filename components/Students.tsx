@@ -27,6 +27,9 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings
   const [messageText, setMessageText] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
 
+  // Delete confirmation state
+  const [deleteConfirmStudent, setDeleteConfirmStudent] = useState<Student | null>(null);
+
   // Arxivlash uchun modal state
   const [showExitModal, setShowExitModal] = useState<{ student: Student, status: StudentStatus } | null>(null);
   const [exitNote, setExitNote] = useState('');
@@ -200,7 +203,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings
                     </div>
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <button onClick={() => onDelete(student.id)} className="p-2 text-slate-200 hover:text-red-500 transition-all">
+                    <button onClick={() => setDeleteConfirmStudent(student)} className="p-2 text-slate-200 hover:text-red-500 transition-all">
                       <Trash2 size={18} />
                     </button>
                   </td>
@@ -299,6 +302,38 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings
                   {sendingMessage ? (t.sending || 'Yuborilmoqda...') : (t.send || 'Yuborish')}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmStudent && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-red-100 text-red-600">
+                <Trash2 size={32} />
+              </div>
+              <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter italic">{t.confirm_delete || "O'chirishni tasdiqlang"}</h3>
+              <p className="text-sm text-slate-500 mt-2">
+                <span className="font-bold text-slate-700">{deleteConfirmStudent.name}</span> {t.will_be_deleted || "o'chiriladi"}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirmStudent(null)}
+                className="flex-1 py-4 font-black text-slate-400 uppercase text-[10px] hover:bg-slate-100 rounded-2xl transition-all"
+              >
+                {t.cancel}
+              </button>
+              <button
+                onClick={() => { onDelete(deleteConfirmStudent.id); setDeleteConfirmStudent(null); }}
+                className="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl uppercase text-[10px] shadow-xl hover:bg-red-600 flex items-center justify-center gap-2"
+              >
+                <Trash2 size={14} />
+                {t.delete || "O'chirish"}
+              </button>
             </div>
           </div>
         </div>
