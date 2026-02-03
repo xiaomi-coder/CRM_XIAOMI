@@ -48,11 +48,29 @@ export default async function handler(req: any, res: any) {
         // Connect to Supabase
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // Find student by ID suffix (the code shown in UI is last 3 chars of id)
-        // Also try tgConnectionCode as fallback
-        const { data: allStudents, error: fetchError } = await supabase
+        // First, find which center this bot belongs to (by bot token)
+        const { data: centerSettings, error: settingsError } = await supabase
+            .from('settings')
+            .select('centerId, centerName')
+            .eq('botToken', botToken)
+            .single();
+
+        if (settingsError || !centerSettings) {
+            console.error('Center not found for bot token');
+            await sendTelegramMessage(botToken, chatId,
+                `⚠️ Bot sozlanmagan. Iltimos, o'quv markazi administratoriga murojaat qiling.`
+            );
+            return res.status(200).json({ ok: true });
+        }
+
+        const centerId = centerSettings.centerId;
+        const centerName = centerSettings.centerName || "O'quv markazi";
+
+        // Find students only within this center
+        const { data: centerStudents, error: fetchError } = await supabase
             .from('students')
-            .select('*');
+            .select('*')
+            .eq('centerId', centerId);
 
         if (fetchError) {
             console.error('Fetch error:', fetchError);
@@ -62,8 +80,8 @@ export default async function handler(req: any, res: any) {
             return res.status(200).json({ ok: true });
         }
 
-        // Search by ID suffix (last 3-4 characters) or tgConnectionCode
-        const student = allStudents?.find(s =>
+        // Search by ID suffix (last 3-4 characters) or tgConnectionCode within this center only
+        const student = centerStudents?.find(s =>
             s.id.slice(-3).toUpperCase() === studentCode ||
             s.id.slice(-4).toUpperCase() === studentCode ||
             s.tgConnectionCode?.toUpperCase() === studentCode
@@ -72,8 +90,8 @@ export default async function handler(req: any, res: any) {
         if (!student) {
             await sendTelegramMessage(botToken, chatId,
                 `❌ O'quvchi topilmadi!\n\n` +
-                `"${studentCode}" kodi bilan o'quvchi tizimda yo'q.\n\n` +
-                `Iltimos, kodni tekshirib qaytadan kiriting yoki o'quv markaziga murojaat qiling.`
+                `"${studentCode}" kodi bilan ${centerName} da o'quvchi yo'q.\n\n` +
+                `Iltimos, kodni tekshirib qaytadan kiriting.`
             );
             return res.status(200).json({ ok: true });
         }
@@ -104,14 +122,7 @@ export default async function handler(req: any, res: any) {
             return res.status(200).json({ ok: true });
         }
 
-        // Get center name for confirmation
-        const { data: settings } = await supabase
-            .from('settings')
-            .select('centerName')
-            .eq('centerId', student.centerId)
-            .single();
-
-        const centerName = settings?.centerName || "O'quv markazi";
+        // centerName already obtained from earlier settings lookup
 
         // Send success message
         await sendTelegramMessage(botToken, chatId,
