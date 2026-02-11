@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Group, Student, Attendance, AttendanceStatus, SystemSettings } from '../types';
-import { Check, X, Clock, Send, Search, Download, AlertCircle, MessageSquare, Users } from 'lucide-react';
+import { Check, X, Clock, Send, Search, Download, AlertCircle, MessageSquare, Users, LogOut } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
 
 interface AttendanceProps {
@@ -53,7 +53,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
     return record ? record.status : null;
   };
 
-  const handleStatusChange = (studentId: string, status: AttendanceStatus) => {
+  const handleStatusChange = async (studentId: string, status: AttendanceStatus) => {
     let targetGroupId = selectedGroupId;
 
     if (selectedGroupId === 'ALL_STUDENTS') {
@@ -65,6 +65,18 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
     if (!targetGroupId || targetGroupId === '') return alert(t.select_group_alert || "Please select a group first!");
 
     onSave({ date: currentDate, studentId, groupId: targetGroupId, status });
+
+    // DISMISSED holatida avtomatik Telegram xabar yuborish
+    if (status === AttendanceStatus.DISMISSED) {
+      const student = students.find(s => s.id === studentId);
+      if (student && settings.botToken && student.tgChatId) {
+        const displayDate = currentDate.split('-').reverse().join('.');
+        const msg = `🏠 <b>${t.dismissed_title || "Dars tugadi"}</b>\n\n👤 ${t.student || "O'quvchi"}: <b>${student.name}</b>\n📅 ${t.date || "Sana"}: ${displayDate}\n\n✅ ${t.dismissed_message || "Farzandingiz darsi tugadi va u uyiga jo'nadi."}\n\n<i>${settings.centerName || 'EduControl CRM'}</i>`;
+        setSendingSms(studentId);
+        await sendTelegramMessage(settings.botToken, student.tgChatId, msg);
+        setSendingSms(null);
+      }
+    }
   };
 
   const handleSendSms = async (student: Student) => {
@@ -73,7 +85,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
 
     if (!status) return alert(t.mark_attendance_alert || "Please mark attendance first!");
 
-    const statusText = status === AttendanceStatus.PRESENT ? `✅ ${t.status_present}` : status === AttendanceStatus.ABSENT ? `❌ ${t.status_absent}` : `⏳ ${t.status_late}`;
+    const statusText = status === AttendanceStatus.PRESENT ? `✅ ${t.status_present}` : status === AttendanceStatus.ABSENT ? `❌ ${t.status_absent}` : status === AttendanceStatus.LATE ? `⏳ ${t.status_late}` : `🏠 ${t.status_dismissed || "Dars tugadi"}`;
     const displayDate = currentDate.split('-').reverse().join('.');
     const msg = `🔔 <b>${t.notification_title}</b>\n\n👤 ${t.student}: <b>${student.name}</b>\n📅 ${t.date}: ${displayDate}\n📊 ${t.status}: ${statusText}\n🏢 ${t.settings}: ${settings.centerName || 'EduControl CRM'}`;
 
@@ -168,6 +180,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
                       <button onClick={() => handleStatusChange(student.id, AttendanceStatus.PRESENT)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.PRESENT ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-emerald-500'}`}><Check size={24} /></button>
                       <button onClick={() => handleStatusChange(student.id, AttendanceStatus.ABSENT)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.ABSENT ? 'bg-red-500 border-red-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-red-500'}`}><X size={24} /></button>
                       <button onClick={() => handleStatusChange(student.id, AttendanceStatus.LATE)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.LATE ? 'bg-amber-500 border-amber-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-amber-500'}`}><Clock size={24} /></button>
+                      <button onClick={() => handleStatusChange(student.id, AttendanceStatus.DISMISSED)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.DISMISSED ? 'bg-blue-500 border-blue-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-blue-500'}`} title={t.dismissed_title || "Dars tugadi"}><LogOut size={24} /></button>
                     </div>
                   </td>
                   <td className="px-8 py-5 text-right">

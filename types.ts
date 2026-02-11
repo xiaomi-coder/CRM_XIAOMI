@@ -2,7 +2,8 @@
 export enum AttendanceStatus {
   PRESENT = 'PRESENT',
   ABSENT = 'ABSENT',
-  LATE = 'LATE'
+  LATE = 'LATE',
+  DISMISSED = 'DISMISSED'
 }
 
 export enum UserRole {
