@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Payment, Student, SystemSettings, Group } from '../types';
-import { CreditCard, DollarSign, ArrowUpRight, Plus, Search, Calendar, AlertCircle, Download, Trash2 } from 'lucide-react';
+import { CreditCard, DollarSign, ArrowUpRight, Plus, Search, Calendar, AlertCircle, Download, Trash2, Pencil } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
 
 interface PaymentsProps {
@@ -18,10 +18,11 @@ interface PaymentsProps {
   groups: Group[];
   onAdd: (payment: Omit<Payment, 'id' | 'centerId'>, nextPaymentDate?: string) => void;
   onDelete: (id: string) => void;
+  onEdit: (id: string, updates: Partial<Payment>) => void;
   settings: SystemSettings;
 }
 
-const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAdd, onDelete, settings }) => {
+const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAdd, onDelete, onEdit, settings }) => {
   const MONTHS = [
     t.jan, t.feb, t.mar, t.apr, t.may, t.jun,
     t.jul, t.aug, t.sep, t.oct, t.nov, t.dec
@@ -30,6 +31,8 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [editPayment, setEditPayment] = useState<Payment | null>(null);
+  const [editData, setEditData] = useState<{ amount: number; forMonth: string; type: Payment['type'] }>({ amount: 0, forMonth: '', type: 'CASH' });
   const currentMonthName = MONTHS[new Date().getMonth()];
 
   const [newPayment, setNewPayment] = useState<{
@@ -226,17 +229,29 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <button
-                      onClick={() => {
-                        if (window.confirm(t.delete_confirm)) {
-                          onDelete(payment.id);
-                        }
-                      }}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                      title={t.delete_staff}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => {
+                          setEditPayment(payment);
+                          setEditData({ amount: payment.amount, forMonth: payment.forMonth, type: payment.type });
+                        }}
+                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
+                        title={t.edit || "Tahrirlash"}
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(t.delete_confirm)) {
+                            onDelete(payment.id);
+                          }
+                        }}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                        title={t.delete_staff}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -328,6 +343,55 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                 className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 disabled:opacity-50"
               >
                 {loading ? t.sending : t.save}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Payment Modal */}
+      {editPayment && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+              <Pencil className="text-blue-600" />
+              {t.edit || "Tahrirlash"}
+            </h3>
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-xl">
+                <p className="text-xs font-bold text-gray-500 uppercase mb-1">{t.students}</p>
+                <p className="font-bold text-gray-800">{getStudentName(editPayment.studentId)}</p>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.amount}</label>
+                <input type="number" className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={editData.amount || ''} onChange={(e) => setEditData({ ...editData, amount: Number(e.target.value) })} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.for_month}</label>
+                <select className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={editData.forMonth} onChange={(e) => setEditData({ ...editData, forMonth: e.target.value })}>
+                  {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.payment_method}</label>
+                <div className="flex bg-gray-100 p-1 rounded-xl">
+                  <button onClick={() => setEditData({ ...editData, type: 'CASH' })} className={`flex-1 py-2 rounded-lg font-bold text-xs ${editData.type === 'CASH' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500'}`}>{t.cash}</button>
+                  <button onClick={() => setEditData({ ...editData, type: 'CARD' })} className={`flex-1 py-2 rounded-lg font-bold text-xs ${editData.type === 'CARD' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500'}`}>{t.card_transfer}</button>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 flex space-x-3">
+              <button onClick={() => setEditPayment(null)} className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-50 rounded-xl">{t.cancel}</button>
+              <button
+                onClick={() => {
+                  if (editData.amount > 0) {
+                    onEdit(editPayment.id, { amount: editData.amount, forMonth: editData.forMonth, type: editData.type });
+                    setEditPayment(null);
+                  }
+                }}
+                className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700"
+              >
+                {t.save}
               </button>
             </div>
           </div>

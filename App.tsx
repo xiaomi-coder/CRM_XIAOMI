@@ -358,7 +358,45 @@ const App: React.FC = () => {
         const id = `${a.date}_${a.studentId}_${a.groupId}`;
         db.upsert('attendance', { ...a, id, "centerId": centerId }).then(loadAllData);
       }} />;
-      case 'payments': return <Payments t={t} payments={payments} students={students} groups={groups} settings={currentSettings || ({} as any)} onAdd={(p, next) => { db.insert('payments', { ...p, id: crypto.randomUUID(), "centerId": centerId }).then(() => { if (next) db.update('students', p.studentId, { nextPaymentDate: next }); loadAllData(); }); }} onDelete={(id) => db.delete('payments', id).then(loadAllData)} />;
+      case 'payments': return <Payments t={t} payments={payments} students={students} groups={groups} settings={currentSettings || ({} as any)} onAdd={(p, next) => {
+        const student = students.find(s => s.id === p.studentId);
+        db.insert('payments', { ...p, id: crypto.randomUUID(), "centerId": centerId }).then(() => {
+          // Balance ni oshirish (to'lov qabul qilindi)
+          if (student) {
+            db.update('students', p.studentId, { balance: (student.balance || 0) + p.amount, ...(next ? { nextPaymentDate: next } : {}) });
+          } else if (next) {
+            db.update('students', p.studentId, { nextPaymentDate: next });
+          }
+          loadAllData();
+        });
+      }} onDelete={(id) => {
+        // O'chirishdan oldin to'lov ma'lumotlarini topib, balance ni kamaytirish
+        const payment = payments.find(p => p.id === id);
+        db.delete('payments', id).then(() => {
+          if (payment) {
+            const student = students.find(s => s.id === payment.studentId);
+            if (student) {
+              db.update('students', payment.studentId, { balance: (student.balance || 0) - payment.amount });
+            }
+          }
+          loadAllData();
+        });
+      }} onEdit={(id, updates) => {
+        // To'lovni tahrirlash va balance ni yangilash
+        const oldPayment = payments.find(p => p.id === id);
+        if (oldPayment) {
+          const diff = (updates.amount !== undefined ? updates.amount : oldPayment.amount) - oldPayment.amount;
+          db.update('payments', id, updates).then(() => {
+            if (diff !== 0) {
+              const student = students.find(s => s.id === oldPayment.studentId);
+              if (student) {
+                db.update('students', oldPayment.studentId, { balance: (student.balance || 0) + diff });
+              }
+            }
+            loadAllData();
+          });
+        }
+      }} />;
       case 'expenses': return <Expenses t={t} expenses={expenses} onAdd={e => db.insert('expenses', { ...e, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('expenses', id).then(loadAllData)} />;
       case 'salary': return <SalaryCalculation t={t} users={users} groups={groups} payments={payments} students={students} currentUser={currentUser} />;
       case 'staff': return <StaffManagement t={t} users={users} groups={groups} onAddUser={u => db.insert('users', { ...u, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDeleteUser={id => db.delete('users', id).then(loadAllData)} onUpdateUser={(id, d) => db.update('users', id, d).then(loadAllData)} />;
