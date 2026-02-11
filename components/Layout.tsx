@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Users, Wallet, CalendarCheck, Settings as SettingsIcon,
-  BrainCircuit, LogOut, Banknote, Receipt, Archive, UserSquare, Clock, Calendar, Layers, ShieldAlert, Megaphone, UserPlus, FileQuestion
+  BrainCircuit, LogOut, Banknote, Receipt, Archive, UserSquare, Clock, Calendar, Layers, ShieldAlert, Megaphone, UserPlus, FileQuestion, Trophy
 } from 'lucide-react';
 import { User, UserRole } from '../types';
 import { translations, Language } from '../services/languageContext';
@@ -87,6 +87,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
   }
 
   educationItems.push({ id: 'archive', label: t.archive, icon: Archive });
+  educationItems.push({ id: 'results', label: t.results_section || 'Natijalar', icon: Trophy });
 
   standardSections.push({ title: t.education, items: educationItems });
 

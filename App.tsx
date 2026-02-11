@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { db } from './services/supabase';
 import {
   Student, Group, Payment, Attendance, User, UserRole,
-  Expense, Lead, SystemSettings, StudentStatus, LeadStatus, LibraryResource
+  Expense, Lead, SystemSettings, StudentStatus, LeadStatus, LibraryResource, Result
 } from './types';
 import Layout from './components/Layout';
 import MobileLayout from './components/MobileLayout';
@@ -21,6 +21,7 @@ import Archive from './components/Archive';
 import Settings from './components/Settings';
 import Login from './components/Login';
 import Library from './components/Library';
+import Results from './components/Results';
 import { CreatorDashboard, CenterControl, BroadcastSystem, SystemLogs } from './components/CreatorComponents';
 import TestQuiz from './components/TestQuiz';
 import { Loader2 } from 'lucide-react';
@@ -46,6 +47,7 @@ const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [library, setLibrary] = useState<LibraryResource[]>([]);
+  const [results, setResults] = useState<Result[]>([]);
   const [allSettings, setAllSettings] = useState<SystemSettings[]>([]);
   const [currentSettings, setCurrentSettings] = useState<SystemSettings | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -60,7 +62,7 @@ const App: React.FC = () => {
   const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const [s, g, p, a, e, u, l, settingsList, lib] = await Promise.all([
+      const [s, g, p, a, e, u, l, settingsList, lib, res] = await Promise.all([
         db.get('students'),
         db.get('groups'),
         db.get('payments'),
@@ -69,7 +71,8 @@ const App: React.FC = () => {
         db.get('users'),
         db.get('leads'),
         db.get('settings'),
-        db.get('library')
+        db.get('library'),
+        db.get('results')
       ]);
 
       const filterByCenter = (list: any[]) => {
@@ -114,6 +117,7 @@ const App: React.FC = () => {
       setUsers(filterByCenter(u));
       setLeads(filterByCenter(l));
       setLibrary(filterByCenter(lib));
+      setResults(filterByCenter(res));
       setAllSettings(Array.isArray(settingsList) ? settingsList : []);
 
       if (centerId !== 'GLOBAL' && Array.isArray(settingsList)) {
@@ -403,6 +407,7 @@ const App: React.FC = () => {
       case 'leads':
       case 'tests': return <Leads t={t} leads={leads} centerId={centerId} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={l => db.delete('leads', l.id).then(() => { loadAllData(); setActiveTab('students'); })} />;
       case 'archive': return <Archive t={t} students={students} groups={groups} />;
+      case 'results': return <Results t={t} results={results} students={students} onAdd={r => db.insert('results', { ...r, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('results', id).then(loadAllData)} />;
       case 'library': return <Library t={t} resources={library} user={currentUser} onAdd={r => db.insert('library', { ...r, id: crypto.randomUUID(), "centerId": centerId, uploadedBy: currentUser.name, uploadedAt: new Date().toISOString() }).then(loadAllData)} onDelete={id => db.delete('library', id).then(loadAllData)} />;
       case 'settings': return <Settings t={t} settings={currentSettings || ({} as any)} onSave={s => db.update('settings', centerId, s).then(loadAllData)} userRole={currentUser.role} />;
       case 'creator_dashboard': return <CreatorDashboard t={t} settings={allSettings} allStudents={students} allPayments={payments} />;

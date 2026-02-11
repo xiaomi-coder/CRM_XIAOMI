@@ -200,7 +200,15 @@ export const translations = {
     date: "Sana",
     group_name: "Guruh nomi",
     category: "Turkum",
-    professional_crm: "Professional CRM"
+    professional_crm: "Professional CRM",
+    results_section: "Natijalar",
+    add_result: "Natija qo'shish",
+    no_results: "Hali natijalar yo'q",
+    add_first_result: "Birinchi natijani qo'shish uchun tugmani bosing",
+    result_type: "Turi",
+    certificate_image: "Sertifikat rasmi",
+    upload_image: "Rasm yuklash",
+    file_too_large: "Fayl hajmi 2MB dan kichik bo'lishi kerak!"
   },
   ru: {
     dashboard: "Дашборд",
@@ -402,7 +410,15 @@ export const translations = {
     date: "Дата",
     group_name: "Название группы",
     category: "Категория",
-    professional_crm: "Профессиональная CRM"
+    professional_crm: "Профессиональная CRM",
+    results_section: "Результаты",
+    add_result: "Добавить результат",
+    no_results: "Результатов пока нет",
+    add_first_result: "Нажмите кнопку, чтобы добавить первый результат",
+    result_type: "Тип",
+    certificate_image: "Фото сертификата",
+    upload_image: "Загрузить фото",
+    file_too_large: "Размер файла должен быть менее 2MB!"
   },
   en: {
     dashboard: "Dashboard",
@@ -604,7 +620,15 @@ export const translations = {
     date: "Date",
     group_name: "Group Name",
     category: "Category",
-    professional_crm: "Professional CRM"
+    professional_crm: "Professional CRM",
+    results_section: "Results",
+    add_result: "Add Result",
+    no_results: "No results yet",
+    add_first_result: "Click the button to add the first result",
+    result_type: "Type",
+    certificate_image: "Certificate Image",
+    upload_image: "Upload Image",
+    file_too_large: "File size must be less than 2MB!"
   }
 };
 

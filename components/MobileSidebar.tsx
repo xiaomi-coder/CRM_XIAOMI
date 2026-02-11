@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
     LayoutDashboard, Users, Wallet, CalendarCheck, Settings as SettingsIcon,
     BrainCircuit, LogOut, Banknote, Receipt, Archive, UserSquare, Layers,
-    ShieldAlert, Megaphone, UserPlus, FileQuestion, X
+    ShieldAlert, Megaphone, UserPlus, FileQuestion, X, Trophy
 } from 'lucide-react';
 import { User, UserRole } from '../types';
 import { translations, Language } from '../services/languageContext';
@@ -61,6 +61,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
         }
 
         items.push({ id: 'archive', label: t.archive, icon: Archive });
+        items.push({ id: 'results', label: t.results_section || 'Natijalar', icon: Trophy });
 
         if (isDirector) {
             items.push({ id: 'payments', label: t.payments, icon: Wallet });

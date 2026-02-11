@@ -157,3 +157,16 @@ export interface LibraryResource {
   uploadedBy: string;
   uploadedAt: string;
 }
+
+export interface Result {
+  id: string;
+  centerId: string;
+  studentId: string;
+  studentName: string;
+  type: 'IELTS' | 'CEFR' | 'UNIVERSITY' | 'OTHER';
+  title: string;
+  score: string;
+  date: string;
+  description: string;
+  certificateImage?: string;
+}
