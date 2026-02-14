@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Users, Activity, Sparkles, Loader2 as LucideLoader2, BrainCircuit, Wallet,
-  UserCheck, FileText, Download, AlertCircle, Layers, TrendingUp, TrendingDown, ArrowUpRight, BarChart3, Banknote, Calendar as CalendarIcon, X, Phone
+  UserCheck, FileText, Download, AlertCircle, Layers, TrendingUp, TrendingDown, ArrowUpRight, BarChart3, Banknote, Calendar as CalendarIcon, X, Phone, Search
 } from 'lucide-react';
 import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead } from '../types';
 import { analyzeDataWithAI } from '../services/geminiService';
@@ -21,6 +21,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, attendance, user, expenses, users, leads }) => {
   const [loadingAi, setLoadingAi] = useState(false);
   const [showDebtorsModal, setShowDebtorsModal] = useState(false);
+  const [debtorSearch, setDebtorSearch] = useState('');
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
@@ -38,17 +39,84 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
     return `${day}.${month}.${year}`;
   };
 
-  // Qarzdor o'quvchilar ro'yxati
+  // O'quvchi guruhlarini topish
+  const getStudentGroups = (studentId: string) => {
+    return groups.filter(g => g.studentIds.includes(studentId));
+  };
+
+  // Qarzdor o'quvchilar — nextPaymentDate o'tgan yoki to'lov qilinmagan
   const debtorStudents = useMemo(() => {
-    return students.filter(s => s.balance < 0).sort((a, b) => a.balance - b.balance);
-  }, [students]);
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+    return students.filter(s => {
+      // 1. nextPaymentDate o'tib ketgan bo'lsa — qarzdor
+      if (s.nextPaymentDate && s.nextPaymentDate < today) {
+        return true;
+      }
+      // 2. nextPaymentDate yo'q lekin guruhda bo'lsa va kamida 30 kun davomida to'lov qilmagan
+      if (!s.nextPaymentDate) {
+        const studentGroups = groups.filter(g => g.studentIds.includes(s.id));
+        if (studentGroups.length > 0) {
+          // So'nggi to'lovni tekshirish
+          const studentPayments = payments.filter(p => p.studentId === s.id);
+          if (studentPayments.length === 0) {
+            // Hech to'lov qilinmagan va guruhda — qarzdor
+            return true;
+          }
+          // So'nggi to'lov 30 kundan oldin bo'lsa — qarzdor
+          const lastPayment = studentPayments.sort((a, b) => b.date.localeCompare(a.date))[0];
+          const lastPaymentDate = new Date(lastPayment.date);
+          const daysSincePayment = Math.floor((new Date().getTime() - lastPaymentDate.getTime()) / (1000 * 60 * 60 * 24));
+          if (daysSincePayment > 30) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }).sort((a, b) => {
+      // nextPaymentDate bo'yicha saralash (eng eski birinchi)
+      const dateA = a.nextPaymentDate || '9999-12-31';
+      const dateB = b.nextPaymentDate || '9999-12-31';
+      return dateA.localeCompare(dateB);
+    });
+  }, [students, groups, payments]);
+
+  // Qarzdorlar qidiruvi
+  const filteredDebtors = useMemo(() => {
+    if (!debtorSearch.trim()) return debtorStudents;
+    const term = debtorSearch.toLowerCase();
+    return debtorStudents.filter(s =>
+      s.name.toLowerCase().includes(term) ||
+      s.phone.toLowerCase().includes(term) ||
+      s.parentPhone?.toLowerCase().includes(term)
+    );
+  }, [debtorStudents, debtorSearch]);
+
+  // Qarz kunlarini hisoblash
+  const getDebtDays = (student: Student) => {
+    if (student.nextPaymentDate) {
+      const dueDate = new Date(student.nextPaymentDate);
+      const today = new Date();
+      const days = Math.floor((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+      return days > 0 ? days : 0;
+    }
+    // To'lov sanasi yo'q — so'nggi to'lovdan hisoblash
+    const studentPayments = payments.filter(p => p.studentId === student.id);
+    if (studentPayments.length > 0) {
+      const lastPayment = studentPayments.sort((a, b) => b.date.localeCompare(a.date))[0];
+      const days = Math.floor((new Date().getTime() - new Date(lastPayment.date).getTime()) / (1000 * 60 * 60 * 24));
+      return days > 30 ? days - 30 : 0;
+    }
+    // Hech to'lov qilinmagan — ro'yxatga qo'shilgan kundan
+    const joinedDate = new Date(student.joinedDate);
+    return Math.floor((new Date().getTime() - joinedDate.getTime()) / (1000 * 60 * 60 * 24));
+  };
 
   const stats = useMemo(() => {
     const filterByDate = (items: any[]) => {
       if (!items) return [];
       return items.filter(item => {
         if (!item.date) return true;
-        const d = item.date; // "YYYY-MM-DD"
+        const d = item.date;
         if (startDate && d < startDate) return false;
         if (endDate && d > endDate) return false;
         return true;
@@ -63,14 +131,15 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
     const totalOfficeExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
 
     let totalSalaries = 0;
-    users.filter(u => u.role === UserRole.TEACHER).forEach(teacher => {
-      const teacherGroupIds = teacher.groupIds || [];
-      const teacherGroups = groups.filter(g =>
-        teacherGroupIds.includes(g.id) || g.teacher === teacher.name
+    // TEACHER va ADMIN rollarini hisobga olish
+    users.filter(u => u.role === UserRole.TEACHER || u.role === UserRole.ADMIN).forEach(staff => {
+      const staffGroupIds = staff.groupIds || [];
+      const staffGroups = groups.filter(g =>
+        staffGroupIds.includes(g.id) || g.teacher === staff.name
       );
-      const percentage = teacher.salaryPercentage || 40;
+      const percentage = staff.salaryPercentage || 40;
 
-      teacherGroups.forEach(g => {
+      staffGroups.forEach(g => {
         const groupRevenue = filteredPayments
           .filter(p => g.studentIds.includes(p.studentId))
           .reduce((sum, p) => sum + p.amount, 0);
@@ -81,9 +150,8 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
     const profit = totalRevenue - (totalOfficeExpenses + totalSalaries);
     const presentCount = filteredAttendance.filter(a => a.status === AttendanceStatus.PRESENT).length;
     const attPercentage = filteredAttendance.length > 0 ? ((presentCount / filteredAttendance.length) * 100).toFixed(1) : 0;
-    const debtCount = students.filter(s => s.balance < 0).length;
 
-    return { totalRevenue, totalOfficeExpenses, totalSalaries, profit, attPercentage, debtCount };
+    return { totalRevenue, totalOfficeExpenses, totalSalaries, profit, attPercentage };
   }, [payments, expenses, attendance, students, users, groups, startDate, endDate]);
 
   const exportToCSV = () => {
@@ -132,7 +200,7 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
             <Download size={18} /> {t.excel_csv}
           </button>
           <button onClick={() => window.print()} className="flex-1 xl:flex-none flex items-center justify-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
-            <FileText size={18} /> {t.export_pdf.toUpperCase()}
+            <FileText size={18} /> {t.export_pdf?.toUpperCase() || 'PDF'}
           </button>
         </div>
       </div>
@@ -140,11 +208,11 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {[
-          { label: t.students.toUpperCase(), val: students.length, color: 'text-slate-800', icon: <Users size={20} />, bg: 'bg-indigo-50', show: true, clickable: false },
-          { label: t.groups.toUpperCase(), val: groups.length, color: 'text-slate-800', icon: <Layers size={20} />, bg: 'bg-purple-50', show: true, clickable: false },
-          { label: t.revenue.toUpperCase(), val: stats.totalRevenue.toLocaleString(), color: 'text-emerald-600', icon: <TrendingUp size={20} />, bg: 'bg-emerald-50', show: user.role !== UserRole.TEACHER, clickable: false },
-          { label: t.attendance.toUpperCase(), val: `${stats.attPercentage}%`, color: 'text-amber-600', icon: <BarChart3 size={20} />, bg: 'bg-amber-50', show: true, clickable: false },
-          { label: t.debtors.toUpperCase(), val: stats.debtCount, color: 'text-rose-600', icon: <AlertCircle size={20} />, bg: 'bg-rose-50', show: user.role !== UserRole.TEACHER, clickable: true, onClick: () => setShowDebtorsModal(true) }
+          { label: (t.students || 'Students').toUpperCase(), val: students.length, color: 'text-slate-800', icon: <Users size={20} />, bg: 'bg-indigo-50', show: true, clickable: false },
+          { label: (t.groups || 'Groups').toUpperCase(), val: groups.length, color: 'text-slate-800', icon: <Layers size={20} />, bg: 'bg-purple-50', show: true, clickable: false },
+          { label: (t.revenue || 'Revenue').toUpperCase(), val: stats.totalRevenue.toLocaleString(), color: 'text-emerald-600', icon: <TrendingUp size={20} />, bg: 'bg-emerald-50', show: user.role !== UserRole.TEACHER, clickable: false },
+          { label: (t.attendance || 'Attendance').toUpperCase(), val: `${stats.attPercentage}%`, color: 'text-amber-600', icon: <BarChart3 size={20} />, bg: 'bg-amber-50', show: true, clickable: false },
+          { label: (t.debtors || 'Debtors').toUpperCase(), val: debtorStudents.length, color: 'text-rose-600', icon: <AlertCircle size={20} />, bg: 'bg-rose-50', show: user.role !== UserRole.TEACHER, clickable: true, onClick: () => setShowDebtorsModal(true) }
         ].filter(i => i.show).map((item, i) => (
           <div
             key={i}
@@ -161,13 +229,13 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
         ))}
       </div>
 
-      {(user.role === UserRole.DIRECTOR || user.role === UserRole.SUPER_ADMIN) && (
+      {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <div className="flex justify-between items-center mb-10">
-              <h3 className="font-black text-slate-800 uppercase tracking-tighter text-sm">{t.financial_report.toUpperCase()}</h3>
+              <h3 className="font-black text-slate-800 uppercase tracking-tighter text-sm">{(t.financial_report || 'Financial Report').toUpperCase()}</h3>
               <div className="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">
-                {t.net_profit.toUpperCase()}: {stats.profit.toLocaleString()} UZS
+                {(t.net_profit || 'Profit').toUpperCase()}: {stats.profit.toLocaleString()} UZS
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -201,7 +269,7 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
         </div>
       )}
 
-      {/* Qarzdorlar Modal */}
+      {/* ========== Qarzdorlar Modal ========== */}
       {showDebtorsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDebtorsModal(false)}>
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
@@ -218,43 +286,78 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
               </button>
             </div>
 
-            <div className="p-6 max-h-[60vh] overflow-y-auto">
-              {debtorStudents.length === 0 ? (
+            {/* Qidiruv */}
+            <div className="p-4 border-b border-gray-100">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                <input
+                  type="text"
+                  className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-sm font-bold focus:ring-2 focus:ring-rose-500"
+                  placeholder={t.search || "Qidiruv..."}
+                  value={debtorSearch}
+                  onChange={e => setDebtorSearch(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="p-6 max-h-[50vh] overflow-y-auto">
+              {filteredDebtors.length === 0 ? (
                 <div className="text-center py-12 text-gray-400">
                   <AlertCircle size={48} className="mx-auto mb-4 opacity-30" />
                   <p className="font-bold">{t.no_debtors || "Qarzdor o'quvchilar yo'q"}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {debtorStudents.map((student, index) => (
-                    <div key={student.id} className="flex items-center justify-between p-4 bg-rose-50 rounded-2xl border border-rose-100 hover:bg-rose-100 transition-all">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-rose-200 rounded-xl flex items-center justify-center text-rose-700 font-black text-sm">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <p className="font-black text-slate-800">{student.name}</p>
-                          <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                            <Phone size={12} />
-                            <span>{student.phone || student.parentPhone || "Telefon yo'q"}</span>
+                  {filteredDebtors.map((student, index) => {
+                    const studentGroups = getStudentGroups(student.id);
+                    const debtDays = getDebtDays(student);
+                    return (
+                      <div key={student.id} className="flex items-center justify-between p-4 bg-rose-50 rounded-2xl border border-rose-100 hover:bg-rose-100 transition-all">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-rose-200 rounded-xl flex items-center justify-center text-rose-700 font-black text-sm">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-800">{student.name}</p>
+                            <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                              <Phone size={12} />
+                              <span>{student.phone || student.parentPhone || "Telefon yo'q"}</span>
+                            </div>
+                            {/* Guruh nomlari */}
+                            {studentGroups.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {studentGroups.map(g => (
+                                  <span key={g.id} className="text-[9px] font-bold px-2 py-0.5 rounded-lg bg-purple-100 text-purple-600 border border-purple-200">
+                                    {g.name}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
+                        <div className="text-right">
+                          <p className="text-sm font-black text-rose-600">
+                            {debtDays} {t.days || "kun"}
+                          </p>
+                          <p className="text-[10px] text-rose-400 font-bold">
+                            {student.nextPaymentDate
+                              ? `${t.due_date || 'Muddati'}: ${student.nextPaymentDate}`
+                              : (t.no_payment || "To'lov qilinmagan")
+                            }
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-black text-rose-600">{Math.abs(student.balance).toLocaleString()} UZS</p>
-                        <p className="text-[10px] text-rose-400 font-bold uppercase">{t.debt || "Qarz"}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
 
             <div className="p-6 bg-gray-50 border-t border-gray-100">
               <div className="flex justify-between items-center">
-                <p className="text-[11px] text-gray-500 font-bold">{t.total_debt || "Jami qarz"}:</p>
+                <p className="text-[11px] text-gray-500 font-bold">{t.total_debtors || "Jami qarzdorlar"}:</p>
                 <p className="text-xl font-black text-rose-600">
-                  {Math.abs(debtorStudents.reduce((sum, s) => sum + s.balance, 0)).toLocaleString()} UZS
+                  {debtorStudents.length} {t.students?.toLowerCase() || "o'quvchi"}
                 </p>
               </div>
             </div>
@@ -266,4 +369,3 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
 };
 
 export default Dashboard;
-

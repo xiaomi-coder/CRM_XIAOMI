@@ -1,15 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Payment, Student, SystemSettings, Group } from '../types';
-import { CreditCard, DollarSign, ArrowUpRight, Plus, Search, Calendar, AlertCircle, Download, Trash2, Pencil } from 'lucide-react';
+import { CreditCard, DollarSign, Plus, Search, Calendar, Download, Trash2, Pencil, X, User } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
-
-interface PaymentsProps {
-  payments: Payment[];
-  students: Student[];
-  onAdd: (payment: Omit<Payment, 'id' | 'centerId'>, nextPaymentDate?: string) => void;
-  settings: SystemSettings;
-}
 
 interface PaymentsProps {
   t: any;
@@ -32,8 +25,12 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editPayment, setEditPayment] = useState<Payment | null>(null);
-  const [editData, setEditData] = useState<{ amount: number; forMonth: string; type: Payment['type'] }>({ amount: 0, forMonth: '', type: 'CASH' });
+  const [editData, setEditData] = useState<{ amount: number; forMonth: string; type: Payment['type']; date: string }>({ amount: 0, forMonth: '', type: 'CASH', date: '' });
   const currentMonthName = MONTHS[new Date().getMonth()];
+
+  // Student search in modal
+  const [studentSearch, setStudentSearch] = useState('');
+  const [showStudentDropdown, setShowStudentDropdown] = useState(false);
 
   const [newPayment, setNewPayment] = useState<{
     studentId: string;
@@ -58,10 +55,20 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
   const getGroup = (id: string) => groups.find(g => g.id === id);
   const getGroupName = (id: string) => getGroup(id)?.name || '';
 
-  // Get groups that contain the selected student
   const getStudentGroups = (studentId: string) => {
     return groups.filter(g => g.studentIds.includes(studentId));
   };
+
+  // Filtered students for search in modal
+  const filteredStudents = useMemo(() => {
+    if (!studentSearch.trim()) return students;
+    const term = studentSearch.toLowerCase();
+    return students.filter(s =>
+      s.name.toLowerCase().includes(term) ||
+      s.phone.toLowerCase().includes(term) ||
+      s.parentPhone?.toLowerCase().includes(term)
+    );
+  }, [students, studentSearch]);
 
   const filteredPayments = payments.filter(p =>
     getStudentName(p.studentId).toLowerCase().includes(searchTerm.toLowerCase())
@@ -93,6 +100,12 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
     document.body.removeChild(link);
   };
 
+  const selectStudent = (student: Student) => {
+    setNewPayment({ ...newPayment, studentId: student.id, groupId: '' });
+    setStudentSearch(student.name);
+    setShowStudentDropdown(false);
+  };
+
   const handleSave = async () => {
     if (!newPayment.studentId || newPayment.amount <= 0) return;
 
@@ -118,6 +131,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
 
     setLoading(false);
     setShowModal(false);
+    setStudentSearch('');
     setNewPayment({
       studentId: '',
       groupId: '',
@@ -152,7 +166,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
             </div>
           </div>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => { setShowModal(true); setStudentSearch(''); }}
             className="bg-indigo-600 text-white p-4 rounded-xl shadow-md font-bold flex items-center justify-center space-x-2 hover:bg-indigo-700 transition-all"
           >
             <Plus size={20} />
@@ -233,7 +247,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                       <button
                         onClick={() => {
                           setEditPayment(payment);
-                          setEditData({ amount: payment.amount, forMonth: payment.forMonth, type: payment.type });
+                          setEditData({ amount: payment.amount, forMonth: payment.forMonth, type: payment.type, date: payment.date });
                         }}
                         className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
                         title={t.edit || "Tahrirlash"}
@@ -260,24 +274,92 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
         </div>
       </div>
 
+      {/* ========== To'lov qabul qilish Modal (Student Search bilan) ========== */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
-            <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-              <DollarSign className="text-indigo-600" />
-              {t.accept_payment}
-            </h3>
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <DollarSign className="text-indigo-600" />
+                {t.accept_payment}
+              </h3>
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={24} />
+              </button>
+            </div>
             <div className="space-y-4">
-              <div>
+              {/* O'quvchi qidirish */}
+              <div className="relative">
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.select_student}</label>
-                <select
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none"
-                  value={newPayment.studentId}
-                  onChange={(e) => setNewPayment({ ...newPayment, studentId: e.target.value, groupId: '' })}
-                >
-                  <option value="">{t.select_student}...</option>
-                  {students.map(s => <option key={s.id} value={s.id}>{s.name} (Next: {s.nextPaymentDate || 'Not set'})</option>)}
-                </select>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input
+                    type="text"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold"
+                    placeholder={t.search || "O'quvchi qidirish..."}
+                    value={studentSearch}
+                    onChange={(e) => {
+                      setStudentSearch(e.target.value);
+                      setShowStudentDropdown(true);
+                      if (!e.target.value) {
+                        setNewPayment({ ...newPayment, studentId: '', groupId: '' });
+                      }
+                    }}
+                    onFocus={() => setShowStudentDropdown(true)}
+                  />
+                  {newPayment.studentId && (
+                    <button
+                      onClick={() => {
+                        setStudentSearch('');
+                        setNewPayment({ ...newPayment, studentId: '', groupId: '' });
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Dropdown ro'yxat */}
+                {showStudentDropdown && !newPayment.studentId && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl max-h-[200px] overflow-y-auto">
+                    {filteredStudents.length > 0 ? filteredStudents.map(s => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => selectStudent(s)}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-indigo-50 transition-all text-left border-b border-gray-50 last:border-0"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-sm">
+                          {s.name.charAt(0)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-gray-800 text-sm truncate">{s.name}</p>
+                          <p className="text-[10px] text-gray-400">{s.phone} {s.nextPaymentDate ? `• ${t.next_payment_due}: ${s.nextPaymentDate}` : ''}</p>
+                        </div>
+                        <div className={`text-[10px] font-black px-2 py-0.5 rounded-full ${(s.balance || 0) >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                          {(s.balance || 0).toLocaleString()}
+                        </div>
+                      </button>
+                    )) : (
+                      <p className="text-center text-gray-400 text-xs py-4">{t.search_empty || "Topilmadi"}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Tanlangan o'quvchi */}
+                {newPayment.studentId && (
+                  <div className="mt-2 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-2 flex items-center gap-3">
+                    <User size={16} className="text-indigo-600" />
+                    <div className="flex-1">
+                      <p className="font-bold text-indigo-800 text-sm">{getStudentName(newPayment.studentId)}</p>
+                      <p className="text-[10px] text-indigo-500">{getStudent(newPayment.studentId)?.phone}</p>
+                    </div>
+                    <span className="text-[10px] font-black bg-white px-2 py-1 rounded-lg text-indigo-600 border border-indigo-200">
+                      {t.balance || 'Balans'}: {(getStudent(newPayment.studentId)?.balance || 0).toLocaleString()}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {newPayment.studentId && getStudentGroups(newPayment.studentId).length > 0 && (
@@ -339,7 +421,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
               <button onClick={() => setShowModal(false)} className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-50 rounded-xl">{t.cancel}</button>
               <button
                 onClick={handleSave}
-                disabled={loading}
+                disabled={loading || !newPayment.studentId}
                 className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 disabled:opacity-50"
               >
                 {loading ? t.sending : t.save}
@@ -349,22 +431,33 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
         </div>
       )}
 
-      {/* Edit Payment Modal */}
+      {/* ========== To'lovni tahrirlash Modal (Sana bilan) ========== */}
       {editPayment && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
-            <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-              <Pencil className="text-blue-600" />
-              {t.edit || "Tahrirlash"}
-            </h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <Pencil className="text-blue-600" />
+                {t.edit || "Tahrirlash"}
+              </h3>
+              <button onClick={() => setEditPayment(null)} className="text-gray-400 hover:text-gray-600">
+                <X size={24} />
+              </button>
+            </div>
             <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded-xl">
                 <p className="text-xs font-bold text-gray-500 uppercase mb-1">{t.students}</p>
                 <p className="font-bold text-gray-800">{getStudentName(editPayment.studentId)}</p>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.amount}</label>
-                <input type="number" className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={editData.amount || ''} onChange={(e) => setEditData({ ...editData, amount: Number(e.target.value) })} />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.amount}</label>
+                  <input type="number" className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={editData.amount || ''} onChange={(e) => setEditData({ ...editData, amount: Number(e.target.value) })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.attendance_date || 'Sana'}</label>
+                  <input type="date" className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={editData.date} onChange={(e) => setEditData({ ...editData, date: e.target.value })} />
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.for_month}</label>
@@ -385,7 +478,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
               <button
                 onClick={() => {
                   if (editData.amount > 0) {
-                    onEdit(editPayment.id, { amount: editData.amount, forMonth: editData.forMonth, type: editData.type });
+                    onEdit(editPayment.id, { amount: editData.amount, forMonth: editData.forMonth, type: editData.type, date: editData.date });
                     setEditPayment(null);
                   }
                 }}

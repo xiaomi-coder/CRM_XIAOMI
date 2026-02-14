@@ -47,10 +47,11 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
   const { dateStr, weekday } = formatDate(currentTime);
 
   const isDirector = user.role === UserRole.DIRECTOR;
+  const isAdmin = user.role === UserRole.ADMIN;
   const isTeacher = user.role === UserRole.TEACHER;
   const isSuper = user.role === UserRole.SUPER_ADMIN;
 
-  const roleLabel = isSuper ? (t.role_creator || 'Creator') : (isDirector ? (t.role_director || 'Director') : (t.role_teacher || 'Teacher'));
+  const roleLabel = isSuper ? (t.role_creator || 'Creator') : (isDirector ? (t.role_director || 'Director') : (isAdmin ? (t.role_admin || 'Admin') : (t.role_teacher || 'Teacher')));
 
   const creatorSections = [
     {
@@ -66,7 +67,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
 
   const standardSections = [];
 
-  if (isDirector) {
+  if (isDirector || isAdmin) {
     standardSections.push({
       title: t.main,
       items: [
@@ -92,7 +93,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
   standardSections.push({ title: t.education, items: educationItems });
 
   const financeItems = [];
-  if (isDirector) {
+  if (isDirector || isAdmin) {
     financeItems.push({ id: 'payments', label: t.payments, icon: Wallet });
     financeItems.push({ id: 'salary', label: t.salary, icon: Banknote });
     financeItems.push({ id: 'expenses', label: t.expenses, icon: Receipt });
@@ -143,7 +144,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
         </nav>
 
         <div className="p-6 mt-auto border-t border-white/5 bg-white/[0.02]">
-          {isDirector && (
+          {(isDirector || isAdmin) && (
             <button
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl mb-4 transition-all ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}

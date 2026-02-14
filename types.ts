@@ -8,6 +8,7 @@ export enum AttendanceStatus {
 
 export enum UserRole {
   DIRECTOR = 'DIRECTOR',
+  ADMIN = 'ADMIN',
   TEACHER = 'TEACHER',
   SUPER_ADMIN = 'SUPER_ADMIN'
 }
@@ -51,6 +52,20 @@ export interface User {
   role: UserRole;
   groupIds?: string[];
   salaryPercentage?: number;
+  permissions?: {
+    dashboard?: boolean;
+    students?: boolean;
+    groups?: boolean;
+    attendance?: boolean;
+    payments?: boolean;
+    expenses?: boolean;
+    salary?: boolean;
+    leads?: boolean;
+    archive?: boolean;
+    results?: boolean;
+    library?: boolean;
+    settings?: boolean;
+  };
 }
 
 export interface Student {
