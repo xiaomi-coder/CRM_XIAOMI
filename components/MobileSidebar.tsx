@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
     LayoutDashboard, Users, Wallet, CalendarCheck, Settings as SettingsIcon,
     BrainCircuit, LogOut, Banknote, Receipt, Archive, UserSquare, Layers,
-    ShieldAlert, Megaphone, UserPlus, FileQuestion, X, Trophy
+    ShieldAlert, Megaphone, UserPlus, FileQuestion, X, Trophy, GraduationCap, ClipboardList
 } from 'lucide-react';
 import { User, UserRole } from '../types';
 import { translations, Language } from '../services/languageContext';
@@ -50,6 +50,8 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
         if (isDirector) {
             items.push({ id: 'dashboard', label: t.dashboard, icon: LayoutDashboard });
             items.push({ id: 'leads', label: t.leads, icon: UserPlus });
+            items.push({ id: 'ielts', label: 'IELTS Mock', icon: GraduationCap });
+            items.push({ id: 'tests_manager', label: 'Testlar', icon: ClipboardList });
         }
 
         items.push({ id: 'students', label: t.students, icon: Users });

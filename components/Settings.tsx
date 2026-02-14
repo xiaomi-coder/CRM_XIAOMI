@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { SystemSettings, Student, TestTemplate, Question, UserRole } from '../types';
-import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { db } from '../services/supabase';
 import { setTelegramWebhook, getTelegramBotInfo } from '../services/telegramService';
 
@@ -239,6 +239,27 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                     <p className="text-xs text-white/70">4. Olingan tokenni shu yerga qo'ying</p>
                   </div>
                 )}
+
+                {/* AI Integration Section */}
+                <div className="p-6 bg-slate-900 rounded-[2rem] text-white space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={18} className="text-amber-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">AI Integration (Gemini)</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-white/50 uppercase font-bold">Custom API Key (Optional)</p>
+                    <input
+                      type="password"
+                      className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-indigo-500 transition-colors"
+                      value={formData.geminiApiKey || ''}
+                      onChange={e => setFormData({ ...formData, geminiApiKey: e.target.value })}
+                      placeholder="AI_... (Bo'sh qoldirsangiz, tizimning umumiy kaliti ishlatiladi)"
+                    />
+                    <p className="text-[9px] text-white/40">Faqat o'zingizning shaxsiy limiti ishlatmoqchi bo'lsangiz to'ldiring. Aks holda bo'sh qoldiring.</p>
+                  </div>
+                </div>
+
               </div>
 
               <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase shadow-xl">{t.save}</button>
@@ -260,11 +281,11 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {templates.map(t => (
-              <div key={t.id} className="p-6 bg-slate-50 rounded-[2.5rem] border border-indigo-100 flex flex-col justify-between hover:shadow-lg transition-all relative group">
+            {templates.map(test => (
+              <div key={test.id} className="p-6 bg-slate-50 rounded-[2.5rem] border border-indigo-100 flex flex-col justify-between hover:shadow-lg transition-all relative group">
                 <div className="absolute top-4 right-4 flex gap-2">
                   <button
-                    onClick={() => openEditModal(t)}
+                    onClick={() => openEditModal(test)}
                     className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
                   >
                     <Edit2 size={18} />
@@ -272,8 +293,8 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                   {onDeleteTest && (
                     <button
                       onClick={async () => {
-                        if (window.confirm(translations[t.main === "Dashboard" ? "en" : (t.main === "Дашборд" ? "ru" : "uz") as Language].delete_confirm)) {
-                          await onDeleteTest(t.id);
+                        if (window.confirm(t.delete_confirm)) {
+                          await onDeleteTest(test.id);
                           loadTemplates();
                         }
                       }}
@@ -285,13 +306,13 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                 </div>
 
                 <div>
-                  <p className="font-black text-slate-800 text-sm uppercase mb-1">{t.title}</p>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t.subject} • {t.questions.length}</p>
+                  <p className="font-black text-slate-800 text-sm uppercase mb-1">{test.title}</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{test.subject} • {test.questions.length}</p>
                 </div>
                 <div className="mt-6">
                   <button
                     type="button"
-                    onClick={() => exportToWord(t)}
+                    onClick={() => exportToWord(test)}
                     className="w-full bg-white border border-slate-200 p-3 rounded-2xl hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center justify-center gap-2 text-[9px] font-black uppercase"
                   >
                     <Download size={14} /> Doc

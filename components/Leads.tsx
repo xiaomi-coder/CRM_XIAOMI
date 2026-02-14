@@ -12,9 +12,10 @@ interface LeadsProps {
   onUpdateStatus: (id: string, status: LeadStatus) => void;
   onDelete: (id: string) => void;
   onRegister: (lead: Lead) => void;
+  onUpdateLead?: (id: string, data: Partial<Lead>) => void;
 }
 
-const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus, onDelete, onRegister }) => {
+const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus, onDelete, onRegister, onUpdateLead }) => {
   const [showModal, setShowModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState<Lead | null>(null);
   const [viewResult, setViewResult] = useState<Lead | null>(null);

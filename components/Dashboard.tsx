@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead } from '../types';
 import { analyzeDataWithAI } from '../services/geminiService';
+import { db } from '../services/supabase';
 
 interface DashboardProps {
   t: any;
@@ -262,7 +263,21 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
               </div>
             </div>
             <p className="text-indigo-100 text-[11px] leading-relaxed mb-8 opacity-70">{t.ai_analysis_note}</p>
-            <button onClick={async () => { setLoadingAi(true); const res = await analyzeDataWithAI(students, payments, groups, attendance); alert(res); setLoadingAi(false); }} disabled={loadingAi} className="w-full bg-[#ffc107] text-black font-black py-4 rounded-2xl text-[10px] uppercase shadow-xl hover:scale-105 active:scale-95 transition-all">
+            <button onClick={async () => {
+              setLoadingAi(true);
+              let apiKey = undefined;
+              try {
+                if (user.centerId) {
+                  const settings = await db.getOne('settings', 'centerId', user.centerId);
+                  if (settings && settings.geminiApiKey) apiKey = settings.geminiApiKey;
+                }
+              } catch (e) {
+                console.error("Settings fetch error:", e);
+              }
+              const res = await analyzeDataWithAI(students, payments, groups, attendance, apiKey);
+              alert(res);
+              setLoadingAi(false);
+            }} disabled={loadingAi} className="w-full bg-[#ffc107] text-black font-black py-4 rounded-2xl text-[10px] uppercase shadow-xl hover:scale-105 active:scale-95 transition-all">
               {loadingAi ? t.ai_analyzing : t.start_analysis}
             </button>
           </div>

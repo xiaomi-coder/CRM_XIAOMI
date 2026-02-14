@@ -6,17 +6,20 @@ export const analyzeDataWithAI = async (
   students: Student[],
   payments: Payment[],
   groups: Group[],
-  attendance: Attendance[]
+  attendance: Attendance[],
+  apiKey?: string
 ): Promise<string> => {
-  // Vercel uchun VITE_API_KEY yoki oddiy API_KEY ni tekshiramiz
-  const apiKey = (import.meta as any).env?.VITE_API_KEY || (import.meta as any).env?.API_KEY || process.env.API_KEY;
+  // 1. Parametrda kelgan kalit
+  // 2. Vercel env
+  // 3. Process env
+  const activeKey = apiKey || (import.meta as any).env?.VITE_API_KEY || (import.meta as any).env?.API_KEY || process.env.API_KEY || process.env.GEMINI_API_KEY;
 
-  if (!apiKey) {
-    return "AI tahlili uchun API kalit topilmadi. Vercel sozlamalarida VITE_API_KEY ni tekshiring.";
+  if (!activeKey) {
+    return "AI tahlili uchun API kalit topilmadi. Sozlamalar bo'limidan kalit kiriting yoki Vercel sozlamalarini tekshiring.";
   }
 
-  const ai = new GoogleGenAI({ apiKey });
-  
+  const ai = new GoogleGenAI({ apiKey: activeKey });
+
   const prompt = `
     Quyidagi o'quv markazi ma'lumotlarini tahlil qiling va o'zbek tilida qisqacha hisobot bering:
     1. O'quvchilar soni: ${students.length}

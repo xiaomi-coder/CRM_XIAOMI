@@ -37,6 +37,8 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
             archive: t.archive,
             settings: t.system_settings,
             tests: t.tests,
+            ielts: 'IELTS Mock',
+            ielts_admin: 'IELTS Admin',
             creator_dashboard: t.dashboard,
             super_centers: t.centers,
             broadcast: t.broadcast,

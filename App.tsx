@@ -24,6 +24,9 @@ import Library from './components/Library';
 import Results from './components/Results';
 import { CreatorDashboard, CenterControl, BroadcastSystem, SystemLogs } from './components/CreatorComponents';
 import TestQuiz from './components/TestQuiz';
+import IELTSMain from './components/ielts/IELTSMain';
+import IELTSAdmin from './components/ielts/IELTSAdmin';
+import TestsManager from './components/ielts/TestsManager';
 import { Loader2 } from 'lucide-react';
 import { TestTemplate } from './types';
 import { translations, Language } from './services/languageContext';
@@ -56,6 +59,8 @@ const App: React.FC = () => {
   // Test topshiruvchi uchun state
   const [testLead, setTestLead] = useState<Lead | null>(null);
   const [testTemplate, setTestTemplate] = useState<TestTemplate | null>(null);
+  const [activeTestId, setActiveTestId] = useState<string | null>(null);
+  const [activeTestPin, setActiveTestPin] = useState<string | null>(null);
 
   const centerId = currentUser ? (currentUser.centerId || (currentUser as any).centerid || 'GLOBAL') : 'GLOBAL';
 
@@ -269,6 +274,36 @@ const App: React.FC = () => {
   const handleTestLogin = async (pin: string) => {
     setIsLoading(true);
     try {
+      // 1. Check IELTS Test PINs
+      const pins = await db.get('ielts_test_pins');
+      if (Array.isArray(pins)) {
+        const validPin = (pins as any[]).find(p => p.pin_code === pin && p.status === 'active');
+        if (validPin) {
+          // PIN found!
+          const testId = validPin.test_id;
+
+          // Increment usage count
+          await db.update('ielts_test_pins', validPin.id, { used_count: (validPin.used_count || 0) + 1 });
+
+          // Log in as guest student
+          const guestUser: User = {
+            id: 'guest_' + pin,
+            centerId: 'GLOBAL', // Tests are global for now or mapped to center via testId
+            name: 'Student', // Can be prompts for name later
+            username: 'student_' + pin,
+            role: UserRole.STUDENT
+          };
+
+          setActiveTestId(testId);
+          setActiveTestPin(pin);
+          setCurrentUser(guestUser);
+          setActiveTab('ielts');
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // 2. Legacy: Check Leads (for old test system if still needed)
       const leads = await db.get('leads');
       const lead = leads.find((l: Lead) => l.testPin === pin && l.testStatus === 'PENDING');
 
@@ -283,7 +318,7 @@ const App: React.FC = () => {
           setLoginError(t.test_not_found);
         }
       } else {
-        setLoginError(t.invalid_pin);
+        setLoginError('PIN kod noto\'g\'ri yoki eskirgan');
       }
     } catch (err) {
       console.error("Test login error:", err);
@@ -405,7 +440,10 @@ const App: React.FC = () => {
       case 'salary': return <SalaryCalculation t={t} users={users} groups={groups} payments={payments} students={students} currentUser={currentUser} />;
       case 'staff': return <StaffManagement t={t} users={users} groups={groups} onAddUser={u => db.insert('users', { ...u, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDeleteUser={id => db.delete('users', id).then(loadAllData)} onUpdateUser={(id, d) => db.update('users', id, d).then(loadAllData)} />;
       case 'leads':
-      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={l => db.delete('leads', l.id).then(() => { loadAllData(); setActiveTab('students'); })} />;
+      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={l => db.delete('leads', l.id).then(() => { loadAllData(); setActiveTab('students'); })} onUpdateLead={(id, d) => db.update('leads', id, d).then(loadAllData)} />;
+      case 'ielts': return <IELTSMain t={t} centerId={centerId} studentName={currentUser.name} testId={activeTestId} pinCode={activeTestPin} onBack={() => { setActiveTab('dashboard'); setActiveTestId(null); setActiveTestPin(null); }} onComplete={(attempt) => { loadAllData(); }} />;
+      case 'ielts_admin': return <IELTSAdmin t={t} centerId={centerId} userRole={currentUser.role} />;
+      case 'tests_manager': return <TestsManager t={t} centerId={centerId} userRole={currentUser.role} />;
       case 'archive': return <Archive t={t} students={students} groups={groups} />;
       case 'results': return <Results t={t} results={results} students={students} onAdd={r => db.insert('results', { ...r, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('results', id).then(loadAllData)} />;
       case 'library': return <Library t={t} resources={library} user={currentUser} onAdd={r => db.insert('library', { ...r, id: crypto.randomUUID(), "centerId": centerId, uploadedBy: currentUser.name, uploadedAt: new Date().toISOString() }).then(loadAllData)} onDelete={id => db.delete('library', id).then(loadAllData)} />;
