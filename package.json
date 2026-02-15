@@ -17,6 +17,7 @@
     "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-router-dom": "^7.1.5",
     "recharts": "^3.6.0",
     "@vercel/node": "^3.0.0",
     "formidable": "^3.5.1"
