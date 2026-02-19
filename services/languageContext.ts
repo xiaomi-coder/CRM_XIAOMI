@@ -208,7 +208,19 @@ export const translations = {
     result_type: "Turi",
     certificate_image: "Sertifikat rasmi",
     upload_image: "Rasm yuklash",
-    file_too_large: "Fayl hajmi 2MB dan kichik bo'lishi kerak!"
+    file_too_large: "Fayl hajmi 2MB dan kichik bo'lishi kerak!",
+    mark_all: "Hammasini belgilash",
+    mark_all_present: "Hammasini KELDI",
+    mark_all_absent: "Hammasini KELMADI",
+    mark_all_late: "Hammasini KECHIKDI",
+    mark_all_dismissed: "Hammasini KETDI (xabar yuborish)",
+    bulk_marking: "Ommaviy belgilash",
+    sending_notifications: "Xabarlar yuborilmoqda...",
+    notifications_sent: "xabar yuborildi",
+    dismissed_all_title: "Dars tugadi",
+    dismissed_all_message: "Farzandingiz darsi tugadi va u uyiga jo'nadi.",
+    no_students_to_notify: "Xabar yuborish uchun kelgan/kechikkan o'quvchi yo'q",
+    bulk_done: "Hammasiga belgilandi!"
   },
   ru: {
     dashboard: "Дашборд",
@@ -418,7 +430,19 @@ export const translations = {
     result_type: "Тип",
     certificate_image: "Фото сертификата",
     upload_image: "Загрузить фото",
-    file_too_large: "Размер файла должен быть менее 2MB!"
+    file_too_large: "Размер файла должен быть менее 2MB!",
+    mark_all: "Отметить всех",
+    mark_all_present: "Все ПРИШЛИ",
+    mark_all_absent: "Все ОТСУТСТВУЮТ",
+    mark_all_late: "Все ОПОЗДАЛИ",
+    mark_all_dismissed: "Все УШЛИ (отправить уведомление)",
+    bulk_marking: "Массовая отметка",
+    sending_notifications: "Отправка уведомлений...",
+    notifications_sent: "уведомлений отправлено",
+    dismissed_all_title: "Занятие завершено",
+    dismissed_all_message: "Ваш ребёнок закончил занятие и отправился домой.",
+    no_students_to_notify: "Нет учеников для уведомления",
+    bulk_done: "Все отмечены!"
   },
   en: {
     dashboard: "Dashboard",
@@ -628,7 +652,19 @@ export const translations = {
     result_type: "Type",
     certificate_image: "Certificate Image",
     upload_image: "Upload Image",
-    file_too_large: "File size must be less than 2MB!"
+    file_too_large: "File size must be less than 2MB!",
+    mark_all: "Mark all",
+    mark_all_present: "All PRESENT",
+    mark_all_absent: "All ABSENT",
+    mark_all_late: "All LATE",
+    mark_all_dismissed: "All DISMISSED (send notifications)",
+    bulk_marking: "Bulk marking",
+    sending_notifications: "Sending notifications...",
+    notifications_sent: "notifications sent",
+    dismissed_all_title: "Lesson ended",
+    dismissed_all_message: "Your child has finished the lesson and is heading home.",
+    no_students_to_notify: "No present/late students to notify",
+    bulk_done: "All marked!"
   }
 };
 

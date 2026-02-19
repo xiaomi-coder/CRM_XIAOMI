@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Group, Student, Attendance, AttendanceStatus, SystemSettings } from '../types';
-import { Check, X, Clock, Send, Search, Download, AlertCircle, MessageSquare, Users, LogOut } from 'lucide-react';
+import { Check, X, Clock, Send, Search, Download, AlertCircle, MessageSquare, Users, LogOut, CheckCheck, Loader2 } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
 
 interface AttendanceProps {
@@ -19,6 +19,8 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
   const [sendingSms, setSendingSms] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [testNotification, setTestNotification] = useState<{ show: boolean, msg: string }>({ show: false, msg: '' });
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ current: number; total: number } | null>(null);
 
   const getStudentGroup = (studentId: string) => {
     return groups.find(g => g.studentIds.includes(studentId));
@@ -100,6 +102,73 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
     }
   };
 
+  const handleMarkAll = async (status: AttendanceStatus) => {
+    if (filteredStudents.length === 0) return;
+    setBulkLoading(true);
+
+    for (const student of filteredStudents) {
+      let targetGroupId = selectedGroupId;
+      if (selectedGroupId === 'ALL_STUDENTS') {
+        const g = getStudentGroup(student.id);
+        if (!g) continue;
+        targetGroupId = g.id;
+      }
+      if (!targetGroupId || targetGroupId === '') continue;
+      onSave({ date: currentDate, studentId: student.id, groupId: targetGroupId, status });
+    }
+
+    setBulkLoading(false);
+  };
+
+  const handleMarkAllDismissed = async () => {
+    if (filteredStudents.length === 0) return;
+    setBulkLoading(true);
+
+    const displayDate = currentDate.split('-').reverse().join('.');
+    const studentsToNotify: Student[] = [];
+
+    for (const student of filteredStudents) {
+      let targetGroupId = selectedGroupId;
+      if (selectedGroupId === 'ALL_STUDENTS') {
+        const g = getStudentGroup(student.id);
+        if (!g) continue;
+        targetGroupId = g.id;
+      }
+      if (!targetGroupId || targetGroupId === '') continue;
+
+      const currentStatus = getStudentStatus(student.id, targetGroupId);
+      if (currentStatus === AttendanceStatus.PRESENT || currentStatus === AttendanceStatus.LATE) {
+        studentsToNotify.push(student);
+      }
+
+      onSave({ date: currentDate, studentId: student.id, groupId: targetGroupId, status: AttendanceStatus.DISMISSED });
+    }
+
+    if (studentsToNotify.length === 0) {
+      setBulkLoading(false);
+      alert(t.no_students_to_notify || "No present/late students to notify");
+      return;
+    }
+
+    setBulkProgress({ current: 0, total: studentsToNotify.length });
+    let sentCount = 0;
+
+    for (const student of studentsToNotify) {
+      if (settings.botToken && student.tgChatId) {
+        const msg = `🏠 <b>${t.dismissed_all_title || "Dars tugadi"}</b>\n\n👤 ${t.student || "O'quvchi"}: <b>${student.name}</b>\n📅 ${t.date || "Sana"}: ${displayDate}\n\n✅ ${t.dismissed_all_message || "Farzandingiz darsi tugadi va u uyiga jo'nadi."}\n\n<i>${settings.centerName || 'EduControl CRM'}</i>`;
+        await sendTelegramMessage(settings.botToken, student.tgChatId, msg);
+        sentCount++;
+        setBulkProgress({ current: sentCount, total: studentsToNotify.length });
+      }
+    }
+
+    setBulkLoading(false);
+    setBulkProgress(null);
+    if (sentCount > 0) {
+      alert(`✅ ${sentCount} ${t.notifications_sent || "notifications sent"}`);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {testNotification.show && (
@@ -139,6 +208,64 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
             <input placeholder={t.search_placeholder} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm" />
           </div>
         </div>
+      </div>
+
+      {/* Hammasini belgilash paneli */}
+      <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 mr-2">
+            <CheckCheck size={18} className="text-indigo-500" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.mark_all || "Hammasini belgilash"}</span>
+          </div>
+          <button
+            onClick={() => handleMarkAll(AttendanceStatus.PRESENT)}
+            disabled={bulkLoading || filteredStudents.length === 0}
+            className="flex items-center gap-2 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-40 border border-emerald-100 hover:border-emerald-500"
+          >
+            <Check size={16} />
+            {t.mark_all_present || "Hammasini KELDI"}
+          </button>
+          <button
+            onClick={() => handleMarkAll(AttendanceStatus.ABSENT)}
+            disabled={bulkLoading || filteredStudents.length === 0}
+            className="flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-500 hover:text-white transition-all disabled:opacity-40 border border-red-100 hover:border-red-500"
+          >
+            <X size={16} />
+            {t.mark_all_absent || "Hammasini KELMADI"}
+          </button>
+          <button
+            onClick={() => handleMarkAll(AttendanceStatus.LATE)}
+            disabled={bulkLoading || filteredStudents.length === 0}
+            className="flex items-center gap-2 px-5 py-2.5 bg-amber-50 text-amber-600 rounded-2xl font-bold text-sm hover:bg-amber-500 hover:text-white transition-all disabled:opacity-40 border border-amber-100 hover:border-amber-500"
+          >
+            <Clock size={16} />
+            {t.mark_all_late || "Hammasini KECHIKDI"}
+          </button>
+          <div className="w-px h-8 bg-slate-200 mx-1 hidden md:block"></div>
+          <button
+            onClick={handleMarkAllDismissed}
+            disabled={bulkLoading || filteredStudents.length === 0}
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 text-blue-600 rounded-2xl font-bold text-sm hover:bg-blue-600 hover:text-white transition-all disabled:opacity-40 border border-blue-100 hover:border-blue-500"
+          >
+            {bulkLoading ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
+            {bulkProgress
+              ? `${bulkProgress.current}/${bulkProgress.total}...`
+              : (t.mark_all_dismissed || "Hammasini KETDI (xabar yuborish)")}
+          </button>
+        </div>
+        {bulkLoading && bulkProgress && (
+          <div className="mt-3">
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-[10px] text-slate-400 font-bold mt-1.5">
+              {t.sending_notifications || "Xabarlar yuborilmoqda..."} ({bulkProgress.current}/{bulkProgress.total})
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
