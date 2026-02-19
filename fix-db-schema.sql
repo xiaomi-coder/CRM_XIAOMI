@@ -8,10 +8,12 @@ ALTER TABLE settings ADD COLUMN IF NOT EXISTS "notifyPayment" BOOLEAN DEFAULT tr
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS "standardTeacherPercentage" NUMERIC DEFAULT 40;
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS "licenseExpiry" DATE;
 ALTER TABLE settings ADD COLUMN IF NOT EXISTS "isBlocked" BOOLEAN DEFAULT false;
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS "reportChatId" TEXT; -- Kunlik hisobot uchun direktor chat ID
 
 -- 2. USERS jadvalini to'ldirish
 ALTER TABLE users ADD COLUMN IF NOT EXISTS "groupIds" TEXT[]; -- Guruhlar ro'yxati
 ALTER TABLE users ADD COLUMN IF NOT EXISTS "salaryPercentage" NUMERIC DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS "permissions" JSONB DEFAULT '{}'; -- Ruxsatlar
 
 -- 3. STUDENTS jadvalini to'ldirish (Telegram integratsiyasi uchun)
 ALTER TABLE students ADD COLUMN IF NOT EXISTS "tgEnabled" BOOLEAN DEFAULT false;
