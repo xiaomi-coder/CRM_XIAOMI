@@ -53,6 +53,15 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
 
   const roleLabel = isSuper ? (t.role_creator || 'Creator') : (isDirector ? (t.role_director || 'Director') : (isAdmin ? (t.role_admin || 'Admin') : (t.role_teacher || 'Teacher')));
 
+  const perms = user.permissions || {};
+  const hasPermission = (key: string): boolean => {
+    if (isSuper || isDirector) return true;
+    if (Object.keys(perms).length > 0) return perms[key] === true;
+    if (isAdmin) return key !== 'settings';
+    if (isTeacher) return ['students', 'groups', 'attendance', 'salary', 'archive', 'results', 'library'].includes(key);
+    return false;
+  };
+
   const creatorSections = [
     {
       title: t.global_control,
@@ -65,48 +74,36 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
     }
   ];
 
-  const standardSections = [];
+  const standardSections: { title: string; items: { id: string; label: string; icon: any }[] }[] = [];
 
+  // ASOSIY bo'lim - faqat ruxsat bor elementlarni ko'rsatish
+  const mainItems: { id: string; label: string; icon: any }[] = [];
+  if (hasPermission('dashboard')) mainItems.push({ id: 'dashboard', label: t.dashboard, icon: LayoutDashboard });
+  if (hasPermission('leads')) mainItems.push({ id: 'leads', label: t.leads, icon: UserPlus });
   if (isDirector || isAdmin) {
-    standardSections.push({
-      title: t.main,
-      items: [
-        { id: 'dashboard', label: t.dashboard, icon: LayoutDashboard },
-        { id: 'leads', label: t.leads, icon: UserPlus },
-        { id: 'ielts', label: 'IELTS Mock', icon: GraduationCap },
-        { id: 'tests_manager', label: 'Testlar', icon: ClipboardList }
-      ]
-    });
+    mainItems.push({ id: 'ielts', label: 'IELTS Mock', icon: GraduationCap });
+    mainItems.push({ id: 'tests_manager', label: 'Testlar', icon: ClipboardList });
   }
+  if (mainItems.length > 0) standardSections.push({ title: t.main, items: mainItems });
 
-  const educationItems = [
-    { id: 'students', label: t.students, icon: Users },
-    { id: 'groups', label: t.groups, icon: BrainCircuit },
-    { id: 'attendance', label: t.attendance, icon: CalendarCheck },
-  ];
+  // TA'LIM bo'limi
+  const educationItems: { id: string; label: string; icon: any }[] = [];
+  if (hasPermission('students')) educationItems.push({ id: 'students', label: t.students, icon: Users });
+  if (hasPermission('groups')) educationItems.push({ id: 'groups', label: t.groups, icon: BrainCircuit });
+  if (hasPermission('attendance')) educationItems.push({ id: 'attendance', label: t.attendance, icon: CalendarCheck });
+  if (isTeacher) educationItems.push({ id: 'tests', label: t.tests, icon: FileQuestion });
+  if (hasPermission('archive')) educationItems.push({ id: 'archive', label: t.archive, icon: Archive });
+  if (hasPermission('results')) educationItems.push({ id: 'results', label: t.results_section || 'Natijalar', icon: Trophy });
+  if (educationItems.length > 0) standardSections.push({ title: t.education, items: educationItems });
 
-  if (isTeacher) {
-    educationItems.push({ id: 'tests', label: t.tests, icon: FileQuestion });
-  }
+  // MOLIYA bo'limi
+  const financeItems: { id: string; label: string; icon: any }[] = [];
+  if (hasPermission('payments')) financeItems.push({ id: 'payments', label: t.payments, icon: Wallet });
+  if (hasPermission('salary')) financeItems.push({ id: 'salary', label: t.salary, icon: Banknote });
+  if (hasPermission('expenses')) financeItems.push({ id: 'expenses', label: t.expenses, icon: Receipt });
+  if (financeItems.length > 0) standardSections.push({ title: t.finance, items: financeItems });
 
-  educationItems.push({ id: 'archive', label: t.archive, icon: Archive });
-  educationItems.push({ id: 'results', label: t.results_section || 'Natijalar', icon: Trophy });
-
-  standardSections.push({ title: t.education, items: educationItems });
-
-  const financeItems = [];
-  if (isDirector || isAdmin) {
-    financeItems.push({ id: 'payments', label: t.payments, icon: Wallet });
-    financeItems.push({ id: 'salary', label: t.salary, icon: Banknote });
-    financeItems.push({ id: 'expenses', label: t.expenses, icon: Receipt });
-  } else if (isTeacher) {
-    financeItems.push({ id: 'salary', label: t.salary, icon: Banknote });
-  }
-
-  if (financeItems.length > 0) {
-    standardSections.push({ title: t.finance, items: financeItems });
-  }
-
+  // JAMOA bo'limi
   if (isDirector) {
     standardSections.push({ title: t.team, items: [{ id: 'staff', label: t.staff, icon: UserSquare }] });
   }
@@ -146,7 +143,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
         </nav>
 
         <div className="p-6 mt-auto border-t border-white/5 bg-white/[0.02]">
-          {(isDirector || isAdmin) && (
+          {hasPermission('settings') && (
             <button
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl mb-4 transition-all ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}

@@ -29,12 +29,21 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
     const t = translations[lang];
 
     const isDirector = user.role === UserRole.DIRECTOR;
+    const isAdmin = user.role === UserRole.ADMIN;
     const isTeacher = user.role === UserRole.TEACHER;
     const isSuper = user.role === UserRole.SUPER_ADMIN;
 
-    const roleLabel = isSuper ? (t.role_creator || 'Creator') : (isDirector ? (t.role_director || 'Director') : (t.role_teacher || 'Teacher'));
+    const roleLabel = isSuper ? (t.role_creator || 'Creator') : (isDirector ? (t.role_director || 'Director') : (isAdmin ? (t.role_admin || 'Admin') : (t.role_teacher || 'Teacher')));
 
-    // Menu items based on role (similar to Layout.tsx)
+    const perms = user.permissions || {};
+    const hasPermission = (key: string): boolean => {
+        if (isSuper || isDirector) return true;
+        if (Object.keys(perms).length > 0) return perms[key] === true;
+        if (isAdmin) return key !== 'settings';
+        if (isTeacher) return ['students', 'groups', 'attendance', 'salary', 'archive', 'results', 'library'].includes(key);
+        return false;
+    };
+
     const getMenuItems = () => {
         if (isSuper) {
             return [
@@ -45,35 +54,28 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
             ];
         }
 
-        const items = [];
+        const items: { id: string; label: string; icon: any }[] = [];
 
-        if (isDirector) {
-            items.push({ id: 'dashboard', label: t.dashboard, icon: LayoutDashboard });
-            items.push({ id: 'leads', label: t.leads, icon: UserPlus });
+        if (hasPermission('dashboard')) items.push({ id: 'dashboard', label: t.dashboard, icon: LayoutDashboard });
+        if (hasPermission('leads')) items.push({ id: 'leads', label: t.leads, icon: UserPlus });
+        if (isDirector || isAdmin) {
             items.push({ id: 'ielts', label: 'IELTS Mock', icon: GraduationCap });
             items.push({ id: 'tests_manager', label: 'Testlar', icon: ClipboardList });
         }
 
-        items.push({ id: 'students', label: t.students, icon: Users });
-        items.push({ id: 'groups', label: t.groups, icon: BrainCircuit });
-        items.push({ id: 'attendance', label: t.attendance, icon: CalendarCheck });
+        if (hasPermission('students')) items.push({ id: 'students', label: t.students, icon: Users });
+        if (hasPermission('groups')) items.push({ id: 'groups', label: t.groups, icon: BrainCircuit });
+        if (hasPermission('attendance')) items.push({ id: 'attendance', label: t.attendance, icon: CalendarCheck });
+        if (isTeacher) items.push({ id: 'tests', label: t.tests, icon: FileQuestion });
+        if (hasPermission('archive')) items.push({ id: 'archive', label: t.archive, icon: Archive });
+        if (hasPermission('results')) items.push({ id: 'results', label: t.results_section || 'Natijalar', icon: Trophy });
 
-        if (isTeacher) {
-            items.push({ id: 'tests', label: t.tests, icon: FileQuestion });
-        }
+        if (hasPermission('payments')) items.push({ id: 'payments', label: t.payments, icon: Wallet });
+        if (hasPermission('salary')) items.push({ id: 'salary', label: t.salary, icon: Banknote });
+        if (hasPermission('expenses')) items.push({ id: 'expenses', label: t.expenses, icon: Receipt });
 
-        items.push({ id: 'archive', label: t.archive, icon: Archive });
-        items.push({ id: 'results', label: t.results_section || 'Natijalar', icon: Trophy });
-
-        if (isDirector) {
-            items.push({ id: 'payments', label: t.payments, icon: Wallet });
-            items.push({ id: 'salary', label: t.salary, icon: Banknote });
-            items.push({ id: 'expenses', label: t.expenses, icon: Receipt });
-            items.push({ id: 'staff', label: t.staff, icon: UserSquare });
-            items.push({ id: 'settings', label: t.system_settings, icon: SettingsIcon });
-        } else if (isTeacher) {
-            items.push({ id: 'salary', label: t.salary, icon: Banknote });
-        }
+        if (isDirector) items.push({ id: 'staff', label: t.staff, icon: UserSquare });
+        if (hasPermission('settings')) items.push({ id: 'settings', label: t.system_settings, icon: SettingsIcon });
 
         return items;
     };

@@ -185,7 +185,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
   };
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser.role !== UserRole.STUDENT) {
       loadAllData();
     }
   }, [currentUser, centerId]);
@@ -277,7 +277,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
 
   // Login rendering removed
 
-  if (isLoading && students.length === 0) {
+  if (isLoading && students.length === 0 && currentUser.role !== UserRole.STUDENT) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -399,7 +399,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
     }
   };
 
-  // STUDENT role - faqat test ko'rsatish, sidebar yashirish
+  // STUDENT role - FAQAT test ko'rsatish, hech narsa boshqa ko'rsatmaslik
   if (currentUser.role === UserRole.STUDENT) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/30">
@@ -410,7 +410,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
             </div>
             <div>
               <p className="font-bold text-slate-800 text-sm">{currentUser.name}</p>
-              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{t.tests || 'Test'}</p>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">IELTS MOCK EXAM</p>
             </div>
           </div>
           <button onClick={onLogout} className="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-100 transition-all">
@@ -418,7 +418,15 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           </button>
         </div>
         <div className="p-4">
-          {renderContent()}
+          <IELTSMain
+            t={t}
+            centerId={centerId}
+            studentName={currentUser.name}
+            testId={testData?.id || null}
+            pinCode={testData?.pin || null}
+            onBack={onLogout}
+            onComplete={() => {}}
+          />
         </div>
       </div>
     );
