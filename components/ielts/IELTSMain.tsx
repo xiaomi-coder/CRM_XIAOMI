@@ -4,6 +4,7 @@ import { IELTSAttempt, IELTSAttemptStatus, IELTSExamType, IELTSReadingQuestion, 
 import { getReadingBandScore, getListeningBandScore, calculateWritingOverall, calculateIELTSOverall } from '../../services/ieltsGradingService';
 import { seedIELTSQuestionsForCenter } from '../../services/ieltsSeedService';
 import { db } from '../../services/supabase';
+import { sendTelegramMessage } from '../../services/telegramService';
 import IELTSReading from './IELTSReading';
 import IELTSListening from './IELTSListening';
 import IELTSWriting from './IELTSWriting';
@@ -37,7 +38,10 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
     const [attempt, setAttempt] = useState<IELTSAttempt | null>(null);
     const [loading, setLoading] = useState(false);
     const [apiKey, setApiKey] = useState<string | undefined>(undefined);
-    const seedingRef = React.useRef(false); // StrictMode dublikat himoya
+    const [centerBotToken, setCenterBotToken] = useState<string>('');
+    const [centerReportChatId, setCenterReportChatId] = useState<string>('');
+    const [centerName, setCenterName] = useState<string>('');
+    const seedingRef = React.useRef(false);
 
     // Load questions from Supabase
     const [readingQuestions, setReadingQuestions] = useState<IELTSReadingQuestion[]>([]);
@@ -45,27 +49,27 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
     const [writingTasks, setWritingTasks] = useState<IELTSWritingTask[]>([]);
     const [speakingQuestions, setSpeakingQuestions] = useState<IELTSSpeakingQuestion[]>([]);
 
+    const loadCenterSettings = (s: any) => {
+        if (!s) return;
+        if (s.geminiApiKey) setApiKey(s.geminiApiKey);
+        if (s.botToken) setCenterBotToken(s.botToken);
+        if (s.reportChatId) setCenterReportChatId(s.reportChatId);
+        if (s.centerName) setCenterName(s.centerName);
+    };
+
     useEffect(() => {
         if (testId) {
-            // Fetch test details to set Exam Type automatically
             db.getOne('ielts_tests', 'id', testId).then((test: any) => {
                 if (test) {
                     setExamType(test.examType);
                     setTestTitle(test.title);
-
-                    // Fetch API Key from test center
                     if (test.centerId) {
-                        db.getOne('settings', 'centerId', test.centerId).then((s: any) => {
-                            if (s && s.geminiApiKey) setApiKey(s.geminiApiKey);
-                        });
+                        db.getOne('settings', 'centerId', test.centerId).then(loadCenterSettings);
                     }
                 }
             });
         } else if (centerId && centerId !== 'GLOBAL') {
-            // Fetch Settings for centerId
-            db.getOne('settings', 'centerId', centerId).then((s: any) => {
-                if (s && s.geminiApiKey) setApiKey(s.geminiApiKey);
-            });
+            db.getOne('settings', 'centerId', centerId).then(loadCenterSettings);
         }
         loadQuestions();
     }, [centerId, examType, testId]);
@@ -255,6 +259,17 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
                 console.error('Final update error:', e);
             }
             if (onComplete) onComplete(finalAttempt);
+
+            // Direktorga test natijasi xabarini yuborish
+            if (centerBotToken && centerReportChatId) {
+                const r = finalAttempt.readingScore || 0;
+                const l = finalAttempt.listeningScore || 0;
+                const w = finalAttempt.writingScore || 0;
+                const sp = score;
+                const msg = `📝 <b>YANGI TEST NATIJASI</b>\n\n👤 O'quvchi: <b>${studentName}</b>\n📋 Test: ${testTitle || 'IELTS Mock'}\n📅 Sana: ${new Date().toLocaleDateString('uz-UZ')}\n\n📊 <b>Natijalar:</b>\n📖 Reading: <b>${r}</b>\n🎧 Listening: <b>${l}</b>\n✍️ Writing: <b>${w}</b>\n🎤 Speaking: <b>${sp}</b>\n\n🏆 Overall Band: <b>${overall}</b>\n\n<i>${centerName || 'EduControl CRM'}</i>`;
+                sendTelegramMessage(centerBotToken, centerReportChatId, msg).catch(console.error);
+            }
+
             setCurrentSection('results');
         }
     }, [attempt, onComplete]);

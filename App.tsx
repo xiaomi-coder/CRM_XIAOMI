@@ -84,7 +84,7 @@ const App: React.FC = () => {
         }
     };
 
-    const handleTestLogin = async (pin: string) => {
+    const handleTestLogin = async (pin: string, studentName: string) => {
         try {
             // 1. Check IELTS Test PINs
             const pins = await db.get('ielts_test_pins');
@@ -95,9 +95,9 @@ const App: React.FC = () => {
                     await db.update('ielts_test_pins', validPin.id, { used_count: (validPin.used_count || 0) + 1 });
 
                     const guestUser: User = {
-                        id: 'guest_' + pin,
+                        id: 'guest_' + pin + '_' + Date.now(),
                         centerId: 'GLOBAL',
-                        name: 'Student',
+                        name: studentName,
                         username: 'student_' + pin,
                         role: UserRole.STUDENT
                     };

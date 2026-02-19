@@ -190,6 +190,65 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
     }
   }, [currentUser, centerId]);
 
+  // Kunlik hisobot yuborish
+  useEffect(() => {
+    if (!currentUser || centerId === 'GLOBAL') return;
+    if (currentUser.role !== UserRole.DIRECTOR && currentUser.role !== UserRole.ADMIN) return;
+
+    const sendDailyReport = async () => {
+      if (!currentSettings?.botToken || !currentSettings?.reportChatId) return;
+
+      const todayKey = new Date().toISOString().split('T')[0];
+      const reportSentKey = `daily_report_${centerId}_${todayKey}`;
+      if (localStorage.getItem(reportSentKey)) return;
+
+      const now = new Date();
+      const hour = now.getHours();
+      if (hour < 18) return; // Faqat 18:00 dan keyin yuboradi
+
+      const todayAttendance = attendance.filter(a => a.date === todayKey);
+      const presentCount = todayAttendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE' || a.status === 'DISMISSED').length;
+      const absentCount = todayAttendance.filter(a => a.status === 'ABSENT').length;
+      const totalMarked = presentCount + absentCount;
+      const attendancePercent = totalMarked > 0 ? Math.round((presentCount / totalMarked) * 100) : 0;
+
+      const todayPayments = payments.filter(p => p.date === todayKey);
+      const todayRevenue = todayPayments.reduce((sum, p) => sum + p.amount, 0);
+
+      const debtors = students.filter(s => {
+        if (!s.nextPaymentDate) return false;
+        return new Date(s.nextPaymentDate) < now;
+      });
+
+      const todayLeads = leads.filter(l => {
+        const ld = (l as any).createdAt || (l as any).created_at;
+        return ld && ld.startsWith(todayKey);
+      });
+
+      const displayDate = todayKey.split('-').reverse().join('.');
+      const formatMoney = (n: number) => n.toLocaleString('uz-UZ');
+
+      const msg = `📊 <b>KUNLIK HISOBOT</b>\n📅 ${displayDate}\n\n👥 Jami o'quvchilar: <b>${students.length}</b>\n✅ Bugun keldi: <b>${presentCount}</b>/${totalMarked} (${attendancePercent}%)\n❌ Kelmadi: <b>${absentCount}</b>\n\n💰 Bugungi tushum: <b>${formatMoney(todayRevenue)} so'm</b>\n⚠️ Qarzdorlar: <b>${debtors.length} ta</b>\n🆕 Yangi lidlar: <b>${todayLeads.length} ta</b>\n🏢 Guruhlar: <b>${groups.length} ta</b>\n\n<i>${currentSettings.centerName || 'EduControl CRM'}</i>`;
+
+      try {
+        const sent = await sendTelegramMessage(currentSettings.botToken, currentSettings.reportChatId, msg);
+        if (sent) {
+          localStorage.setItem(reportSentKey, 'true');
+          console.log('Kunlik hisobot yuborildi!');
+        }
+      } catch (err) {
+        console.error('Kunlik hisobot xatosi:', err);
+      }
+    };
+
+    if (students.length > 0) {
+      sendDailyReport();
+    }
+
+    const interval = setInterval(sendDailyReport, 10 * 60 * 1000); // Har 10 daqiqada tekshirish
+    return () => clearInterval(interval);
+  }, [currentUser, centerId, currentSettings, students, attendance, payments, leads, groups]);
+
   // Har 30 soniyada markaz holatini tekshirish (blokirovka/o'chirilgan)
   useEffect(() => {
     if (!currentUser || centerId === 'GLOBAL') return;
@@ -238,6 +297,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           students={students}
           groups={groups}
           user={currentUser}
+          attendance={attendance}
           settings={{ botToken: currentSettings?.botToken || '', centerName: currentSettings?.centerName || "O'quv markazi" }}
           onAdd={(s, gid) => {
             const id = crypto.randomUUID();
@@ -338,6 +398,31 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       default: return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} />;
     }
   };
+
+  // STUDENT role - faqat test ko'rsatish, sidebar yashirish
+  if (currentUser.role === UserRole.STUDENT) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/30">
+        <div className="bg-white border-b border-slate-100 px-6 py-3 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="bg-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm">
+              {currentUser.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="font-bold text-slate-800 text-sm">{currentUser.name}</p>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{t.tests || 'Test'}</p>
+            </div>
+          </div>
+          <button onClick={onLogout} className="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-100 transition-all">
+            {t.logout}
+          </button>
+        </div>
+        <div className="p-4">
+          {renderContent()}
+        </div>
+      </div>
+    );
+  }
 
   // Detect if running in native Capacitor app
   const isNativeApp = Capacitor.isNativePlatform();

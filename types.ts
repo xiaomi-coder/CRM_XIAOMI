@@ -326,6 +326,7 @@ export interface SystemSettings {
   licenseExpiry?: string;
   isBlocked?: boolean;
   geminiApiKey?: string;
+  reportChatId?: string;
 }
 
 export interface LibraryResource {

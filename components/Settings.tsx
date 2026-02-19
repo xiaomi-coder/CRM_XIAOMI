@@ -260,6 +260,31 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                   </div>
                 </div>
 
+                {/* Direktor Telegram Hisobot */}
+                <div className="p-6 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] text-white space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Bot size={18} className="text-blue-200" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Kunlik Hisobot (Telegram)</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-white/70 uppercase font-bold">Direktor Telegram Chat ID</p>
+                    <input
+                      className="w-full bg-white/10 border border-white/20 p-3 rounded-xl text-xs outline-none focus:border-white/50 transition-colors placeholder-white/30"
+                      value={formData.reportChatId || ''}
+                      onChange={e => setFormData({ ...formData, reportChatId: e.target.value })}
+                      placeholder="Masalan: 123456789"
+                    />
+                    <div className="bg-white/10 rounded-xl p-3 space-y-1">
+                      <p className="text-[10px] text-white/70 font-bold">Chat ID olish uchun:</p>
+                      <p className="text-[10px] text-white/60">1. Botingizga Telegramda /start yuboring</p>
+                      <p className="text-[10px] text-white/60">2. <a href="https://t.me/userinfobot" target="_blank" className="text-blue-200 underline">@userinfobot</a> ga /start yuboring</p>
+                      <p className="text-[10px] text-white/60">3. Ko'rsatilgan ID ni shu yerga yozing</p>
+                    </div>
+                    <p className="text-[9px] text-white/50">Har kuni kechqurun kunlik hisobot va test natijalari shu chatga yuboriladi.</p>
+                  </div>
+                </div>
+
               </div>
 
               <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase shadow-xl">{t.save}</button>

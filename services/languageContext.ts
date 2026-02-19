@@ -220,7 +220,19 @@ export const translations = {
     dismissed_all_title: "Dars tugadi",
     dismissed_all_message: "Farzandingiz darsi tugadi va u uyiga jo'nadi.",
     no_students_to_notify: "Xabar yuborish uchun kelgan/kechikkan o'quvchi yo'q",
-    bulk_done: "Hammasiga belgilandi!"
+    bulk_done: "Hammasiga belgilandi!",
+    enter_name_alert: "Iltimos, ism va familiyangizni kiriting!",
+    enter_your_name: "Ism Familiya",
+    progress: "O'quvchi progressi",
+    monthly_attendance: "Oylik davomat",
+    no_data: "Ma'lumot yo'q",
+    daily_report: "Kunlik hisobot",
+    report_chat_id: "Direktor Telegram Chat ID",
+    parent_not_linked: "Ota-ona hali Telegram botiga ulanmagan!",
+    bot_not_configured: "Bot token sozlanmagan!",
+    message_sent: "Xabar yuborildi!",
+    message_failed: "Xabar yuborishda xatolik!",
+    not_linked: "Ulanmagan"
   },
   ru: {
     dashboard: "Дашборд",
@@ -442,7 +454,19 @@ export const translations = {
     dismissed_all_title: "Занятие завершено",
     dismissed_all_message: "Ваш ребёнок закончил занятие и отправился домой.",
     no_students_to_notify: "Нет учеников для уведомления",
-    bulk_done: "Все отмечены!"
+    bulk_done: "Все отмечены!",
+    enter_name_alert: "Пожалуйста, введите имя и фамилию!",
+    enter_your_name: "Имя Фамилия",
+    progress: "Прогресс ученика",
+    monthly_attendance: "Посещаемость по месяцам",
+    no_data: "Нет данных",
+    daily_report: "Ежедневный отчёт",
+    report_chat_id: "Telegram Chat ID директора",
+    parent_not_linked: "Родитель ещё не подключен к боту!",
+    bot_not_configured: "Бот не настроен!",
+    message_sent: "Сообщение отправлено!",
+    message_failed: "Ошибка отправки сообщения!",
+    not_linked: "Не подключен"
   },
   en: {
     dashboard: "Dashboard",
@@ -664,7 +688,19 @@ export const translations = {
     dismissed_all_title: "Lesson ended",
     dismissed_all_message: "Your child has finished the lesson and is heading home.",
     no_students_to_notify: "No present/late students to notify",
-    bulk_done: "All marked!"
+    bulk_done: "All marked!",
+    enter_name_alert: "Please enter your full name!",
+    enter_your_name: "Full Name",
+    progress: "Student Progress",
+    monthly_attendance: "Monthly Attendance",
+    no_data: "No data",
+    daily_report: "Daily Report",
+    report_chat_id: "Director Telegram Chat ID",
+    parent_not_linked: "Parent not linked to Telegram bot!",
+    bot_not_configured: "Bot token not configured!",
+    message_sent: "Message sent!",
+    message_failed: "Failed to send message!",
+    not_linked: "Not linked"
   }
 };
 

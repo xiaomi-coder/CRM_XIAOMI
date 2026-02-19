@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
-import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Send, MessageSquare } from 'lucide-react';
-import { Student, Group, User, StudentStatus } from '../types';
+import React, { useState, useMemo } from 'react';
+import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Send, MessageSquare, BarChart3, TrendingUp, Calendar } from 'lucide-react';
+import { Student, Group, User, StudentStatus, Attendance, AttendanceStatus } from '../types';
 import { translations, Language } from '../services/languageContext';
 import { sendTelegramMessage } from '../services/telegramService';
 
@@ -10,6 +10,7 @@ interface StudentsProps {
   students: Student[];
   groups: Group[];
   user: User;
+  attendance: Attendance[];
   settings: { botToken: string; centerName: string };
   onAdd: (student: Omit<Student, 'id' | 'centerId' | 'tgEnabled' | 'tgConnectionCode' | 'status'>, groupId?: string) => void;
   onDelete: (id: string) => void;
@@ -17,10 +18,11 @@ interface StudentsProps {
   onUpdateStudent: (id: string, data: Partial<Student>) => void;
 }
 
-const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings, onAdd, onDelete, onUpdateStatus, onUpdateStudent }) => {
+const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendance, settings, onAdd, onDelete, onUpdateStatus, onUpdateStudent }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [statusMenuId, setStatusMenuId] = useState<string | null>(null);
+  const [progressStudent, setProgressStudent] = useState<Student | null>(null);
 
   // Send message modal state
   const [sendMessageStudent, setSendMessageStudent] = useState<Student | null>(null);
@@ -33,6 +35,65 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings
   // Arxivlash uchun modal state
   const [showExitModal, setShowExitModal] = useState<{ student: Student, status: StudentStatus } | null>(null);
   const [exitNote, setExitNote] = useState('');
+
+  const getStudentProgress = useMemo(() => {
+    if (!progressStudent) return null;
+
+    const studentAtt = attendance.filter(a => a.studentId === progressStudent.id);
+    const monthlyData: { month: string; present: number; absent: number; late: number; total: number; percent: number }[] = [];
+
+    const months = new Map<string, { present: number; absent: number; late: number; total: number }>();
+
+    studentAtt.forEach(a => {
+      const monthKey = a.date.substring(0, 7); // "2026-02"
+      if (!months.has(monthKey)) months.set(monthKey, { present: 0, absent: 0, late: 0, total: 0 });
+      const m = months.get(monthKey)!;
+      m.total++;
+      if (a.status === AttendanceStatus.PRESENT || a.status === AttendanceStatus.DISMISSED) m.present++;
+      else if (a.status === AttendanceStatus.ABSENT) m.absent++;
+      else if (a.status === AttendanceStatus.LATE) { m.late++; m.present++; }
+    });
+
+    const sortedMonths = Array.from(months.entries()).sort((a, b) => a[0].localeCompare(b[0])).slice(-6);
+
+    const monthNames: Record<string, string> = {
+      '01': t.jan || 'Yan', '02': t.feb || 'Fev', '03': t.mar || 'Mar', '04': t.apr || 'Apr',
+      '05': t.may || 'May', '06': t.jun || 'Iyn', '07': t.jul || 'Iyl', '08': t.aug || 'Avg',
+      '09': t.sep || 'Sen', '10': t.oct || 'Okt', '11': t.nov || 'Noy', '12': t.dec || 'Dek'
+    };
+
+    sortedMonths.forEach(([key, data]) => {
+      const mm = key.split('-')[1];
+      monthlyData.push({
+        month: monthNames[mm] || mm,
+        present: data.present,
+        absent: data.absent,
+        late: data.late,
+        total: data.total,
+        percent: data.total > 0 ? Math.round((data.present / data.total) * 100) : 0
+      });
+    });
+
+    const totalPresent = studentAtt.filter(a => a.status === AttendanceStatus.PRESENT || a.status === AttendanceStatus.DISMISSED || a.status === AttendanceStatus.LATE).length;
+    const totalAll = studentAtt.length;
+    const overallPercent = totalAll > 0 ? Math.round((totalPresent / totalAll) * 100) : 0;
+
+    const streak = (() => {
+      const sorted = studentAtt.filter(a => a.status === AttendanceStatus.PRESENT || a.status === AttendanceStatus.LATE || a.status === AttendanceStatus.DISMISSED).map(a => a.date).sort().reverse();
+      let count = 0;
+      const today = new Date();
+      for (let i = 0; i < 60; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const ds = d.toISOString().split('T')[0];
+        if (sorted.includes(ds)) count++;
+        else if (studentAtt.some(a => a.date === ds)) break;
+      }
+      return count;
+    })();
+
+    return { monthlyData, overallPercent, totalPresent, totalAll, streak };
+  }, [progressStudent, attendance, t]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -203,9 +264,14 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings
                     </div>
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <button onClick={() => setDeleteConfirmStudent(student)} className="p-2 text-slate-200 hover:text-red-500 transition-all">
-                      <Trash2 size={18} />
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => setProgressStudent(student)} className="p-2 text-slate-200 hover:text-indigo-500 transition-all" title={t.progress || "Progress"}>
+                        <BarChart3 size={18} />
+                      </button>
+                      <button onClick={() => setDeleteConfirmStudent(student)} className="p-2 text-slate-200 hover:text-red-500 transition-all">
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -301,6 +367,88 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, settings
                   {sendingMessage ? <MessageSquare className="animate-pulse" size={14} /> : <Send size={14} />}
                   {sendingMessage ? (t.sending || 'Yuborilmoqda...') : (t.send || 'Yuborish')}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Student Progress Modal */}
+      {progressStudent && getStudentProgress && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-2xl font-black text-slate-800 tracking-tighter italic">{progressStudent.name}</h3>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{t.progress || "O'quvchi progressi"}</p>
+              </div>
+              <button onClick={() => setProgressStudent(null)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
+            </div>
+
+            {/* Stats kartochkalar */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 rounded-2xl text-white text-center">
+                <p className="text-3xl font-black">{getStudentProgress.overallPercent}%</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest opacity-80">{t.attendance || "Davomat"}</p>
+              </div>
+              <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-4 rounded-2xl text-white text-center">
+                <p className="text-3xl font-black">{getStudentProgress.totalPresent}/{getStudentProgress.totalAll}</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest opacity-80">{t.total || "Jami"}</p>
+              </div>
+              <div className="bg-gradient-to-br from-amber-500 to-orange-500 p-4 rounded-2xl text-white text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <TrendingUp size={18} />
+                  <p className="text-3xl font-black">{getStudentProgress.streak}</p>
+                </div>
+                <p className="text-[9px] font-bold uppercase tracking-widest opacity-80">Streak</p>
+              </div>
+            </div>
+
+            {/* Oylik grafik */}
+            <div className="bg-slate-50 rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Calendar size={16} className="text-slate-400" />
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.monthly_attendance || "Oylik davomat"}</p>
+              </div>
+
+              {getStudentProgress.monthlyData.length > 0 ? (
+                <div className="space-y-3">
+                  {getStudentProgress.monthlyData.map((m, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-[10px] font-black text-slate-500 w-10">{m.month}</span>
+                      <div className="flex-1 bg-slate-200 rounded-full h-6 overflow-hidden relative">
+                        <div
+                          className={`h-full rounded-full transition-all duration-700 ${m.percent >= 80 ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' : m.percent >= 50 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-red-400 to-red-500'}`}
+                          style={{ width: `${m.percent}%` }}
+                        ></div>
+                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-slate-700">
+                          {m.present}/{m.total} ({m.percent}%)
+                        </span>
+                      </div>
+                      <div className="flex gap-1 w-16 justify-end">
+                        {m.late > 0 && <span className="text-[8px] font-bold bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded">{m.late} {t.status_late || 'kech'}</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-slate-400 text-sm py-8 italic">{t.no_data || "Ma'lumot yo'q"}</p>
+              )}
+
+              {/* Rang izohi */}
+              <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-200">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                  <span className="text-[9px] font-bold text-slate-500">80%+ A'lo</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                  <span className="text-[9px] font-bold text-slate-500">50-79% O'rta</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="text-[9px] font-bold text-slate-500">&lt;50% Past</span>
+                </div>
               </div>
             </div>
           </div>

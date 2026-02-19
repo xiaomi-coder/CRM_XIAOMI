@@ -7,7 +7,7 @@ import { UserRole, Lead, User } from '../types';
 interface LoginProps {
   t: any;
   onLogin: (username: string, pass: string) => void;
-  onTestLogin: (pin: string) => void;
+  onTestLogin: (pin: string, studentName: string) => void;
   error?: string;
 }
 
@@ -16,6 +16,7 @@ const Login: React.FC<LoginProps> = ({ t, onLogin, onTestLogin, error: externalE
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [testPin, setTestPin] = useState('');
+  const [studentName, setStudentName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -27,7 +28,12 @@ const Login: React.FC<LoginProps> = ({ t, onLogin, onTestLogin, error: externalE
     if (mode === 'ADMIN') {
       onLogin(username, password);
     } else {
-      onTestLogin(testPin);
+      if (!studentName.trim()) {
+        setLocalError(t.enter_name_alert || "Iltimos, ism va familiyangizni kiriting!");
+        setIsLoading(false);
+        return;
+      }
+      onTestLogin(testPin, studentName.trim());
     }
   };
 
@@ -108,17 +114,33 @@ const Login: React.FC<LoginProps> = ({ t, onLogin, onTestLogin, error: externalE
                   </div>
                 </>
               ) : (
-                <div className="space-y-4 text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t.enter_pin}</p>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    className="w-full text-center py-5 bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] outline-none font-black text-4xl tracking-[0.5em] text-indigo-600 focus:border-indigo-500 transition-all"
-                    placeholder="000000"
-                    value={testPin}
-                    onChange={(e) => setTestPin(e.target.value.replace(/\D/g, ''))}
-                    required
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">{t.full_name}</label>
+                    <div className="relative group">
+                      <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-amber-500 transition-colors" size={18} />
+                      <input
+                        type="text"
+                        className="w-full pl-12 pr-6 py-4 bg-gray-50 border border-gray-100 rounded-[1.2rem] outline-none font-bold text-gray-700 focus:ring-2 focus:ring-amber-500 transition-all"
+                        placeholder={t.enter_your_name || "Ism Familiya"}
+                        value={studentName}
+                        onChange={(e) => setStudentName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t.enter_pin}</p>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      className="w-full text-center py-5 bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] outline-none font-black text-4xl tracking-[0.5em] text-indigo-600 focus:border-indigo-500 transition-all"
+                      placeholder="000000"
+                      value={testPin}
+                      onChange={(e) => setTestPin(e.target.value.replace(/\D/g, ''))}
+                      required
+                    />
+                  </div>
                 </div>
               )}
             </div>
