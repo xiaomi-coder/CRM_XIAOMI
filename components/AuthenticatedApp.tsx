@@ -299,16 +299,15 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           user={currentUser}
           attendance={attendance}
           settings={{ botToken: currentSettings?.botToken || '', centerName: currentSettings?.centerName || "O'quv markazi" }}
-          onAdd={(s, gid) => {
+          onAdd={async (s, gid) => {
             const id = crypto.randomUUID();
             const student = { ...s, id, "centerId": centerId, tgEnabled: false, status: StudentStatus.ACTIVE, tgConnectionCode: '' };
-            db.insert('students', student).then(() => {
-              if (gid) {
-                const group = groups.find(g => g.id === gid);
-                if (group) db.update('groups', gid, { studentIds: [...group.studentIds, id] });
-              }
-              loadAllData();
-            });
+            await db.insert('students', student);
+            if (gid) {
+              const group = groups.find(g => g.id === gid);
+              if (group) await db.update('groups', gid, { studentIds: [...group.studentIds, id] });
+            }
+            loadAllData();
           }}
           onDelete={id => db.delete('students', id).then(loadAllData)}
           onUpdateStatus={(id, status, lg, lt, note) => db.update('students', id, { status, lastGroup: lg, lastTeacher: lt, exitDate: new Date().toISOString().split('T')[0], exitNote: note }).then(loadAllData)}
