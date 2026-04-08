@@ -1,5 +1,262 @@
 import { db } from './supabase';
 
+// Platforma testlari uchun global ID (barcha markazlar uchun umumiy)
+export const PLATFORM_CENTER_ID = '00000000-0000-0000-0000-000000000001';
+
+/**
+ * Platforma Test 2: "Technology & Society" mavzusi
+ * Bu test barcha markazlarga umumiy — super admin tomonidan bir marta qo'shiladi.
+ * centerId = PLATFORM_CENTER_ID bo'ladi.
+ */
+export const seedPlatformTest2 = async (): Promise<{ success: boolean; testId?: string; error?: string }> => {
+    try {
+        // Tekshirish — Test 2 allaqachon bormi?
+        const existing = await db.get('ielts_tests');
+        const alreadyExists = (existing as any[]).some(
+            (t: any) => (t.center_id === PLATFORM_CENTER_ID || t.centerId === PLATFORM_CENTER_ID) && t.title === 'Platform Test 2 – Technology & Society'
+        );
+        if (alreadyExists) {
+            return { success: false, error: 'Platform Test 2 allaqachon mavjud!' };
+        }
+
+        const testId = crypto.randomUUID();
+
+        // 1. ielts_tests jadvaliga test yaratish
+        await db.insert('ielts_tests', {
+            id: testId,
+            center_id: PLATFORM_CENTER_ID,
+            title: 'Platform Test 2 – Technology & Society',
+            exam_type: 'academic',
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+        });
+
+        const insertAll = async (table: string, items: any[]) => {
+            for (const item of items) await db.insert(table, item);
+        };
+
+        await Promise.all([
+            insertAll('ielts_reading_questions', generatePT2Reading(PLATFORM_CENTER_ID, testId)),
+            insertAll('ielts_listening_questions', generatePT2Listening(PLATFORM_CENTER_ID, testId)),
+            insertAll('ielts_writing_tasks', generatePT2Writing(PLATFORM_CENTER_ID, testId)),
+            insertAll('ielts_speaking_questions', generatePT2Speaking(PLATFORM_CENTER_ID, testId)),
+        ]);
+
+        console.log('Platform Test 2 muvaffaqiyatli yaratildi! testId:', testId);
+        return { success: true, testId };
+    } catch (error: any) {
+        console.error('Platform Test 2 seed error:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// ---- PLATFORM TEST 2: READING ----
+function generatePT2Reading(centerId: string, testId: string) {
+    const q = (num: number, pNum: number, pTitle: string, pText: string, type: string, text: string, opts: string[] | null, ans: string) => ({
+        id: crypto.randomUUID(), centerId, test_id: testId, examType: 'academic',
+        passageNumber: pNum, passageTitle: pTitle,
+        passageText: num === (pNum === 1 ? 1 : pNum === 2 ? 14 : 28) ? pText : '',
+        questionNumber: num, questionType: type, questionText: text,
+        options: opts, correctAnswer: ans, points: 1,
+    });
+
+    const p1Text = `The Digital Revolution and Human Behaviour
+
+The rapid advancement of digital technology over the past two decades has fundamentally altered the way humans communicate, work, and socialise. Smartphones, once considered luxury items, are now owned by more than 6.8 billion people worldwide – representing 85% of the global population. This unprecedented connectivity has brought both remarkable benefits and serious challenges to modern society.
+
+Research conducted by the American Psychological Association found that 45% of adults report feeling overwhelmed by the constant connectivity demanded by modern devices. Psychologists have coined the term "technostress" to describe the anxiety and cognitive strain experienced by individuals who feel unable to cope with the demands of digital life. Despite these concerns, the same study found that 72% of participants believed that technology had an overall positive effect on their lives.
+
+The impact of social media platforms on social behaviour has been particularly significant. Studies suggest that teenagers in developed countries spend an average of seven hours per day on screens – more time than they spend sleeping. While this has raised concerns among educators and parents about declining attention spans and reduced face-to-face interaction, researchers at Oxford University have found that moderate social media use can actually strengthen existing social bonds and facilitate the formation of new ones.
+
+Digital technology has also transformed the workplace. Remote work, once a privilege reserved for a small minority, became a necessity for hundreds of millions during the global pandemic. A survey by McKinsey found that 87% of employees offered remote work opportunities take advantage of them. However, the boundaries between work and personal life have become increasingly blurred, with many workers reporting difficulty "switching off" from professional responsibilities.
+
+The question of digital inequality has emerged as a major concern. While access to the internet has expanded dramatically, a significant "digital divide" persists between developed and developing nations, as well as between urban and rural communities within the same country. Approximately 2.6 billion people remain without internet access, limiting their participation in the modern economy and access to educational resources.`;
+
+    const p2Text = `Artificial Intelligence in Healthcare
+
+Artificial intelligence is rapidly transforming the healthcare industry, offering the potential to revolutionise diagnosis, treatment, and patient care. Machine learning algorithms can now analyse medical images with accuracy that rivals – and in some cases exceeds – that of experienced human physicians. A study published in Nature Medicine demonstrated that an AI system detected breast cancer from mammograms with greater accuracy than a panel of radiologists, reducing false positives by 5.7% and false negatives by 9.4%.
+
+Beyond diagnostics, AI is being employed to accelerate drug discovery. Traditional pharmaceutical development is an enormously costly and time-consuming process, often requiring over a decade and billions of dollars to bring a single drug to market. AI-powered platforms can analyse vast molecular databases to identify promising drug candidates in a fraction of the time. During the COVID-19 pandemic, AI tools helped researchers identify potential vaccine components at unprecedented speed.
+
+Predictive analytics powered by AI is enabling healthcare providers to identify at-risk patients before they develop serious conditions. By analysing patterns in electronic health records, AI systems can flag patients who may be at risk of sepsis, heart failure, or diabetic complications, allowing clinicians to intervene proactively. One hospital system in the United States reported a 20% reduction in sepsis mortality after implementing an AI-driven early warning system.
+
+Despite these promising developments, significant challenges remain. Questions of data privacy and security are paramount, as AI systems require access to vast quantities of sensitive patient information. There are also concerns about algorithmic bias, as AI systems trained predominantly on data from certain demographic groups may perform less accurately for others. A 2019 study found that a widely used healthcare algorithm exhibited significant racial bias, underestimating the medical needs of Black patients.
+
+The regulatory landscape for AI in healthcare is still evolving. Health authorities around the world are working to develop frameworks that balance the need to protect patients with the desire to foster innovation. Critics argue that overly restrictive regulation could slow the development of life-saving technologies, while patient advocates warn that insufficient oversight poses unacceptable risks.`;
+
+    const p3Text = `Urban Planning and the Sustainable City
+
+As the global population becomes increasingly urban – with projections suggesting that 68% of people will live in cities by 2050 – urban planners face the enormous challenge of creating cities that are both liveable and sustainable. Traditional urban development models, which prioritised motor vehicle transport and suburban sprawl, are being reconsidered in light of pressing environmental and social challenges.
+
+The concept of the "15-minute city," popularised by Paris Mayor Anne Hidalgo and urban theorist Carlos Moreno, proposes that residents should be able to access all essential services – work, education, healthcare, shopping, and leisure – within a 15-minute walk or cycle from their homes. This model, which has gained significant traction in cities including Paris, Melbourne, and Portland, aims to reduce car dependency, decrease carbon emissions, and foster stronger community bonds.
+
+Mixed-use zoning, which allows residential, commercial, and recreational spaces to coexist in close proximity, is a key tool in implementing this vision. Cities that have embraced mixed-use development report lower rates of car ownership, increased pedestrian activity, and higher levels of reported wellbeing among residents. However, critics argue that mixed-use developments can drive gentrification, displacing lower-income residents as property values rise.
+
+Green infrastructure is another cornerstone of sustainable urban planning. Urban forests, green roofs, parks, and constructed wetlands help to regulate urban temperatures, manage stormwater, improve air quality, and support biodiversity. Singapore, often cited as a model of sustainable urban development, has committed to ensuring that 80% of buildings are green-certified by 2030.
+
+The role of data and technology in shaping the cities of the future cannot be overstated. Smart city technologies, including sensor networks, real-time data analytics, and connected infrastructure, enable city managers to optimise traffic flow, energy consumption, and waste management. Barcelona's superblock model, which restricts vehicle access to create pedestrian-friendly urban "rooms," has been shown to reduce air pollution by up to 40% within superblock areas.`;
+
+    return [
+        // Passage 1 (Q1-13)
+        q(1,1,'The Digital Revolution and Human Behaviour',p1Text,'true_false_not_given','Smartphones are owned by more than half the world\'s population.',null,'TRUE'),
+        q(2,1,'','','true_false_not_given','The term "technostress" was invented by a government agency.',null,'FALSE'),
+        q(3,1,'','','true_false_not_given','Most people surveyed believed technology had a net positive effect on their lives.',null,'TRUE'),
+        q(4,1,'','','true_false_not_given','Oxford University researchers concluded that social media always harms teenagers.',null,'FALSE'),
+        q(5,1,'','','multiple_choice','According to the passage, how many people lack internet access?',['A) 1.6 billion','B) 2.6 billion','C) 3.6 billion','D) 4.6 billion'],'B'),
+        q(6,1,'','','multiple_choice','What did McKinsey\'s survey find about remote work?',['A) Most workers dislike it','B) 87% of those offered it take advantage','C) It reduces productivity','D) It is only for managers'],'B'),
+        q(7,1,'','','sentence_completion','Researchers describe the anxiety caused by digital overload as _____.',null,'technostress'),
+        q(8,1,'','','sentence_completion','Teenagers in developed countries spend an average of _____ hours per day on screens.',null,'seven'),
+        q(9,1,'','','sentence_completion','The digital divide refers to the gap between those with and without access to _____.',null,'the internet'),
+        q(10,1,'','','true_false_not_given','Remote work became widespread during the global pandemic.',null,'TRUE'),
+        q(11,1,'','','true_false_not_given','All workers find it easy to separate their professional and personal lives when working remotely.',null,'FALSE'),
+        q(12,1,'','','true_false_not_given','Digital technology has not changed the nature of social interaction.',null,'FALSE'),
+        q(13,1,'','','multiple_choice','The passage suggests that the overall view of technology among adults is:',['A) Entirely negative','B) Entirely positive','C) Mixed — both positive and negative','D) Indifferent'],'C'),
+
+        // Passage 2 (Q14-26)
+        q(14,2,'Artificial Intelligence in Healthcare',p2Text,'true_false_not_given','The AI system described reduced both false positives and false negatives in cancer detection.',null,'TRUE'),
+        q(15,2,'','','true_false_not_given','Developing a new drug traditionally takes less than five years.',null,'FALSE'),
+        q(16,2,'','','multiple_choice','What did one US hospital report after implementing an AI early warning system?',['A) 10% reduction in costs','B) 20% reduction in sepsis mortality','C) 30% increase in patient satisfaction','D) 40% reduction in wait times'],'B'),
+        q(17,2,'','','true_false_not_given','AI systems trained on limited demographic data may work less accurately for some groups.',null,'TRUE'),
+        q(18,2,'','','true_false_not_given','The regulatory frameworks for AI in healthcare are fully established globally.',null,'FALSE'),
+        q(19,2,'','','sentence_completion','AI systems can identify at-risk patients by analysing patterns in _____.',null,'electronic health records'),
+        q(20,2,'','','sentence_completion','A 2019 study found that a healthcare algorithm underestimated the medical needs of _____ patients.',null,'Black'),
+        q(21,2,'','','sentence_completion','During COVID-19, AI helped identify potential _____ components quickly.',null,'vaccine'),
+        q(22,2,'','','multiple_choice','What is described as a major challenge for AI in healthcare?',['A) Lack of computing power','B) Data privacy and security','C) Shortage of doctors','D) High cost of AI tools'],'B'),
+        q(23,2,'','','true_false_not_given','AI drug discovery platforms are slower than traditional methods.',null,'FALSE'),
+        q(24,2,'','','true_false_not_given','The passage suggests that all health authorities agree on the right approach to AI regulation.',null,'NOT GIVEN'),
+        q(25,2,'','','multiple_choice','The Nature Medicine study compared AI performance to:',['A) Junior medical students','B) A panel of radiologists','C) Government health agencies','D) Pharmaceutical companies'],'B'),
+        q(26,2,'','','sentence_completion','Critics argue that overly restrictive regulation could slow the development of _____ technologies.',null,'life-saving'),
+
+        // Passage 3 (Q27-40)
+        q(27,3,'Urban Planning and the Sustainable City',p3Text,'true_false_not_given','By 2050, more than two-thirds of the global population is projected to live in cities.',null,'TRUE'),
+        q(28,3,'','','true_false_not_given','The 15-minute city concept was invented by an urban planner in Melbourne.',null,'FALSE'),
+        q(29,3,'','','multiple_choice','What is the primary aim of the "15-minute city" model?',['A) To increase public transport use','B) To reduce car dependency and carbon emissions','C) To attract more businesses to city centres','D) To build more high-rise apartments'],'B'),
+        q(30,3,'','','true_false_not_given','Mixed-use zoning has been linked to increased pedestrian activity.',null,'TRUE'),
+        q(31,3,'','','true_false_not_given','Singapore has already achieved its green building certification target.',null,'FALSE'),
+        q(32,3,'','','sentence_completion','Carlos Moreno is described in the passage as an urban _____.',null,'theorist'),
+        q(33,3,'','','sentence_completion','Barcelona\'s superblock model has been shown to reduce air pollution by up to _____ within those areas.',null,'40%'),
+        q(34,3,'','','sentence_completion','Singapore has committed to ensuring that _____ of buildings are green-certified by 2030.',null,'80%'),
+        q(35,3,'','','multiple_choice','What concern do critics raise about mixed-use developments?',['A) They are too expensive to build','B) They can lead to gentrification','C) They reduce property values','D) They create traffic problems'],'B'),
+        q(36,3,'','','true_false_not_given','Green infrastructure helps to regulate urban temperatures.',null,'TRUE'),
+        q(37,3,'','','true_false_not_given','Smart city technologies are used to optimise traffic flow.',null,'TRUE'),
+        q(38,3,'','','true_false_not_given','The 15-minute city model has been rejected by most major cities.',null,'FALSE'),
+        q(39,3,'','','multiple_choice','What does "mixed-use zoning" allow?',['A) Only residential buildings in one area','B) Residential, commercial, and recreational spaces to coexist','C) Factories to be built near schools','D) Cars to be banned in city centres'],'B'),
+        q(40,3,'','','sentence_completion','Traditional urban development models that prioritised motor vehicle transport are being _____.',null,'reconsidered'),
+    ];
+}
+
+// ---- PLATFORM TEST 2: LISTENING ----
+function generatePT2Listening(centerId: string, testId: string) {
+    const q = (num: number, sec: number, secTitle: string, type: string, text: string, opts: string[] | null, ans: string) => ({
+        id: crypto.randomUUID(), centerId, test_id: testId, examType: 'academic',
+        sectionNumber: sec, sectionTitle: secTitle, audioUrl: null,
+        questionNumber: num, questionType: type, questionText: text,
+        options: opts, correctAnswer: ans, points: 1,
+    });
+
+    return [
+        // Section 1: Job Interview Preparation (Q1-10)
+        q(1,1,'Job Interview Preparation','sentence_completion','The job position being discussed is a _____ role at a marketing firm.',null,'graduate trainee'),
+        q(2,1,'','sentence_completion','The interview is scheduled for _____ at 10 AM.',null,'Thursday'),
+        q(3,1,'','multiple_choice','What does the advisor recommend bringing to the interview?',['A) Only a CV','B) A portfolio and references','C) A letter from a professor','D) Nothing extra'],'B'),
+        q(4,1,'','sentence_completion','The company was founded in _____ and specialises in digital marketing.',null,'2008'),
+        q(5,1,'','true_false_not_given','The advisor suggests researching the company\'s recent campaigns.',null,'TRUE'),
+        q(6,1,'','sentence_completion','The dress code for the interview is described as _____.',null,'smart casual'),
+        q(7,1,'','multiple_choice','How long is the interview expected to last?',['A) 30 minutes','B) 45 minutes','C) 1 hour','D) 2 hours'],'C'),
+        q(8,1,'','sentence_completion','The advisor recommends preparing at least _____ questions to ask the interviewer.',null,'three'),
+        q(9,1,'','multiple_choice','What is the salary range mentioned for the position?',['A) £22,000–£25,000','B) £25,000–£28,000','C) £28,000–£32,000','D) £32,000–£36,000'],'B'),
+        q(10,1,'','sentence_completion','The candidate is advised to arrive _____ minutes early.',null,'ten'),
+
+        // Section 2: Museum Audio Guide (Q11-20)
+        q(11,2,'Museum Audio Guide','multiple_choice','What is the museum\'s main focus?',['A) Natural history','B) Ancient civilisations','C) Modern art','D) Science and technology'],'D'),
+        q(12,2,'','sentence_completion','The museum was opened in _____ by the local city council.',null,'1987'),
+        q(13,2,'','multiple_choice','How many permanent exhibitions does the museum have?',['A) Four','B) Six','C) Eight','D) Ten'],'B'),
+        q(14,2,'','sentence_completion','The interactive robotics display is located on the _____ floor.',null,'third'),
+        q(15,2,'','true_false_not_given','Children under five are admitted free of charge.',null,'TRUE'),
+        q(16,2,'','sentence_completion','The museum café closes at _____ on weekdays.',null,'5:30 PM'),
+        q(17,2,'','multiple_choice','What is special about the Space Exploration exhibit?',['A) It has real moon rocks','B) It uses virtual reality','C) It was donated by NASA','D) It opens only on weekends'],'B'),
+        q(18,2,'','sentence_completion','The gift shop is situated near the _____ entrance.',null,'main'),
+        q(19,2,'','multiple_choice','When does the guided tour begin?',['A) 10:00 AM','B) 11:00 AM','C) 12:00 PM','D) 2:00 PM'],'B'),
+        q(20,2,'','sentence_completion','The museum is closed every _____ for maintenance.',null,'Monday'),
+
+        // Section 3: University Discussion (Q21-30)
+        q(21,3,'University Research Discussion','multiple_choice','What is the topic of the students\' research project?',['A) Climate change adaptation in coastal cities','B) Renewable energy policy','C) Urban food security','D) Water management systems'],'A'),
+        q(22,3,'','sentence_completion','The project supervisor has requested a preliminary draft by _____ of next month.',null,'the 15th'),
+        q(23,3,'','multiple_choice','Which methodology does the supervisor recommend?',['A) Purely quantitative','B) Purely qualitative','C) Mixed methods','D) Case study only'],'C'),
+        q(24,3,'','sentence_completion','The students plan to conduct interviews with _____ city council representatives.',null,'six'),
+        q(25,3,'','true_false_not_given','The supervisor warns that secondary data sources should be used with caution.',null,'TRUE'),
+        q(26,3,'','multiple_choice','What concern does one student raise about the timeline?',['A) The budget is too small','B) There is not enough time for data analysis','C) The topic is too broad','D) They lack access to participants'],'B'),
+        q(27,3,'','sentence_completion','The final presentation is worth _____ percent of the module grade.',null,'40'),
+        q(28,3,'','multiple_choice','What does the supervisor suggest regarding the literature review?',['A) It should be completed last','B) It should focus only on recent publications','C) It should be at least 3,000 words','D) It should include both historical and recent sources'],'D'),
+        q(29,3,'','sentence_completion','The students agree to meet again in _____ weeks to review progress.',null,'two'),
+        q(30,3,'','true_false_not_given','The supervisor recommends submitting the project before the deadline.',null,'TRUE'),
+
+        // Section 4: Academic Lecture (Q31-40)
+        q(31,4,'Lecture: The Psychology of Decision Making','sentence_completion','The lecture focuses on a concept known as _____ bias.',null,'confirmation'),
+        q(32,4,'','multiple_choice','According to the lecturer, what percentage of decisions are influenced by unconscious bias?',['A) About 20%','B) About 50%','C) About 70%','D) About 90%'],'D'),
+        q(33,4,'','sentence_completion','The study by Kahneman and Tversky is described as a landmark in the field of _____.',null,'behavioural economics'),
+        q(34,4,'','true_false_not_given','The lecturer argues that humans are naturally rational decision-makers.',null,'FALSE'),
+        q(35,4,'','multiple_choice','What is the "anchoring effect" described in the lecture?',['A) The tendency to rely too heavily on the first piece of information received','B) The tendency to follow the opinions of others','C) The inability to make decisions under pressure','D) The preference for familiar choices'],'A'),
+        q(36,4,'','sentence_completion','The "sunk cost fallacy" refers to continuing an action because of _____ already invested.',null,'resources'),
+        q(37,4,'','multiple_choice','What strategy does the lecturer suggest for improving decision-making?',['A) Making decisions alone','B) Acting on instinct','C) Seeking diverse perspectives','D) Avoiding all risk'],'C'),
+        q(38,4,'','sentence_completion','The recommended reading for this topic is a book published in _____.',null,'2011'),
+        q(39,4,'','true_false_not_given','The next lecture will cover the topic of memory and learning.',null,'TRUE'),
+        q(40,4,'','sentence_completion','Students are asked to submit a reflection paper of _____ words.',null,'500'),
+    ];
+}
+
+// ---- PLATFORM TEST 2: WRITING ----
+function generatePT2Writing(centerId: string, testId: string) {
+    return [
+        {
+            id: crypto.randomUUID(), centerId, test_id: testId, examType: 'academic',
+            taskNumber: 1,
+            taskPrompt: `The graph below shows the percentage of people using the internet in three different countries between 2005 and 2023.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.`,
+            wordLimitMin: 150,
+            timeMinutes: 20,
+        },
+        {
+            id: crypto.randomUUID(), centerId, test_id: testId, examType: 'academic',
+            taskNumber: 2,
+            taskPrompt: `In many countries, people are choosing to have children later in life than they did in the past. What are the reasons for this trend? Do the advantages outweigh the disadvantages?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words.`,
+            wordLimitMin: 250,
+            timeMinutes: 40,
+        },
+    ];
+}
+
+// ---- PLATFORM TEST 2: SPEAKING ----
+function generatePT2Speaking(centerId: string, testId: string) {
+    return [
+        // Part 1
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 1, questionText: 'Do you use the internet a lot? What do you mainly use it for?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 1, questionText: 'Do you prefer reading news online or in print? Why?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 1, questionText: 'How has technology changed the way you study or work?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 1, questionText: 'Do you think young people spend too much time on their phones?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 1, questionText: 'What kind of technology do you find most useful in daily life?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        // Part 2
+        {
+            id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 2,
+            questionText: 'Describe a piece of technology that has had a significant impact on your life.',
+            cueCardTopic: 'A piece of technology that has changed your life',
+            cueCardPoints: [
+                'What it is',
+                'When you first started using it',
+                'How it has changed your daily routine',
+                'Why you think it is important'
+            ],
+            preparationTime: 60, speakingTime: 120,
+        },
+        // Part 3
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 3, questionText: 'How has the internet changed the way people communicate in society?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 3, questionText: 'Do you think artificial intelligence will replace human workers in the future?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 3, questionText: 'What responsibilities do technology companies have towards society?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 3, questionText: 'How can governments ensure that technology benefits everyone equally?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+        { id: crypto.randomUUID(), centerId, test_id: testId, partNumber: 3, questionText: 'Should social media companies be held responsible for harmful content on their platforms?', cueCardTopic: null, cueCardPoints: null, preparationTime: null, speakingTime: null },
+    ];
+}
+
 /**
  * Markaz uchun IELTS savollar mavjudligini tekshiradi.
  * Agar savollar yo'q bo'lsa, avtomatik namuna savollar qo'shadi.

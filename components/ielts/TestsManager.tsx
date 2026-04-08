@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../services/supabase';
 import { IELTSTest, IELTSTestPin, IELTSExamType } from '../../types';
-import { Plus, Edit3, Trash2, Eye, Play, StopCircle, Archive, Copy, CheckCircle, RefreshCw, Smartphone, Hash } from 'lucide-react';
+import { Plus, Edit3, Play, Archive, Copy, CheckCircle, Hash, Globe, Loader2, Sparkles, Smartphone } from 'lucide-react';
 import IELTSAdmin from './IELTSAdmin';
+import { seedPlatformTest2, PLATFORM_CENTER_ID } from '../../services/ieltsSeedService';
 
 interface TestsManagerProps {
     t: any;
@@ -12,9 +13,11 @@ interface TestsManagerProps {
 
 const TestsManager: React.FC<TestsManagerProps> = ({ t, centerId, userRole }) => {
     const [tests, setTests] = useState<IELTSTest[]>([]);
+    const [platformTests, setPlatformTests] = useState<IELTSTest[]>([]);
+    const [activeTab, setActiveTab] = useState<'my' | 'platform'>('my');
     const [loading, setLoading] = useState(false);
-    const [editingTest, setEditingTest] = useState<IELTSTest | null>(null);
-    const [viewingTestId, setViewingTestId] = useState<string | null>(null); // If set, shows IELTSAdmin for this test
+    const [seedingPlatform, setSeedingPlatform] = useState(false);
+    const [viewingTestId, setViewingTestId] = useState<string | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [newTestTitle, setNewTestTitle] = useState('');
     const [newTestType, setNewTestType] = useState<IELTSExamType>(IELTSExamType.ACADEMIC);
@@ -22,6 +25,8 @@ const TestsManager: React.FC<TestsManagerProps> = ({ t, centerId, userRole }) =>
     // PIN Modal
     const [pinModalTest, setPinModalTest] = useState<IELTSTest | null>(null);
     const [generatedPin, setGeneratedPin] = useState<IELTSTestPin | null>(null);
+
+    const isSuperAdmin = userRole === 'SUPER_ADMIN' || userRole === 'DIRECTOR';
 
     useEffect(() => {
         loadTests();
@@ -32,19 +37,43 @@ const TestsManager: React.FC<TestsManagerProps> = ({ t, centerId, userRole }) =>
         try {
             const data = await db.get('ielts_tests');
             if (Array.isArray(data)) {
-                // Filter by center and map snake_case to camelCase
-                const centerTests = (data as any[]).filter(t => t.center_id === centerId).map(t => ({
+                const mapTest = (t: any): IELTSTest => ({
                     id: t.id,
                     centerId: t.center_id,
                     title: t.title,
                     examType: t.exam_type,
                     status: t.status,
                     createdAt: t.created_at
-                })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                });
+
+                const centerTests = (data as any[])
+                    .filter(t => t.center_id === centerId)
+                    .map(mapTest)
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+                const globalTests = (data as any[])
+                    .filter(t => t.center_id === PLATFORM_CENTER_ID)
+                    .map(mapTest)
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
                 setTests(centerTests as IELTSTest[]);
+                setPlatformTests(globalTests as IELTSTest[]);
             }
         } catch (e) { console.error(e); }
         setLoading(false);
+    };
+
+    const handleSeedPlatformTest2 = async () => {
+        if (!window.confirm('Platform Test 2 ni qo\'shishni tasdiqlaysizmi? Bu bir marta bajariladi.')) return;
+        setSeedingPlatform(true);
+        const result = await seedPlatformTest2();
+        setSeedingPlatform(false);
+        if (result.success) {
+            alert('✅ Platform Test 2 muvaffaqiyatli qo\'shildi!');
+            loadTests();
+        } else {
+            alert(`⚠️ ${result.error}`);
+        }
     };
 
     const handleCreateTest = async () => {
@@ -128,17 +157,109 @@ const TestsManager: React.FC<TestsManagerProps> = ({ t, centerId, userRole }) =>
 
     return (
         <div className="p-6 md:p-8 min-h-screen bg-[#f8f9fc]">
-            <div className="flex items-center justify-between mb-8">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tight">IELTS Testlar</h1>
                     <p className="text-xs font-bold text-slate-400 mt-1">Imtihonlarni boshqarish va PIN kodlar</p>
                 </div>
-                <button onClick={() => setModalOpen(true)} className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg hover:scale-[1.02] flex items-center gap-2">
-                    <Plus size={16} /> Yangi Test
+                {activeTab === 'my' && (
+                    <button onClick={() => setModalOpen(true)} className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg hover:scale-[1.02] flex items-center gap-2">
+                        <Plus size={16} /> Yangi Test
+                    </button>
+                )}
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6">
+                <button
+                    onClick={() => setActiveTab('my')}
+                    className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2
+                        ${activeTab === 'my' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-slate-500 border border-slate-200 hover:border-indigo-300'}`}
+                >
+                    <Edit3 size={14} /> Mening Testlarim
+                    {tests.length > 0 && <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${activeTab === 'my' ? 'bg-white/20 text-white' : 'bg-indigo-100 text-indigo-600'}`}>{tests.length}</span>}
+                </button>
+                <button
+                    onClick={() => setActiveTab('platform')}
+                    className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2
+                        ${activeTab === 'platform' ? 'bg-emerald-600 text-white shadow-lg' : 'bg-white text-slate-500 border border-slate-200 hover:border-emerald-300'}`}
+                >
+                    <Globe size={14} /> Platforma Testlari
+                    {platformTests.length > 0 && <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${activeTab === 'platform' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-600'}`}>{platformTests.length}</span>}
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Platform Tests Tab */}
+            {activeTab === 'platform' && (
+                <div>
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+                        <Sparkles size={20} className="text-emerald-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                            <p className="text-sm font-black text-emerald-800">Platforma tomonidan tayyor testlar</p>
+                            <p className="text-xs text-emerald-600 mt-0.5">Bu testlarni yaratmaysiz — faqat PIN olib o'quvchilarga berasiz. Har oy yangi testlar qo'shiladi!</p>
+                        </div>
+                    </div>
+
+                    {/* Super admin: seed trigger */}
+                    {isSuperAdmin && (
+                        <div className="mb-6 flex justify-end">
+                            <button
+                                onClick={handleSeedPlatformTest2}
+                                disabled={seedingPlatform}
+                                className="bg-purple-600 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-purple-700 disabled:opacity-60"
+                            >
+                                {seedingPlatform ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                                Platform Test 2 qo'shish
+                            </button>
+                        </div>
+                    )}
+
+                    {platformTests.length === 0 ? (
+                        <div className="text-center py-16">
+                            <Globe size={48} className="mx-auto text-slate-300 mb-4" />
+                            <p className="font-black text-slate-400">Hozircha platforma testlari yo'q</p>
+                            <p className="text-xs text-slate-400 mt-1">Tez orada qo'shiladi!</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {platformTests.map(test => (
+                                <div key={test.id} className="bg-white rounded-2xl border border-emerald-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
+                                    <div className="p-5">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                    <Globe size={16} className="text-emerald-600" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-sm font-black text-slate-800 leading-tight">{test.title}</h3>
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase">{test.examType}</span>
+                                                </div>
+                                            </div>
+                                            <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-lg uppercase">Tayyor</span>
+                                        </div>
+                                        <div className="bg-emerald-50 rounded-xl p-2.5 mb-4 text-[11px] text-emerald-700 font-bold flex items-center gap-1.5">
+                                            <CheckCircle size={13} /> 40 Reading • 40 Listening • 2 Writing • Speaking
+                                        </div>
+                                        <button
+                                            onClick={() => { setPinModalTest(test); setGeneratedPin(null); }}
+                                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all"
+                                        >
+                                            <Hash size={14} /> PIN olish va o'quvchiga berish
+                                        </button>
+                                    </div>
+                                    <div className="bg-emerald-50/60 px-4 py-2 border-t border-emerald-100 text-[10px] font-bold text-emerald-600 text-center">
+                                        Barcha markazlar uchun bepul
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* My Tests Tab */}
+            {activeTab === 'my' && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {tests.map(test => (
                     <div key={test.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all group overflow-hidden">
                         <div className="p-6">
@@ -189,7 +310,7 @@ const TestsManager: React.FC<TestsManagerProps> = ({ t, centerId, userRole }) =>
                         )}
                     </div>
                 ))}
-            </div>
+            </div>}
 
             {/* Create Modal */}
             {modalOpen && (
