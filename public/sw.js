@@ -46,6 +46,8 @@ self.addEventListener('fetch', (event) => {
 
     // API so'rovlarini cache qilmaslik
     if (event.request.url.includes('supabase.co') ||
+        event.request.url.includes('api.eduprocrm.uz') ||
+        event.request.url.includes('/rest/v1/') ||
         event.request.url.includes('/api/')) {
         return;
     }

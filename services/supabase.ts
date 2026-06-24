@@ -2,8 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Hardcoded fallback for production stability
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://ndrynujcnzxkvhmrlemr.supabase.co";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcnludWpjbnp4a3ZobXJsZW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzODM0NDcsImV4cCI6MjA4Mzk1OTQ0N30.DrSYWDTgOVft-LH136GwJeyYdvyKMnZO_NwiegPwDr0";
+// VPS backend (PostgreSQL + PostgREST). Eski Supabase o'rnini bosadi.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://api.eduprocrm.uz";
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6ImNybS12cHMiLCJpYXQiOjE3ODIzMzQ3NTcsImV4cCI6MjQxMzA1NDc1N30.f1UCrcbJ-G0_q9-wFn9BIyMLPNBgzk2MYpxzU1IC4xw";
 
 // Supabase client initialization
 export const supabase = (supabaseUrl && supabaseUrl.startsWith('http') && supabaseAnonKey)
