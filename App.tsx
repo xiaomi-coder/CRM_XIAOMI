@@ -7,6 +7,7 @@ import Login from './components/Login';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import ProtectedRoute from './components/ProtectedRoute';
 import TestQuiz from './components/TestQuiz';
+import Toaster from './components/Toaster';
 import { translations, Language } from './services/languageContext';
 import { Loader2 } from 'lucide-react';
 
@@ -141,6 +142,8 @@ const App: React.FC = () => {
     };
 
     return (
+        <>
+        <Toaster />
         <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route
@@ -202,6 +205,7 @@ const App: React.FC = () => {
             {/* Catch all - redirect to landing */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </>
     );
 };
 

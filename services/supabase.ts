@@ -1,5 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { toast } from './toast';
 
 // Hardcoded fallback for production stability
 // VPS backend (PostgreSQL + PostgREST). Eski Supabase o'rnini bosadi.
@@ -17,9 +18,9 @@ if (!supabase) {
   if (!supabaseAnonKey) missing.push("VITE_SUPABASE_ANON_KEY");
 
   if (missing.length > 0) {
-    alert(`XATO: Quyidagi kalitlar topilmadi: ${missing.join(', ')}. Vercel sozlamalarini tekshiring!`);
+    toast.error(`XATO: Quyidagi kalitlar topilmadi: ${missing.join(', ')}. Vercel sozlamalarini tekshiring!`);
   } else if (supabaseUrl && !supabaseUrl.startsWith('http')) {
-    alert(`XATO: Supabase URL noto'g'ri: ${supabaseUrl}`);
+    toast.error(`XATO: Supabase URL noto'g'ri: ${supabaseUrl}`);
   }
 
   console.warn("DIQQAT: Supabase ulanishi amalga oshmadi.");
@@ -37,7 +38,7 @@ export const db = {
       return data || [];
     } catch (e: any) {
       console.error(`Ulanish xatosi (${table}):`, e);
-      alert(`XATO (Yuklash - ${table}): ${e.message || e}`);
+      toast.error(`XATO (Yuklash - ${table}): ${e.message || e}`);
       return [];
     }
   },
@@ -58,7 +59,7 @@ export const db = {
     if (!supabase) {
       const u = import.meta.env.VITE_SUPABASE_URL;
       const k = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      alert(`XATO: Tizim bazaga ulanmagan! URL: ${u ? 'BOR' : 'YOQ'}, KEY: ${k ? 'BOR' : 'YOQ'}. Qayta urinib ko'ring.`);
+      toast.error(`XATO: Tizim bazaga ulanmagan! URL: ${u ? 'BOR' : 'YOQ'}, KEY: ${k ? 'BOR' : 'YOQ'}. Qayta urinib ko'ring.`);
       return item;
     }
     try {
@@ -67,7 +68,7 @@ export const db = {
       return data ? data[0] : item;
     } catch (e: any) {
       console.error(`Insert xatosi (${table}):`, e);
-      alert(`XATO (Saqlash - ${table}): ${e.message || e}`);
+      toast.error(`XATO (Saqlash - ${table}): ${e.message || e}`);
       throw e;
     }
   },
@@ -75,7 +76,7 @@ export const db = {
   update: async (table: string, id: string, updates: any) => {
     const key = table === 'settings' ? 'centerId' : 'id';
     if (!supabase) {
-      alert("XATO: Tizim bazaga ulanmagan! O'zgarishlar saqlanmadi.");
+      toast.error("XATO: Tizim bazaga ulanmagan! O'zgarishlar saqlanmadi.");
       return updates;
     }
     try {
@@ -84,7 +85,7 @@ export const db = {
       return data ? data[0] : updates;
     } catch (e: any) {
       console.error(`Update xatosi (${table}):`, e);
-      alert(`XATO (Yangilash - ${table}): ${e.message || e}`);
+      toast.error(`XATO (Yangilash - ${table}): ${e.message || e}`);
       throw e;
     }
   },
@@ -92,7 +93,7 @@ export const db = {
   delete: async (table: string, id: string) => {
     const key = table === 'settings' ? 'centerId' : 'id';
     if (!supabase) {
-      alert("XATO: Tizim bazaga ulanmagan! O'chirish amalga oshmadi.");
+      toast.error("XATO: Tizim bazaga ulanmagan! O'chirish amalga oshmadi.");
       return false;
     }
     try {
@@ -101,7 +102,7 @@ export const db = {
       return true;
     } catch (e: any) {
       console.error(`Delete xatosi (${table}):`, e);
-      alert(`XATO (O'chirish - ${table}): ${e.message || e}`);
+      toast.error(`XATO (O'chirish - ${table}): ${e.message || e}`);
       return false;
     }
   },
@@ -114,7 +115,7 @@ export const db = {
       return data ? data[0] : item;
     } catch (e: any) {
       console.error(`Upsert xatosi (${table}):`, e);
-      alert(`XATO (Yangilash/Saqlash - ${table}): ${e.message || e}`);
+      toast.error(`XATO (Yangilash/Saqlash - ${table}): ${e.message || e}`);
       throw e;
     }
   }

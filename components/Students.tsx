@@ -4,6 +4,7 @@ import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2
 import { Student, Group, User, StudentStatus, Attendance, AttendanceStatus } from '../types';
 import { translations, Language } from '../services/languageContext';
 import { sendTelegramMessage } from '../services/telegramService';
+import { toast } from '../services/toast';
 
 interface StudentsProps {
   t: any;
@@ -135,11 +136,11 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
   const handleSendMessage = async () => {
     if (!sendMessageStudent || !messageText.trim()) return;
     if (!sendMessageStudent.tgChatId) {
-      alert(t.parent_not_linked || "Ota-ona hali Telegram botiga ulanmagan!");
+      toast.error(t.parent_not_linked || "Ota-ona hali Telegram botiga ulanmagan!");
       return;
     }
     if (!settings.botToken) {
-      alert(t.bot_not_configured || "Bot token sozlanmagan!");
+      toast.error(t.bot_not_configured || "Bot token sozlanmagan!");
       return;
     }
 
@@ -150,11 +151,11 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
 
     setSendingMessage(false);
     if (success) {
-      alert(t.message_sent || "Xabar yuborildi!");
+      toast.success(t.message_sent || "Xabar yuborildi!");
       setSendMessageStudent(null);
       setMessageText('');
     } else {
-      alert(t.message_failed || "Xabar yuborishda xatolik!");
+      toast.error(t.message_failed || "Xabar yuborishda xatolik!");
     }
   };
 
@@ -176,63 +177,92 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-8 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="relative w-full sm:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+      {/* Sahifa sarlavhasi */}
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-ink tracking-tight">{t.students}</h2>
+          <p className="text-sm text-muted mt-0.5">{activeStudents.length} {t.active || 'faol'}</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-card shadow-card border border-line overflow-hidden">
+        <div className="p-5 border-b border-line flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
               placeholder={t.search}
-              className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold"
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-line rounded-field focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 text-sm font-medium text-ink placeholder:text-slate-400 transition"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="w-full sm:w-auto bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-xl flex items-center justify-center gap-2 uppercase text-xs tracking-widest"
+            className="w-full sm:w-auto bg-primary text-white px-5 py-2.5 rounded-field font-semibold text-sm hover:bg-primary-700 transition-colors shadow-sm flex items-center justify-center gap-2"
           >
             <Plus size={18} /> {t.add_student}
           </button>
         </div>
 
+        {filteredStudents.length === 0 ? (
+          <div className="px-8 py-20 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-primary-50 text-primary flex items-center justify-center mx-auto mb-4">
+              <GraduationCap size={28} />
+            </div>
+            <h3 className="text-base font-bold text-ink">
+              {searchTerm ? (t.no_results || "Hech narsa topilmadi") : (t.no_students_yet || "Hali o'quvchi yo'q")}
+            </h3>
+            <p className="text-sm text-muted mt-1 max-w-xs mx-auto">
+              {searchTerm ? (t.try_another_search || "Boshqa kalit so'z bilan qidirib ko'ring") : (t.add_first_student || "Birinchi o'quvchingizni qo'shib boshlang")}
+            </p>
+            {!searchTerm && (
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="mt-5 inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-field font-semibold text-sm hover:bg-primary-700 transition-colors"
+              >
+                <Plus size={16} /> {t.add_student}
+              </button>
+            )}
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                <th className="px-8 py-5">{t.students}</th>
-                <th className="px-8 py-5">{t.parent}</th>
-                <th className="px-8 py-5">{t.message || 'Xabar'}</th>
-                <th className="px-8 py-5">{t.balance}</th>
-                <th className="px-8 py-5 text-right">{t.main}</th>
+              <tr className="bg-slate-50/70 text-muted text-[11px] font-semibold uppercase tracking-wide border-b border-line">
+                <th className="px-6 py-3.5">{t.students}</th>
+                <th className="px-6 py-3.5">{t.parent}</th>
+                <th className="px-6 py-3.5">{t.message || 'Xabar'}</th>
+                <th className="px-6 py-3.5">{t.balance}</th>
+                <th className="px-6 py-3.5 text-right">{t.main}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-line">
               {filteredStudents.map((student) => (
-                <tr key={student.id} className="hover:bg-indigo-50/30 transition-colors group">
-                  <td className="px-8 py-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="bg-indigo-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg font-black text-[12px]">
+                <tr key={student.id} className="hover:bg-slate-50 transition-colors group">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary text-white w-9 h-9 rounded-lg flex items-center justify-center font-semibold text-xs shrink-0">
                         {student.id.slice(-3).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-black text-slate-800 flex items-center gap-2">
+                        <div className="font-semibold text-ink text-sm flex items-center gap-1.5">
                           {student.name}
                           <div className="relative inline-block">
-                            <button onClick={() => setStatusMenuId(statusMenuId === student.id ? null : student.id)} className="p-1 hover:bg-slate-200 rounded-lg text-slate-400 transition-all">
+                            <button onClick={() => setStatusMenuId(statusMenuId === student.id ? null : student.id)} className="p-1 hover:bg-slate-200 rounded-md text-slate-400 transition-all opacity-0 group-hover:opacity-100">
                               <Settings2 size={14} />
                             </button>
                             {statusMenuId === student.id && (
-                              <div className="absolute left-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 py-2 animate-in fade-in zoom-in duration-200">
+                              <div className="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-pop border border-line z-50 py-1.5">
                                 <button
                                   onClick={() => handleStatusChange(student, StudentStatus.GRADUATED)}
-                                  className="w-full text-left px-5 py-3 text-[10px] font-black uppercase text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-3"
+                                  className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-emerald-50 hover:text-success flex items-center gap-3"
                                 >
                                   <GraduationCap size={16} /> {t.graduated}
                                 </button>
                                 <button
                                   onClick={() => handleStatusChange(student, StudentStatus.DROPPED)}
-                                  className="w-full text-left px-5 py-3 text-[10px] font-black uppercase text-slate-600 hover:bg-red-50 hover:text-red-600 flex items-center gap-3"
+                                  className="w-full text-left px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-red-50 hover:text-danger flex items-center gap-3"
                                 >
                                   <UserMinus size={16} /> {t.dropped}
                                 </button>
@@ -240,35 +270,35 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
                             )}
                           </div>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-bold">{student.phone}</div>
+                        <div className="text-xs text-muted mt-0.5">{student.phone}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
-                    <div className="text-xs font-black text-slate-700">{student.parentName}</div>
-                    <div className="text-[10px] text-slate-400 font-bold">{student.parentPhone}</div>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-medium text-ink">{student.parentName}</div>
+                    <div className="text-xs text-muted mt-0.5">{student.parentPhone}</div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <button
                       onClick={() => setSendMessageStudent(student)}
                       disabled={!student.tgChatId}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black transition-all ${student.tgChatId ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-field text-xs font-semibold transition-all ${student.tgChatId ? 'bg-primary-50 text-primary hover:bg-primary-100' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
                     >
                       <Send size={14} />
                       {student.tgChatId ? (t.send_message || 'Xabar yuborish') : (t.not_linked || 'Ulanmagan')}
                     </button>
                   </td>
-                  <td className="px-8 py-6">
-                    <div className={`font-black text-[11px] px-3 py-1 rounded-xl w-fit ${student.balance >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                  <td className="px-6 py-4">
+                    <div className={`font-semibold text-xs px-2.5 py-1 rounded-lg w-fit ${student.balance >= 0 ? 'bg-emerald-50 text-success' : 'bg-red-50 text-danger'}`}>
                       {student.balance.toLocaleString()} UZS
                     </div>
                   </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => setProgressStudent(student)} className="p-2 text-slate-200 hover:text-indigo-500 transition-all" title={t.progress || "Progress"}>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <button onClick={() => setProgressStudent(student)} className="p-2 text-slate-300 hover:text-primary hover:bg-primary-50 rounded-lg transition-all" title={t.progress || "Progress"}>
                         <BarChart3 size={18} />
                       </button>
-                      <button onClick={() => setDeleteConfirmStudent(student)} className="p-2 text-slate-200 hover:text-red-500 transition-all">
+                      <button onClick={() => setDeleteConfirmStudent(student)} className="p-2 text-slate-300 hover:text-danger hover:bg-red-50 rounded-lg transition-all">
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -278,6 +308,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
             </tbody>
           </table>
         </div>
+        )}
       </div>
 
       {showAddModal && (

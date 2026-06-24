@@ -128,7 +128,19 @@
 - PostgREST restart qilindi (kesh yangilandi).
 - ✅ End-to-end test (public HTTPS + anon token, frontend kabi): settings/users INSERT→SELECT→DELETE — hammasi ishladi.
 
-## Bosqich 4 — Frontend ulash 🔄 (kod tayyor, deploy kutilyapti)
+## Bosqich 4 — Frontend ulash ✅ (deploy qilindi 2026-06-25)
+- Vercel loyiha: **`anti`** (Shokha's projects, Hobby) — `eduprocrm.uz`, repo `xiaomi-coder/CRM_XIAOMI`.
+- Vercel'da env YO'Q ("No Environment Variables") → sayt doim kod hardcode'ini ishlatadi → endi VPS.
+- Kod `main`'ga push qilindi (`4388f13`, fast-forward) → Vercel avto-build → production VPS'ga ulanadi.
+- ✅ Deploy tekshirildi: `eduprocrm.uz` HTTP 200; bundle `index-Bl_iCkBX.js` da `api.eduprocrm.uz` bor, eski Supabase 0 marta.
+- ✅ To'liq oqim testi (production API, frontend kabi): markaz yaratish (settings+users 201), admin login simulyatsiya (parol mos, aktiv), o'quvchi qo'shish (201) — hammasi ishladi.
+- 📌 Test uchun qoldirildi: markaz `DEMO-MARKAZ-001` ("Demo Markaz (TEST)"), admin `demo_admin`/`demo123`, o'quvchi "Ali Valiyev". Foydalanuvchi ko'rib, keyin o'chirishi mumkin.
+
+## MIGRATSIYA YAKUNI ✅ (2026-06-25)
+- Backend Supabase'dan VPS'ga ko'chdi: `https://api.eduprocrm.uz/rest/v1/` (Postgres16 + PostgREST + nginx + SSL).
+- Frontend (Vercel `anti`) VPS'ga ulandi. Yangi markazlar ishlamoqda.
+- **QOLGAN (kelajak):** (1) eski Supabase ma'lumotini import — $34.31 to'langach. (2) Xavfsizlik: ochiq parollar→bcrypt, anon to'liq-CRUD→cheklash.
+
 - ✅ Kod o'zgartirildi (eski URL/key → VPS):
   - `services/supabase.ts:5-6` → `https://api.eduprocrm.uz` + yangi anon JWT.
   - `api/telegram-webhook.ts:4-5`, `api/send-monthly-report.ts:3-4` → bir xil.
