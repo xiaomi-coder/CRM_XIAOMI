@@ -404,7 +404,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/30">
         <div className="bg-white border-b border-slate-100 px-6 py-3 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm">
+            <div className="bg-indigo-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm">
               {currentUser.name.charAt(0).toUpperCase()}
             </div>
             <div>

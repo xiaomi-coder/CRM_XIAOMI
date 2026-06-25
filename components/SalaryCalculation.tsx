@@ -93,10 +93,10 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {/* Tanlov Paneli */}
-      <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-wrap items-end gap-6">
+      <div className="bg-white p-6 rounded-card shadow-sm border border-slate-100 flex flex-wrap items-end gap-6">
         {isDirector && (
           <div className="flex-1 min-w-[250px] space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.teacher}</label>
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{t.teacher}</label>
             <div className="relative">
               <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
               <select
@@ -117,7 +117,7 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
         )}
 
         <div className="w-full md:w-48 space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.month}</label>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{t.month}</label>
           <div className="relative">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
             <select
@@ -132,12 +132,12 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
 
         {isDirector && (
           <div className="w-full md:w-32 space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.share}</label>
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{t.share}</label>
             <div className="relative">
               <Percent className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
               <input
                 type="number"
-                className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black text-indigo-600"
+                className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-indigo-600"
                 value={percentage}
                 onChange={(e) => setPercentage(Number(e.target.value))}
               />
@@ -150,63 +150,63 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
         <div className="space-y-6">
           {/* Statistika Kartalari */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
+            <div className="bg-white p-6 rounded-card shadow-sm border border-gray-100 relative overflow-hidden group">
               <div className="absolute -right-4 -bottom-4 text-emerald-50 opacity-10 group-hover:scale-110 transition-transform">
                 <Wallet size={100} />
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.salary}</p>
-                <h3 className="text-3xl font-black text-emerald-600 tracking-tighter">{calculation.teacherSalary.toLocaleString()}</h3>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{t.salary}</p>
+                <h3 className="text-3xl font-bold text-emerald-600 tracking-tighter">{calculation.teacherSalary.toLocaleString()}</h3>
                 <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase italic">UZS</p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
+            <div className="bg-white p-6 rounded-card shadow-sm border border-gray-100 relative overflow-hidden group">
               <div className="absolute -right-4 -bottom-4 text-indigo-50 opacity-10 group-hover:scale-110 transition-transform">
                 <Target size={100} />
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.revenue}</p>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{calculation.totalRevenue.toLocaleString()}</h3>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{t.revenue}</p>
+                <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{calculation.totalRevenue.toLocaleString()}</h3>
                 <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase italic">UZS</p>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
+            <div className="bg-white p-6 rounded-card shadow-sm border border-gray-100 relative overflow-hidden group">
               <div className="absolute -right-4 -bottom-4 text-purple-50 opacity-10 group-hover:scale-110 transition-transform">
                 <BookOpen size={100} />
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.groups}</p>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{calculation.groupsCount}</h3>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{t.groups}</p>
+                <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{calculation.groupsCount}</h3>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
+            <div className="bg-white p-6 rounded-card shadow-sm border border-gray-100 relative overflow-hidden group">
               <div className="absolute -right-4 -bottom-4 text-amber-50 opacity-10 group-hover:scale-110 transition-transform">
                 <Users size={100} />
               </div>
               <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.students}</p>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{calculation.studentsCount}</h3>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{t.students}</p>
+                <h3 className="text-3xl font-bold text-slate-800 tracking-tighter">{calculation.studentsCount}</h3>
               </div>
             </div>
           </div>
 
           {/* Tafsilotlar Jadvali */}
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-card border border-slate-100 shadow-sm overflow-hidden">
             <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-              <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">
+              <h3 className="font-bold text-slate-800 uppercase tracking-tighter flex items-center gap-3">
                 <Activity size={20} className="text-indigo-600" />
                 {t.details} ({selectedMonth})
               </h3>
-              <div className="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+              <div className="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest">
                 {t.share}: {calculation.currentPercentage}%
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em]">
+                <thead className="bg-slate-50 text-slate-400 text-[9px] font-bold uppercase tracking-[0.2em]">
                   <tr>
                     <th className="px-10 py-5">{t.groups} / {t.subject}</th>
                     <th className="px-10 py-5 text-right">{t.revenue}</th>
@@ -217,26 +217,26 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
                   {calculation.groupDetails.map((group, idx) => (
                     <tr key={idx} className="hover:bg-slate-50 transition-all group">
                       <td className="px-10 py-6">
-                        <div className="font-black text-slate-800 uppercase tracking-tight">{group.name}</div>
+                        <div className="font-bold text-slate-800 uppercase tracking-tight">{group.name}</div>
                         <div className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-0.5">{group.subject}</div>
                       </td>
                       <td className="px-10 py-6 text-right font-bold text-slate-600">
-                        {group.revenue.toLocaleString()} <span className="text-[8px] font-black text-slate-400">UZS</span>
+                        {group.revenue.toLocaleString()} <span className="text-[8px] font-bold text-slate-400">UZS</span>
                       </td>
                       <td className="px-10 py-6 text-right">
-                        <div className="font-black text-emerald-600 text-lg">
+                        <div className="font-bold text-emerald-600 text-lg">
                           +{group.share.toLocaleString()}
                         </div>
-                        <div className="text-[8px] font-black text-emerald-400 uppercase tracking-widest">UZS</div>
+                        <div className="text-[8px] font-bold text-emerald-400 uppercase tracking-widest">UZS</div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot className="bg-slate-900 text-white">
                   <tr>
-                    <td className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">{t.total}:</td>
-                    <td className="px-10 py-6 text-right font-black text-base">{calculation.totalRevenue.toLocaleString()} UZS</td>
-                    <td className="px-10 py-6 text-right font-black text-xl text-emerald-400">{calculation.teacherSalary.toLocaleString()} UZS</td>
+                    <td className="px-10 py-6 font-bold uppercase tracking-widest text-[10px]">{t.total}:</td>
+                    <td className="px-10 py-6 text-right font-bold text-base">{calculation.totalRevenue.toLocaleString()} UZS</td>
+                    <td className="px-10 py-6 text-right font-bold text-xl text-emerald-400">{calculation.teacherSalary.toLocaleString()} UZS</td>
                   </tr>
                 </tfoot>
               </table>
@@ -244,11 +244,11 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
           </div>
         </div>
       ) : (
-        <div className="bg-white p-24 rounded-[3rem] border border-dashed border-slate-200 text-center flex flex-col items-center">
+        <div className="bg-white p-24 rounded-card border border-dashed border-slate-200 text-center flex flex-col items-center">
           <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center text-slate-200 mb-6">
             <Calculator size={48} />
           </div>
-          <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">{t.search_empty}</h3>
+          <h3 className="text-2xl font-bold text-slate-800 uppercase tracking-tighter italic">{t.search_empty}</h3>
           <p className="text-slate-400 max-w-sm mt-2 text-sm font-medium italic">
             Iltimos, o'qituvchini tanlang. Uning guruhlari borligiga va ushbu oyda o'quvchilar to'lov qilganiga ishonch hosil qiling.
           </p>

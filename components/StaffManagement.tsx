@@ -190,11 +190,11 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
   const getRoleBadge = (role: UserRole) => {
     const config = ROLE_CONFIG[role];
     if (!config) {
-      return <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-red-100 text-red-700">Creator</span>;
+      return <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-red-100 text-red-700">Creator</span>;
     }
     const Icon = config.icon;
     return (
-      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase ${config.badge}`}>
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase ${config.badge}`}>
         <Icon size={12} />
         {config.label}
       </span>
@@ -218,7 +218,7 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest">
+            <tr className="bg-gray-50 text-gray-500 text-[10px] font-bold uppercase tracking-widest">
               <th className="px-6 py-4">{t.student_name}</th>
               <th className="px-6 py-4">{t.role}</th>
               <th className="px-6 py-4 text-center">{t.share}</th>
@@ -232,7 +232,7 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
                 <td className="px-6 py-4 font-bold text-gray-800">{u.name}</td>
                 <td className="px-6 py-4">{getRoleBadge(u.role)}</td>
                 <td className="px-6 py-4 text-center">
-                  <div className="font-black text-indigo-600">
+                  <div className="font-bold text-indigo-600">
                     {u.role === UserRole.SUPER_ADMIN || u.role === UserRole.DIRECTOR ? '—' : (u.salaryPercentage || 40) + '%'}
                   </div>
                 </td>
@@ -268,16 +268,16 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8">
+          <div className="bg-white w-full max-w-sm rounded-card shadow-pop p-8">
             <div className="text-center">
               <div className="bg-red-100 w-16 h-16 rounded-3xl flex items-center justify-center text-red-600 mx-auto mb-6">
                 <AlertTriangle size={32} />
               </div>
-              <h3 className="text-xl font-black text-slate-800 mb-2 uppercase tracking-tighter italic">{t.delete_staff || 'Delete?'}</h3>
+              <h3 className="text-xl font-bold text-slate-800 mb-2 uppercase tracking-tighter italic">{t.delete_staff || 'Delete?'}</h3>
               <p className="text-slate-500 text-sm mb-8">{t.confirm_delete_staff}</p>
               <div className="flex gap-4">
-                <button onClick={() => setDeleteConfirmId(null)} className="flex-1 py-3 bg-slate-100 text-slate-500 font-black rounded-2xl uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all">{t.cancel}</button>
-                <button onClick={confirmDelete} className="flex-1 py-3 bg-red-600 text-white font-black rounded-2xl uppercase text-[10px] tracking-widest shadow-lg shadow-red-200 hover:bg-red-700 transition-all">{t.delete_staff || 'Yes, delete'}</button>
+                <button onClick={() => setDeleteConfirmId(null)} className="flex-1 py-3 bg-slate-100 text-slate-500 font-bold rounded-2xl uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all">{t.cancel}</button>
+                <button onClick={confirmDelete} className="flex-1 py-3 bg-red-600 text-white font-bold rounded-2xl uppercase text-[10px] tracking-widest shadow-lg shadow-red-200 hover:bg-red-700 transition-all">{t.delete_staff || 'Yes, delete'}</button>
               </div>
             </div>
           </div>
@@ -287,7 +287,7 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
       {/* Add/Edit Staff Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-pop p-8 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold">{editingUser ? t.save : t.add_staff}</h3>
               <button onClick={() => { setShowModal(false); setEditingUser(null); }}><X size={24} /></button>
@@ -335,7 +335,7 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
                           </div>
                         )}
                         <Icon size={22} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">{config.label}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider">{config.label}</span>
                         <span className={`text-[8px] font-medium text-center leading-tight ${isSelected ? 'text-white/70' : 'text-gray-400'}`}>{config.description}</span>
                       </button>
                     );

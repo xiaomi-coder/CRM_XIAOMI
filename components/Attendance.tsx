@@ -173,10 +173,10 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
     <div className="space-y-6">
       {testNotification.show && (
         <div className="fixed top-10 right-10 z-[200] animate-in slide-in-from-right-10 duration-500">
-          <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-2xl border border-white/10 max-w-sm">
+          <div className="bg-slate-900 text-white p-6 rounded-card shadow-pop border border-white/10 max-w-sm">
             <div className="flex items-center gap-3 mb-4 text-amber-400">
               <AlertCircle size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest">{t.telegram_simulation}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">{t.telegram_simulation}</span>
             </div>
             <div className="bg-white/5 p-4 rounded-2xl text-[12px] font-medium leading-relaxed whitespace-pre-wrap border border-white/5" dangerouslySetInnerHTML={{ __html: testNotification.msg }}></div>
             <p className="mt-4 text-[9px] text-slate-400 font-bold italic">{t.simulation_note}</p>
@@ -184,25 +184,25 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
         </div>
       )}
 
-      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-wrap gap-4 items-end">
+      <div className="bg-white p-6 rounded-card shadow-sm border border-slate-100 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px] space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.select_group}</label>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{t.select_group}</label>
           <select
             value={selectedGroupId}
             onChange={e => setSelectedGroupId(e.target.value)}
             className={`w-full px-4 py-3 border rounded-2xl outline-none font-bold text-sm transition-all ${selectedGroupId === 'ALL_STUDENTS' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-100'}`}
           >
-            <option value="ALL_STUDENTS" className="font-black text-indigo-600">✨ {t.all_students}</option>
+            <option value="ALL_STUDENTS" className="font-bold text-indigo-600">✨ {t.all_students}</option>
             <option disabled>──────────────────</option>
             {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </select>
         </div>
         <div className="w-full md:w-48 space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.attendance_date}</label>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{t.attendance_date}</label>
           <input type="date" value={currentDate} onChange={e => setCurrentDate(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm" />
         </div>
         <div className="flex-1 min-w-[200px] space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.search}</label>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-2">{t.search}</label>
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
             <input placeholder={t.search_placeholder} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm" />
@@ -211,11 +211,11 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
       </div>
 
       {/* Hammasini belgilash paneli */}
-      <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
+      <div className="bg-white p-5 rounded-card shadow-sm border border-slate-100">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 mr-2">
             <CheckCheck size={18} className="text-indigo-500" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.mark_all || "Hammasini belgilash"}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.mark_all || "Hammasini belgilash"}</span>
           </div>
           <button
             onClick={() => handleMarkAll(AttendanceStatus.PRESENT)}
@@ -268,9 +268,9 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
         )}
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-card border border-slate-100 overflow-hidden shadow-sm">
         <table className="w-full text-left">
-          <thead className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+          <thead className="bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
             <tr>
               <th className="px-8 py-4">{t.students} (ID)</th>
               <th className="px-8 py-4 text-center">{t.attendance}</th>
@@ -286,14 +286,14 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
                 <tr key={student.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-3">
-                      <div className="bg-indigo-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-[10px] shadow-lg shadow-indigo-100 uppercase tracking-tighter">
+                      <div className="bg-indigo-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold text-[10px] shadow-lg shadow-indigo-100 uppercase tracking-tighter">
                         {student.id.slice(-4)}
                       </div>
                       <div>
                         <div className="font-bold text-slate-800 tracking-tight flex items-center gap-2">
                           {student.name}
                           {selectedGroupId === 'ALL_STUDENTS' && (
-                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded text-[8px] font-black uppercase border border-indigo-100">
+                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded text-[8px] font-bold uppercase border border-indigo-100">
                               {studentGroup?.name || t.not_assigned}
                             </span>
                           )}
@@ -318,7 +318,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
                 </tr>
               );
             }) : (
-              <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 font-black uppercase text-[10px] tracking-widest italic opacity-50">{t.search_empty}</td></tr>
+              <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 font-bold uppercase text-[10px] tracking-widest italic opacity-50">{t.search_empty}</td></tr>
             )}
           </tbody>
         </table>

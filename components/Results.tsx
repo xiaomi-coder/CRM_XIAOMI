@@ -117,8 +117,8 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${stat.color}`}>
                                 <Icon size={20} />
                             </div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
-                            <p className="text-2xl font-black text-slate-800 mt-1">{stat.count}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
+                            <p className="text-2xl font-bold text-slate-800 mt-1">{stat.count}</p>
                         </div>
                     );
                 })}
@@ -173,7 +173,7 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
 
                                 <div className="p-5">
                                     <div className="flex items-start justify-between mb-3">
-                                        <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${typeInfo.color}`}>
+                                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-lg border ${typeInfo.color}`}>
                                             {typeInfo.label}
                                         </span>
                                         <button
@@ -188,8 +188,8 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
                                         </button>
                                     </div>
 
-                                    <h3 className="font-black text-slate-800 text-lg leading-tight mb-1">{result.title}</h3>
-                                    <p className="text-indigo-600 font-black text-xl mb-3">{result.score}</p>
+                                    <h3 className="font-bold text-slate-800 text-lg leading-tight mb-1">{result.title}</h3>
+                                    <p className="text-indigo-600 font-bold text-xl mb-3">{result.score}</p>
 
                                     <div className="flex items-center justify-between">
                                         <div>
@@ -214,7 +214,7 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
             {/* Add Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white w-full max-w-lg rounded-3xl shadow-pop p-8 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
                         <h3 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
                             <Trophy className="text-amber-500" />
                             {t.add_result || "Natija qo'shish"}
@@ -246,7 +246,7 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
                                                 className={`p-3 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${newResult.type === type.value ? 'border-indigo-500 bg-indigo-50 scale-105' : 'border-gray-100 hover:border-gray-200'}`}
                                             >
                                                 <Icon size={18} className={newResult.type === type.value ? 'text-indigo-600' : 'text-gray-400'} />
-                                                <span className={`text-[9px] font-black ${newResult.type === type.value ? 'text-indigo-600' : 'text-gray-400'}`}>{type.label}</span>
+                                                <span className={`text-[9px] font-bold ${newResult.type === type.value ? 'text-indigo-600' : 'text-gray-400'}`}>{type.label}</span>
                                             </button>
                                         );
                                     })}
@@ -344,7 +344,7 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
                         <button onClick={() => setViewImage(null)} className="absolute -top-3 -right-3 p-2 bg-white rounded-full shadow-lg z-10">
                             <X size={20} />
                         </button>
-                        <img src={viewImage} alt="Certificate" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain" />
+                        <img src={viewImage} alt="Certificate" className="max-w-full max-h-[85vh] rounded-2xl shadow-pop object-contain" />
                     </div>
                 </div>
             )}

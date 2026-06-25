@@ -124,11 +124,11 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter italic">{t.groups}</h3>
+        <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tighter italic">{t.groups}</h3>
         {isDirector && (
           <button
             onClick={() => { setEditingGroupId(null); setNewGroup({ name: '', teacher: 'Not assigned', subject: '', days: [], time: '', fee: 0 }); setShowAddGroupModal(true); }}
-            className="flex items-center space-x-3 bg-indigo-600 text-white px-8 py-3.5 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all hover:scale-[1.02] active:scale-95 text-[11px] uppercase tracking-widest"
+            className="flex items-center space-x-3 bg-indigo-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-card shadow-indigo-100 hover:bg-indigo-700 transition-all hover:scale-[1.02] active:scale-95 text-[11px] uppercase tracking-widest"
           >
             <Plus size={20} />
             <span>{t.add_group}</span>
@@ -140,11 +140,11 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
         {groups.map(group => {
           const currentTeacherName = getGroupTeacher(group.id);
           return (
-            <div key={group.id} className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 hover:shadow-2xl transition-all relative overflow-hidden flex flex-col group/card border-b-4 border-b-transparent hover:border-b-indigo-500">
+            <div key={group.id} className="bg-white p-8 rounded-card shadow-sm border border-gray-100 hover:shadow-pop transition-all relative overflow-hidden flex flex-col group/card border-b-4 border-b-transparent hover:border-b-indigo-500">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h4 className="text-2xl font-black text-slate-800 tracking-tighter uppercase italic leading-none mb-1.5">{group.name}</h4>
-                  <p className="text-indigo-500 font-black text-[10px] uppercase tracking-[0.2em]">{group.subject}</p>
+                  <h4 className="text-2xl font-bold text-slate-800 tracking-tighter uppercase italic leading-none mb-1.5">{group.name}</h4>
+                  <p className="text-indigo-500 font-bold text-[10px] uppercase tracking-[0.2em]">{group.subject}</p>
                 </div>
                 <div className="flex gap-2">
                   {isDirector && (
@@ -182,24 +182,24 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                     className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
                   >
                     <Users size={14} />
-                    <span className="font-black">{group.studentIds.length}</span>
+                    <span className="font-bold">{group.studentIds.length}</span>
                     {expandedGroupId === group.id ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                   </button>
                 </div>
               </div>
 
               {expandedGroupId === group.id && (
-                <div className="mb-6 bg-slate-50 rounded-[2rem] p-5 max-h-[250px] overflow-y-auto animate-in slide-in-from-top-4 duration-300 border border-slate-100 custom-scrollbar shadow-inner">
+                <div className="mb-6 bg-slate-50 rounded-card p-5 max-h-[250px] overflow-y-auto animate-in slide-in-from-top-4 duration-300 border border-slate-100 custom-scrollbar shadow-inner">
                   <div className="space-y-2">
                     {group.studentIds.map(sid => {
                       const s = getStudentById(sid);
                       return (
                         <div key={sid} className="flex justify-between items-center p-3.5 bg-white rounded-2xl text-[11px] border border-slate-100 group/item hover:border-indigo-300 hover:shadow-sm transition-all">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 font-black text-[10px] shadow-sm">
+                            <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-[10px] shadow-sm">
                               {s?.name.charAt(0)}
                             </div>
-                            <span className="font-black text-slate-700 tracking-tight">{s?.name || 'Deleted'}</span>
+                            <span className="font-bold text-slate-700 tracking-tight">{s?.name || 'Deleted'}</span>
                           </div>
                           {isDirector && (
                             <button onClick={() => onRemoveStudent(group.id, sid)} className="text-slate-300 hover:text-red-500 p-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
@@ -215,7 +215,7 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
 
               <button
                 onClick={() => setShowAssignModal(group.id)}
-                className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-3 text-[10px] uppercase tracking-widest active:scale-[0.98]"
+                className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-card shadow-slate-200 flex items-center justify-center gap-3 text-[10px] uppercase tracking-widest active:scale-[0.98]"
               >
                 <UserPlus size={18} />
                 {t.add_student}
@@ -227,11 +227,11 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
 
       {showAssignModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300 border border-white/20">
+          <div className="bg-white w-full max-w-md rounded-card shadow-pop overflow-hidden animate-in zoom-in duration-300 border border-white/20">
             <div className="p-8 bg-indigo-600 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12"><Users size={120} /></div>
               <div className="relative z-10">
-                <h3 className="font-black italic tracking-tighter text-xl uppercase leading-none">{t.add_student}</h3>
+                <h3 className="font-bold italic tracking-tighter text-xl uppercase leading-none">{t.add_student}</h3>
                 <p className="text-[10px] text-indigo-100 font-bold uppercase tracking-widest mt-2 opacity-80">{t.groups}: {groups.find(g => g.id === showAssignModal)?.name}</p>
               </div>
               <button onClick={() => { setShowAssignModal(null); setAssignSearch(''); setLastAssignedId(null); }} className="relative z-10 p-2 hover:bg-white/20 rounded-full transition-colors">
@@ -253,12 +253,12 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                     className="w-full flex items-center justify-between p-4 bg-white border border-slate-100 rounded-[1.5rem] hover:border-indigo-500 hover:bg-indigo-50/50 transition-all group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 font-black text-sm shadow-sm group-hover:bg-white transition-colors">
+                      <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 font-bold text-sm shadow-sm group-hover:bg-white transition-colors">
                         {s.name.charAt(0)}
                       </div>
                       <div className="text-left">
-                        <p className="text-sm font-black text-slate-800 tracking-tight">{s.name}</p>
-                        <p className="text-[10px] text-slate-400 font-black tracking-widest mt-0.5">{s.phone}</p>
+                        <p className="text-sm font-bold text-slate-800 tracking-tight">{s.name}</p>
+                        <p className="text-[10px] text-slate-400 font-bold tracking-widest mt-0.5">{s.phone}</p>
                       </div>
                     </div>
                     {lastAssignedId === s.id ? <CheckCircle2 size={24} className="text-emerald-500 animate-in zoom-in" /> : <Plus size={20} className="text-slate-300 group-hover:text-indigo-600" />}
@@ -267,7 +267,7 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
               </div>
             </div>
             <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-end">
-              <button onClick={() => { setShowAssignModal(null); setAssignSearch(''); }} className="px-10 py-4 bg-indigo-600 text-white font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg">{t.save}</button>
+              <button onClick={() => { setShowAssignModal(null); setAssignSearch(''); }} className="px-10 py-4 bg-indigo-600 text-white font-bold rounded-2xl text-[10px] uppercase tracking-widest shadow-lg">{t.save}</button>
             </div>
           </div>
         </div>
@@ -275,11 +275,11 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
 
       {showAddGroupModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[120] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-white/20">
+          <div className="bg-white w-full max-w-lg rounded-card shadow-pop overflow-hidden animate-in fade-in zoom-in duration-300 border border-white/20">
             <div className="bg-indigo-600 p-8 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12"><BookOpen size={140} /></div>
               <div className="relative z-10">
-                <h3 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{editingGroupId ? t.save : t.add_group}</h3>
+                <h3 className="text-2xl font-bold italic tracking-tighter uppercase leading-none">{editingGroupId ? t.save : t.add_group}</h3>
                 <p className="text-[10px] text-indigo-100 font-bold uppercase tracking-widest mt-2 opacity-80">CRM EduControl</p>
               </div>
               <button onClick={() => setShowAddGroupModal(false)} className="relative z-10 hover:bg-white/20 p-2 rounded-full transition-colors"><X size={24} /></button>
@@ -288,20 +288,20 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
             <form onSubmit={handleAddGroupSubmit} className="p-10 space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.groups}</label>
-                  <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-black text-slate-800 uppercase tracking-tighter" placeholder="IELTS Expert" value={newGroup.name} onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })} />
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.groups}</label>
+                  <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold text-slate-800 uppercase tracking-tighter" placeholder="IELTS Expert" value={newGroup.name} onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.subject}</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.subject}</label>
                   <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" placeholder="English" value={newGroup.subject} onChange={(e) => setNewGroup({ ...newGroup, subject: e.target.value })} />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.time}</label>
-                  <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black text-indigo-600" placeholder="14:00 - 16:00" value={newGroup.time} onChange={(e) => setNewGroup({ ...newGroup, time: e.target.value })} />
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.time}</label>
+                  <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-indigo-600" placeholder="14:00 - 16:00" value={newGroup.time} onChange={(e) => setNewGroup({ ...newGroup, time: e.target.value })} />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.teacher}</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.teacher}</label>
                   <select
                     className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-slate-800"
                     value={newGroup.teacher}
@@ -313,14 +313,14 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.days}</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.days}</label>
                   <div className="flex flex-wrap gap-2">
                     {weekDays.map(day => (
                       <button
                         key={day}
                         type="button"
                         onClick={() => toggleDay(day)}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${newGroup.days.includes(day) ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${newGroup.days.includes(day) ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
                       >
                         {day}
                       </button>
@@ -329,16 +329,16 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.revenue} / {t.month}</label>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2.5 ml-1 tracking-widest">{t.revenue} / {t.month}</label>
                   <div className="relative">
-                    <input required type="number" className="w-full px-5 py-4 bg-amber-50 border border-amber-100 rounded-2xl outline-none font-black text-amber-700 text-xl tracking-tighter" placeholder="500000" value={newGroup.fee || ''} onChange={(e) => setNewGroup({ ...newGroup, fee: Number(e.target.value) })} />
-                    <span className="absolute right-5 top-1/2 -translate-y-1/2 font-black text-[10px] text-amber-500 uppercase tracking-widest">UZS / {t.month}</span>
+                    <input required type="number" className="w-full px-5 py-4 bg-amber-50 border border-amber-100 rounded-2xl outline-none font-bold text-amber-700 text-xl tracking-tighter" placeholder="500000" value={newGroup.fee || ''} onChange={(e) => setNewGroup({ ...newGroup, fee: Number(e.target.value) })} />
+                    <span className="absolute right-5 top-1/2 -translate-y-1/2 font-bold text-[10px] text-amber-500 uppercase tracking-widest">UZS / {t.month}</span>
                   </div>
                 </div>
               </div>
               <div className="flex gap-4 pt-8 border-t border-slate-100">
-                <button type="button" onClick={() => setShowAddGroupModal(false)} className="flex-1 py-4.5 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 rounded-[1.5rem]">{t.cancel}</button>
-                <button type="submit" className="flex-1 py-4.5 bg-indigo-600 text-white font-black rounded-[1.5rem] shadow-2xl shadow-indigo-100 uppercase text-[10px] tracking-widest">{t.save}</button>
+                <button type="button" onClick={() => setShowAddGroupModal(false)} className="flex-1 py-4.5 text-slate-400 font-bold uppercase text-[10px] tracking-widest hover:bg-slate-50 rounded-[1.5rem]">{t.cancel}</button>
+                <button type="submit" className="flex-1 py-4.5 bg-indigo-600 text-white font-bold rounded-[1.5rem] shadow-pop shadow-indigo-100 uppercase text-[10px] tracking-widest">{t.save}</button>
               </div>
             </form>
           </div>

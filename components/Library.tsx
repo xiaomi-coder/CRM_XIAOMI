@@ -88,7 +88,7 @@ const Library: React.FC<LibraryProps> = ({ t, resources, user, onAdd, onDelete }
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
                 {resource.fileType.includes('pdf') ? <FileText size={24} /> : <File size={24} />}
               </div>
-              <span className="text-[10px] font-black uppercase text-indigo-400 bg-indigo-50 px-2 py-1 rounded-lg">
+              <span className="text-[10px] font-bold uppercase text-indigo-400 bg-indigo-50 px-2 py-1 rounded-lg">
                 {resource.category}
               </span>
             </div>
@@ -126,14 +126,14 @@ const Library: React.FC<LibraryProps> = ({ t, resources, user, onAdd, onDelete }
             <div className="bg-slate-50 w-16 h-16 rounded-3xl flex items-center justify-center text-slate-200 mx-auto mb-4">
               <Book size={48} className="mx-auto opacity-20" />
             </div>
-            <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">{t.search_empty || 'No resources found'}</p>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">{t.search_empty || 'No resources found'}</p>
           </div>
         )}
       </div>
 
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-pop p-8 animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold">{t.add_resource || 'Upload Resource'}</h3>
               <button onClick={() => setShowUploadModal(false)}><X size={24} /></button>

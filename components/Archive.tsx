@@ -55,7 +55,7 @@ const Archive: React.FC<ArchiveProps> = ({ t, students, groups }) => {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="bg-white p-6 rounded-card border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -67,7 +67,7 @@ const Archive: React.FC<ArchiveProps> = ({ t, students, groups }) => {
             />
           </div>
           <select
-            className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-black text-[10px] uppercase tracking-widest text-gray-700 outline-none cursor-pointer"
+            className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl font-bold text-[10px] uppercase tracking-widest text-gray-700 outline-none cursor-pointer"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
           >
@@ -78,16 +78,16 @@ const Archive: React.FC<ArchiveProps> = ({ t, students, groups }) => {
         </div>
         <button
           onClick={exportArchive}
-          className="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all flex items-center gap-2 shadow-sm"
+          className="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl font-bold uppercase text-[10px] tracking-widest border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all flex items-center gap-2 shadow-sm"
         >
           <Download size={14} /> EXCEL (CSV)
         </button>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-card border border-gray-100 shadow-sm overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest">
+            <tr className="bg-gray-50 text-gray-500 text-[10px] font-bold uppercase tracking-widest">
               <th className="px-8 py-5">{t.student_name}</th>
               <th className="px-8 py-5">{t.status}</th>
               <th className="px-8 py-5">{t.groups} / {t.teacher}</th>
@@ -104,20 +104,20 @@ const Archive: React.FC<ArchiveProps> = ({ t, students, groups }) => {
                 </td>
                 <td className="px-8 py-6">
                   {s.status === StudentStatus.GRADUATED ? (
-                    <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-[9px] font-black uppercase flex items-center gap-1.5 w-fit border border-emerald-200">
+                    <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-[9px] font-bold uppercase flex items-center gap-1.5 w-fit border border-emerald-200">
                       <GraduationCap size={12} /> {t.graduated}
                     </span>
                   ) : (
-                    <span className="bg-red-100 text-red-700 px-4 py-1.5 rounded-full text-[9px] font-black uppercase flex items-center gap-1.5 w-fit border border-red-200">
+                    <span className="bg-red-100 text-red-700 px-4 py-1.5 rounded-full text-[9px] font-bold uppercase flex items-center gap-1.5 w-fit border border-red-200">
                       <UserMinus size={12} /> {t.dropped}
                     </span>
                   )}
                 </td>
                 <td className="px-8 py-6">
-                  <div className="text-sm font-black text-indigo-600 tracking-tighter">{s.lastGroup || '—'}</div>
-                  <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{s.lastTeacher || '—'}</div>
+                  <div className="text-sm font-bold text-indigo-600 tracking-tighter">{s.lastGroup || '—'}</div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{s.lastTeacher || '—'}</div>
                 </td>
-                <td className="px-8 py-6 text-slate-400 font-black text-[11px] italic">
+                <td className="px-8 py-6 text-slate-400 font-bold text-[11px] italic">
                   {s.exitDate ? s.exitDate.split('-').reverse().join('.') : '—'}
                 </td>
                 <td className="px-8 py-6">
@@ -132,7 +132,7 @@ const Archive: React.FC<ArchiveProps> = ({ t, students, groups }) => {
                   <div className="bg-slate-50 w-16 h-16 rounded-3xl flex items-center justify-center text-slate-200 mx-auto mb-4">
                     <History size={32} />
                   </div>
-                  <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">{t.search_empty}</p>
+                  <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">{t.search_empty}</p>
                 </td>
               </tr>
             )}

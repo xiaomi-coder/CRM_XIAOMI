@@ -181,7 +181,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
           <div className="flex items-center gap-3">
             <button
               onClick={exportPaymentsToExcel}
-              className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[11px] font-black uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
+              className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[11px] font-bold uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
             >
               <Download size={16} /> Excel
             </button>
@@ -277,7 +277,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
       {/* ========== To'lov qabul qilish Modal (Student Search bilan) ========== */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-pop p-8 animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <DollarSign className="text-indigo-600" />
@@ -322,7 +322,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
 
                 {/* Dropdown ro'yxat */}
                 {showStudentDropdown && !newPayment.studentId && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl max-h-[200px] overflow-y-auto">
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-card max-h-[200px] overflow-y-auto">
                     {filteredStudents.length > 0 ? filteredStudents.map(s => (
                       <button
                         key={s.id}
@@ -330,14 +330,14 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                         onClick={() => selectStudent(s)}
                         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-indigo-50 transition-all text-left border-b border-gray-50 last:border-0"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-black text-sm">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
                           {s.name.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-bold text-gray-800 text-sm truncate">{s.name}</p>
                           <p className="text-[10px] text-gray-400">{s.phone} {s.nextPaymentDate ? `• ${t.next_payment_due}: ${s.nextPaymentDate}` : ''}</p>
                         </div>
-                        <div className={`text-[10px] font-black px-2 py-0.5 rounded-full ${(s.balance || 0) >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${(s.balance || 0) >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
                           {(s.balance || 0).toLocaleString()}
                         </div>
                       </button>
@@ -355,7 +355,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                       <p className="font-bold text-indigo-800 text-sm">{getStudentName(newPayment.studentId)}</p>
                       <p className="text-[10px] text-indigo-500">{getStudent(newPayment.studentId)?.phone}</p>
                     </div>
-                    <span className="text-[10px] font-black bg-white px-2 py-1 rounded-lg text-indigo-600 border border-indigo-200">
+                    <span className="text-[10px] font-bold bg-white px-2 py-1 rounded-lg text-indigo-600 border border-indigo-200">
                       {t.balance || 'Balans'}: {(getStudent(newPayment.studentId)?.balance || 0).toLocaleString()}
                     </span>
                   </div>
@@ -434,7 +434,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
       {/* ========== To'lovni tahrirlash Modal (Sana bilan) ========== */}
       {editPayment && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-pop p-8 animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <Pencil className="text-blue-600" />

@@ -12,30 +12,30 @@ export const CreatorDashboard: React.FC<{ t: any, settings: SystemSettings[], al
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 p-8 rounded-card border border-white/5 text-white shadow-pop relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Building size={100} /></div>
           <Activity className="text-amber-500 mb-4" size={32} />
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.centers || 'Centers'}</p>
-          <h3 className="text-3xl font-black">{settings.length}</h3>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t.centers || 'Centers'}</p>
+          <h3 className="text-3xl font-bold">{settings.length}</h3>
         </div>
-        <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 p-8 rounded-card border border-white/5 text-white shadow-pop relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Users size={100} /></div>
           <Users className="text-blue-500 mb-4" size={32} />
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.students}</p>
-          <h3 className="text-3xl font-black">{allStudents.length}</h3>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t.students}</p>
+          <h3 className="text-3xl font-bold">{allStudents.length}</h3>
         </div>
-        <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 p-8 rounded-card border border-white/5 text-white shadow-pop relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Wallet size={100} /></div>
           <Wallet className="text-emerald-500 mb-4" size={32} />
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.revenue || 'Revenue'}</p>
-          <h3 className="text-3xl font-black text-emerald-400">{totalRevenue.toLocaleString()} UZS</h3>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t.revenue || 'Revenue'}</p>
+          <h3 className="text-3xl font-bold text-emerald-400">{totalRevenue.toLocaleString()} UZS</h3>
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+      <div className="bg-white p-8 rounded-card border border-gray-100 shadow-sm">
         <div className="flex justify-between items-center mb-6">
-          <h4 className="text-lg font-black text-slate-800 uppercase tracking-tighter">{t.centers_list || 'Centers List'}</h4>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.recent || 'Recent'}</div>
+          <h4 className="text-lg font-bold text-slate-800 uppercase tracking-tighter">{t.centers_list || 'Centers List'}</h4>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.recent || 'Recent'}</div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {settings.length > 0 ? settings.map(s => (
@@ -45,11 +45,11 @@ export const CreatorDashboard: React.FC<{ t: any, settings: SystemSettings[], al
                   <Building size={20} />
                 </div>
                 <div>
-                  <p className="font-black text-slate-800 uppercase tracking-tight">{s.centerName}</p>
+                  <p className="font-bold text-slate-800 uppercase tracking-tight">{s.centerName}</p>
                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{s.centerId}</p>
                 </div>
               </div>
-              <span className={`text-[9px] font-black ${s.isBlocked ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50'} px-4 py-1.5 rounded-xl uppercase border ${s.isBlocked ? 'border-red-100' : 'border-emerald-100'}`}>
+              <span className={`text-[9px] font-bold ${s.isBlocked ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50'} px-4 py-1.5 rounded-xl uppercase border ${s.isBlocked ? 'border-red-100' : 'border-emerald-100'}`}>
                 {s.isBlocked ? 'Blocked' : 'Active'}
               </span>
             </div>
@@ -132,15 +132,15 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
       <div className="flex justify-end">
         <button
           onClick={() => setShowModal(true)}
-          className="bg-slate-900 text-white px-10 py-4 rounded-[1.5rem] font-black flex items-center gap-3 hover:bg-black transition-all shadow-2xl active:scale-95 uppercase text-[10px] tracking-widest"
+          className="bg-slate-900 text-white px-10 py-4 rounded-[1.5rem] font-bold flex items-center gap-3 hover:bg-black transition-all shadow-pop active:scale-95 uppercase text-[10px] tracking-widest"
         >
           <Plus size={20} /> {t.add_center || 'New Center'}
         </button>
       </div>
 
-      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-card border border-gray-100 shadow-sm overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em]">
+          <thead className="bg-slate-900 text-white text-[10px] font-bold uppercase tracking-[0.2em]">
             <tr>
               <th className="px-10 py-6">{t.center_name || 'Center'}</th>
               <th className="px-10 py-6">{t.login_data || 'Login Info'}</th>
@@ -155,34 +155,34 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
               return (
                 <tr key={s.centerId} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-10 py-6">
-                    <div className="font-black text-slate-800 uppercase tracking-tighter text-base">{s.centerName}</div>
+                    <div className="font-bold text-slate-800 uppercase tracking-tighter text-base">{s.centerName}</div>
                     <div className="text-[10px] font-bold text-indigo-500 mt-1 uppercase tracking-widest flex items-center gap-1.5">
                       <UserIcon size={12} /> {admin?.name || 'No Director'}
                     </div>
                   </td>
                   <td className="px-10 py-6">
                     <div className="flex flex-col gap-1">
-                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Login: <span className="text-slate-800">{admin?.username}</span></div>
-                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Parol: <span className="text-slate-800">{admin?.password}</span></div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Login: <span className="text-slate-800">{admin?.username}</span></div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Parol: <span className="text-slate-800">{admin?.password}</span></div>
                     </div>
                   </td>
                   <td className="px-10 py-6">
-                    <div className="flex items-center gap-2 text-xs font-black text-slate-600 bg-amber-50 px-4 py-2 rounded-xl border border-amber-100 w-fit">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-600 bg-amber-50 px-4 py-2 rounded-xl border border-amber-100 w-fit">
                       <Clock size={14} className="text-amber-500" />
                       {s.licenseExpiry}
                     </div>
                   </td>
                   <td className="px-10 py-6">
                     {s.isBlocked ? (
-                      <span className="bg-red-50 text-red-600 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase border border-red-100">Blocked</span>
+                      <span className="bg-red-50 text-red-600 px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase border border-red-100">Blocked</span>
                     ) : (
-                      <span className="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase border border-emerald-100">Active</span>
+                      <span className="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase border border-emerald-100">Active</span>
                     )}
                   </td>
                   <td className="px-10 py-6 text-right space-x-2">
                     <button
                       onClick={() => onUpdate({ ...s, isBlocked: !s.isBlocked })}
-                      className={`p-3 rounded-2xl transition-all ${s.isBlocked ? 'bg-emerald-50 text-emerald-600 shadow-emerald-100' : 'bg-red-50 text-red-600 shadow-red-100'} shadow-xl hover:scale-110`}
+                      className={`p-3 rounded-2xl transition-all ${s.isBlocked ? 'bg-emerald-50 text-emerald-600 shadow-emerald-100' : 'bg-red-50 text-red-600 shadow-red-100'} shadow-card hover:scale-110`}
                     >
                       {s.isBlocked ? <Unlock size={18} /> : <Lock size={18} />}
                     </button>
@@ -210,12 +210,12 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-card shadow-pop overflow-hidden animate-in zoom-in duration-300">
             <div className="bg-slate-900 p-8 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12"><ShieldAlert size={140} /></div>
               <div className="relative z-10">
-                <h3 className="text-2xl font-black italic tracking-tighter uppercase">{t.add_center || 'New Center'}</h3>
-                <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2 opacity-80">Global License Manager</p>
+                <h3 className="text-2xl font-bold italic tracking-tighter uppercase">{t.add_center || 'New Center'}</h3>
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] mt-2 opacity-80">Global License Manager</p>
               </div>
               <button onClick={() => setShowModal(false)} className="relative z-10 p-2 hover:bg-white/10 rounded-full transition-colors"><X size={24} /></button>
             </div>
@@ -223,44 +223,44 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
             <form onSubmit={handleSubmit} className="p-10 space-y-8">
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Business Info</p>
+                  <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Business Info</p>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Center Name</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-2 ml-1">Center Name</label>
                     <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/5 font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder="Elite Academy" />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Phone</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-2 ml-1">Phone</label>
                     <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="+998" />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Expiry</label>
-                    <input type="date" required className="w-full px-5 py-4 bg-amber-50 border border-amber-100 rounded-2xl outline-none font-black text-amber-700" value={formData.expiryDate} onChange={e => setFormData({ ...formData, expiryDate: e.target.value })} />
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-2 ml-1">Expiry</label>
+                    <input type="date" required className="w-full px-5 py-4 bg-amber-50 border border-amber-100 rounded-2xl outline-none font-bold text-amber-700" value={formData.expiryDate} onChange={e => setFormData({ ...formData, expiryDate: e.target.value })} />
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Director (Super User)</p>
+                  <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Director (Super User)</p>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Full Name</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-2 ml-1">Full Name</label>
                     <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.adminName} onChange={e => setFormData({ ...formData, adminName: e.target.value })} placeholder="..." />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Login</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black text-indigo-600" value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="admin" />
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-2 ml-1">Login</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-indigo-600" value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="admin" />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Parol</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} placeholder="••••" />
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-2 ml-1">Parol</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} placeholder="••••" />
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-black text-slate-400 hover:bg-slate-50 rounded-2xl transition-all uppercase text-[10px] tracking-widest">{t.cancel}</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-bold text-slate-400 hover:bg-slate-50 rounded-2xl transition-all uppercase text-[10px] tracking-widest">{t.cancel}</button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-5 bg-indigo-600 text-white rounded-2xl font-black shadow-2xl shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all uppercase text-[10px] tracking-widest"
+                  className="flex-1 py-5 bg-indigo-600 text-white rounded-2xl font-bold shadow-pop shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all uppercase text-[10px] tracking-widest"
                 >
                   {isSubmitting ? "..." : t.save}
                 </button>
@@ -277,21 +277,21 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 export const BroadcastSystem: React.FC<{ t: any }> = ({ t }) => {
   const [msg, setMsg] = useState('');
   return (
-    <div className="bg-white p-12 rounded-[3.5rem] border border-gray-100 shadow-2xl max-w-2xl mx-auto animate-in slide-in-from-bottom-10 duration-700">
-      <div className="bg-indigo-600 w-20 h-20 rounded-[2rem] flex items-center justify-center text-white mb-8 shadow-2xl shadow-indigo-200">
+    <div className="bg-white p-12 rounded-[3.5rem] border border-gray-100 shadow-pop max-w-2xl mx-auto animate-in slide-in-from-bottom-10 duration-700">
+      <div className="bg-indigo-600 w-20 h-20 rounded-card flex items-center justify-center text-white mb-8 shadow-pop shadow-indigo-200">
         <Megaphone size={32} />
       </div>
-      <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tighter italic uppercase leading-none">{t.broadcast || 'Global Broadcast'}</h3>
+      <h3 className="text-3xl font-bold text-slate-900 mb-3 tracking-tighter italic uppercase leading-none">{t.broadcast || 'Global Broadcast'}</h3>
       <p className="text-slate-400 text-sm mb-10 font-medium">{t.uz === "Boshqaruv" ? "Ushbu xabar barcha o'quv markazlari tizimida e'lon qilinadi." : "This message will be broadcast to all training centers."}</p>
 
       <textarea
-        className="w-full h-48 bg-slate-50 border border-slate-100 rounded-[2rem] p-8 outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white transition-all font-bold text-slate-700 shadow-inner"
+        className="w-full h-48 bg-slate-50 border border-slate-100 rounded-card p-8 outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white transition-all font-bold text-slate-700 shadow-inner"
         placeholder={t.note || "Message..."}
         value={msg}
         onChange={(e) => setMsg(e.target.value)}
       ></textarea>
 
-      <button className="w-full mt-8 bg-slate-900 text-white font-black py-5 rounded-[2rem] flex items-center justify-center gap-4 hover:bg-black transition-all shadow-2xl uppercase text-xs tracking-[0.2em] active:scale-[0.98]">
+      <button className="w-full mt-8 bg-slate-900 text-white font-bold py-5 rounded-card flex items-center justify-center gap-4 hover:bg-black transition-all shadow-pop uppercase text-xs tracking-[0.2em] active:scale-[0.98]">
         {t.send_message || 'Broadcast Message'} <Send size={20} />
       </button>
     </div>
@@ -301,13 +301,13 @@ export const BroadcastSystem: React.FC<{ t: any }> = ({ t }) => {
 // Tizim Loglari qismi
 export const SystemLogs: React.FC<{ t: any }> = ({ t }) => {
   return (
-    <div className="bg-slate-950 rounded-[3rem] p-10 text-indigo-300 font-mono text-[11px] overflow-hidden border border-white/5 shadow-2xl animate-in fade-in duration-700">
+    <div className="bg-slate-950 rounded-card p-10 text-indigo-300 font-mono text-[11px] overflow-hidden border border-white/5 shadow-pop animate-in fade-in duration-700">
       <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
         <div className="flex items-center gap-3">
           <ShieldAlert size={20} className="text-amber-500" />
-          <span className="uppercase font-black tracking-[0.3em] text-white">{t.logs || 'System Audit & Access Log'}</span>
+          <span className="uppercase font-bold tracking-[0.3em] text-white">{t.logs || 'System Audit & Access Log'}</span>
         </div>
-        <div className="bg-white/5 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-400">Live Stream</div>
+        <div className="bg-white/5 px-4 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest text-indigo-400">Live Stream</div>
       </div>
       <div className="space-y-3 h-[500px] overflow-y-auto custom-scrollbar pr-4">
         <p className="opacity-60 flex gap-4"><span className="text-slate-500 shrink-0">[20:45:12]</span> <span className="text-indigo-400">CREATOR_LOGGED_IN:</span> Super Admin entry success from 127.0.0.1</p>

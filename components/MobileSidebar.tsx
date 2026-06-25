@@ -99,8 +99,8 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                             <BrainCircuit size={24} className="text-white" />
                         </div>
                         <div>
-                            <h1 className="text-lg font-black tracking-tighter italic uppercase leading-none">EDUCONTROL</h1>
-                            <p className="text-[7px] font-black text-slate-500 uppercase tracking-[0.4em] mt-1">{t.professional_crm || 'Professional CRM'}</p>
+                            <h1 className="text-lg font-bold tracking-tighter italic uppercase leading-none">EDUCONTROL</h1>
+                            <p className="text-[7px] font-bold text-slate-500 uppercase tracking-[0.4em] mt-1">{t.professional_crm || 'Professional CRM'}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-2 bg-white/5 rounded-lg text-slate-400 hover:text-white">
@@ -111,12 +111,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                 {/* User Info */}
                 <div className="px-6 py-6 border-b border-white/5 bg-white/[0.02]">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center justify-center font-black text-indigo-400 border border-indigo-500/20 text-lg">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center justify-center font-bold text-indigo-400 border border-indigo-500/20 text-lg">
                             {user.name.charAt(0)}
                         </div>
                         <div className="flex flex-col min-w-0">
-                            <span className="text-sm font-black text-white truncate">{user.name}</span>
-                            <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest truncate mt-1">{roleLabel}</span>
+                            <span className="text-sm font-bold text-white truncate">{user.name}</span>
+                            <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest truncate mt-1">{roleLabel}</span>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                                 }`}
                         >
                             <item.icon size={20} className={activeTab === item.id ? 'stroke-[2.5px]' : 'opacity-70'} />
-                            <span className={`text-[11px] ${activeTab === item.id ? 'font-black' : 'font-bold uppercase tracking-wide'}`}>
+                            <span className={`text-[11px] ${activeTab === item.id ? 'font-bold' : 'font-bold uppercase tracking-wide'}`}>
                                 {item.label}
                             </span>
                         </button>

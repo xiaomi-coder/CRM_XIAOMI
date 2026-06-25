@@ -80,12 +80,12 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+      <div className="flex justify-between items-center bg-white p-6 rounded-card shadow-sm border border-slate-100">
         <div className="relative w-80">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input className="w-full pl-12 pr-6 py-3 bg-slate-50 border-none rounded-2xl outline-none font-bold text-sm" placeholder={t.search} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
         </div>
-        <button onClick={() => setShowModal(true)} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs tracking-widest flex items-center gap-2 shadow-xl shadow-indigo-100 hover:scale-[1.02] transition-all">
+        <button onClick={() => setShowModal(true)} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center gap-2 shadow-card shadow-indigo-100 hover:scale-[1.02] transition-all">
           <Plus size={18} /> {t.add_lead}
         </button>
       </div>
@@ -96,24 +96,24 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
             <div className="flex items-center justify-between px-4">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${col.bg}`}></div>
-                <h4 className="font-black text-slate-800 text-[10px] uppercase tracking-widest">{col.label}</h4>
+                <h4 className="font-bold text-slate-800 text-[10px] uppercase tracking-widest">{col.label}</h4>
               </div>
-              <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">
+              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">
                 {filtered.filter(l => l.status === col.status).length}
               </span>
             </div>
-            <div className="bg-slate-100/50 rounded-[2.5rem] p-4 min-h-[500px] border border-dashed border-slate-200 flex flex-col gap-4">
+            <div className="bg-slate-100/50 rounded-card p-4 min-h-[500px] border border-dashed border-slate-200 flex flex-col gap-4">
               {filtered.filter(l => l.status === col.status).map(lead => (
                 <div key={lead.id} className="bg-white p-5 rounded-3xl shadow-sm border border-transparent hover:border-indigo-100 transition-all group relative overflow-hidden">
                   <div className="flex justify-between items-start mb-3">
-                    <h5 className="font-black text-slate-800 text-sm tracking-tighter">{lead.name}</h5>
+                    <h5 className="font-bold text-slate-800 text-sm tracking-tighter">{lead.name}</h5>
                     <button onClick={() => onDelete(lead.id)} className="text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
                   </div>
 
                   {lead.testPin && lead.testStatus === 'PENDING' && (
                     <div className="mb-3 bg-amber-50 p-2 rounded-xl border border-amber-100 flex items-center justify-between">
-                      <span className="text-[9px] font-black text-amber-500 uppercase">PIN:</span>
-                      <span className="text-xs font-black text-amber-700 tracking-widest">{lead.testPin}</span>
+                      <span className="text-[9px] font-bold text-amber-500 uppercase">PIN:</span>
+                      <span className="text-xs font-bold text-amber-700 tracking-widest">{lead.testPin}</span>
                     </div>
                   )}
 
@@ -125,7 +125,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
                     {lead.testStatus === 'COMPLETED' && (
                       <button
                         onClick={() => setViewResult(lead)}
-                        className="w-full bg-emerald-50 text-emerald-600 py-2.5 rounded-xl text-[9px] font-black uppercase flex items-center justify-center gap-2 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 mb-1"
+                        className="w-full bg-emerald-50 text-emerald-600 py-2.5 rounded-xl text-[9px] font-bold uppercase flex items-center justify-center gap-2 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 mb-1"
                       >
                         <Award size={14} /> {t.result}: {lead.testScore}%
                       </button>
@@ -134,7 +134,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
                     {col.status === LeadStatus.NEW && !lead.testId && (
                       <button
                         onClick={() => setShowTestModal(lead)}
-                        className="w-full bg-amber-50 text-amber-600 py-2 rounded-xl text-[9px] font-black uppercase flex items-center justify-center gap-2 hover:bg-amber-600 hover:text-white transition-all border border-amber-100"
+                        className="w-full bg-amber-50 text-amber-600 py-2 rounded-xl text-[9px] font-bold uppercase flex items-center justify-center gap-2 hover:bg-amber-600 hover:text-white transition-all border border-amber-100"
                       >
                         <ClipboardCheck size={14} /> {t.get_pin}
                       </button>
@@ -145,7 +145,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
                       const idx = next.indexOf(col.status);
                       if (idx < 3) onUpdateStatus(lead.id, next[idx + 1]);
                       else onRegister(lead);
-                    }} className="w-full bg-slate-900 text-white py-2.5 rounded-xl text-[9px] font-black uppercase flex items-center justify-center gap-2 transition-all hover:bg-indigo-600 shadow-sm">
+                    }} className="w-full bg-slate-900 text-white py-2.5 rounded-xl text-[9px] font-bold uppercase flex items-center justify-center gap-2 transition-all hover:bg-indigo-600 shadow-sm">
                       {t.status.toUpperCase()} <ArrowRight size={10} />
                     </button>
                   </div>
@@ -158,17 +158,17 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
 
       {viewResult && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-sm rounded-[3rem] shadow-2xl p-10 text-center animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-sm rounded-card shadow-pop p-10 text-center animate-in zoom-in duration-300">
             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <Award size={40} />
             </div>
-            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter mb-2">{viewResult.name}</h3>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">{t.result}</p>
-            <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 mb-8">
-              <p className="text-5xl font-black text-emerald-600 italic tracking-tighter">{viewResult.testScore}%</p>
-              <p className="text-[10px] font-black text-emerald-400 uppercase mt-2">{t.score}</p>
+            <h3 className="text-xl font-bold text-slate-800 uppercase tracking-tighter mb-2">{viewResult.name}</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">{t.result}</p>
+            <div className="bg-slate-50 p-8 rounded-card border border-slate-100 mb-8">
+              <p className="text-5xl font-bold text-emerald-600 italic tracking-tighter">{viewResult.testScore}%</p>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase mt-2">{t.score}</p>
             </div>
-            <button onClick={() => setViewResult(null)} className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase text-xs tracking-widest">{t.cancel}</button>
+            <button onClick={() => setViewResult(null)} className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold uppercase text-xs tracking-widest">{t.cancel}</button>
           </div>
         </div>
       )}
@@ -176,14 +176,14 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
 
       {showTestModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-md rounded-[3rem] shadow-2xl p-10 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-md rounded-card shadow-pop p-10 animate-in zoom-in duration-300">
             <div className="flex justify-between items-center mb-8 border-b pb-6">
-              <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-800">{t.tests}</h3>
+              <h3 className="text-2xl font-bold italic tracking-tighter uppercase text-slate-800">{t.tests}</h3>
               <button onClick={() => setShowTestModal(null)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
             </div>
             <div className="space-y-6">
               <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1 tracking-widest">{t.tests}</label>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-widest">{t.tests}</label>
                 <select
                   className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold"
                   value={selectedTemplateId}
@@ -196,11 +196,11 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
                 </select>
               </div>
               <div className="flex gap-4 pt-6">
-                <button onClick={() => setShowTestModal(null)} className="flex-1 py-4 font-black text-slate-400 uppercase text-[10px] tracking-widest">{t.cancel}</button>
+                <button onClick={() => setShowTestModal(null)} className="flex-1 py-4 font-bold text-slate-400 uppercase text-[10px] tracking-widest">{t.cancel}</button>
                 <button
                   onClick={handleAssignTest}
                   disabled={!selectedTemplateId}
-                  className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-100 uppercase text-[10px] tracking-widest disabled:opacity-50"
+                  className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-card shadow-indigo-100 uppercase text-[10px] tracking-widest disabled:opacity-50"
                 >
                   <Key size={18} className="inline mr-2" /> {t.create_pin}
                 </button>
@@ -212,28 +212,28 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, onAdd, onUpdateStatus
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl p-10 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-card shadow-pop p-10 animate-in zoom-in duration-300">
             <div className="flex justify-between items-center mb-8 border-b pb-6">
-              <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-800">{t.add_lead}</h3>
+              <h3 className="text-2xl font-bold italic tracking-tighter uppercase text-slate-800">{t.add_lead}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">{t.main}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">{t.main}</p>
                   <input required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder={t.student_name} />
                   <input required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder={t.phone} />
                 </div>
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">{t.parent}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">{t.parent}</p>
                   <input className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.parentName} onChange={e => setFormData({ ...formData, parentName: e.target.value })} placeholder={t.full_name} />
                   <input className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.parentPhone} onChange={e => setFormData({ ...formData, parentPhone: e.target.value })} placeholder={t.phone} />
                 </div>
               </div>
               <input required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.subject} onChange={e => setFormData({ ...formData, subject: e.target.value })} placeholder={t.subject} />
               <div className="flex gap-4 pt-6">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-4 font-black text-slate-400 uppercase text-[10px]">{t.cancel}</button>
-                <button type="submit" className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-100 uppercase text-[10px]">{t.save}</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-4 font-bold text-slate-400 uppercase text-[10px]">{t.cancel}</button>
+                <button type="submit" className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-card shadow-indigo-100 uppercase text-[10px]">{t.save}</button>
               </div>
             </form>
           </div>
