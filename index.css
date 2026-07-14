@@ -74,8 +74,8 @@ body {
   50%      { transform: translate(32px, -24px) scale(1.18); }
 }
 @keyframes login-logo-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+  0%, 100% { transform: translateY(0); box-shadow: 0 0 24px rgba(52, 211, 153, 0.25); }
+  50%      { transform: translateY(-6px); box-shadow: 0 0 48px rgba(52, 211, 153, 0.5); }
 }
 @keyframes login-field-in {
   from { opacity: 0; transform: translateY(12px); }
@@ -90,12 +90,69 @@ body {
 .login-stagger > *:nth-child(1) { animation-delay: 0.18s; }
 .login-stagger > *:nth-child(2) { animation-delay: 0.28s; }
 .login-stagger > *:nth-child(3) { animation-delay: 0.38s; }
+.login-stagger > *:nth-child(4) { animation-delay: 0.48s; }
+
+/* ===== Glassmorphism login ===== */
+@property --login-a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.login-glass {
+  background: rgba(255, 255, 255, 0.055);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Aylanuvchi shimmer chegara */
+.login-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--login-a), transparent 0deg, rgba(52, 211, 153, 0.85) 40deg, rgba(45, 212, 191, 0.4) 90deg, transparent 150deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: login-border-spin 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes login-border-spin {
+  to { --login-a: 360deg; }
+}
+
+/* Nozik harakatlanuvchi grid fon */
+.login-grid {
+  background-image:
+    linear-gradient(rgba(52, 211, 153, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52, 211, 153, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  animation: login-grid-pan 18s linear infinite;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 42%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 42%, #000 25%, transparent 78%);
+}
+
+@keyframes login-grid-pan {
+  to { background-position: 44px 44px; }
+}
+
+/* Input focus porlashi */
+.login-input:focus {
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .login-card,
   .login-blob,
   .login-blob-2,
   .login-logo,
+  .login-grid,
+  .login-glass::before,
   .login-stagger > * {
     animation: none !important;
   }
