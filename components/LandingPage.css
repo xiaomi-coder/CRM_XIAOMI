@@ -496,6 +496,27 @@ body {
   transform: perspective(1000px) rotateY(0) rotateX(0);
 }
 
+/* Davriy yorug'lik o'tishi (premium tuyg'u) */
+.landing-dashboard-preview::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.055) 48%, transparent 62%);
+  transform: translateX(-120%);
+  animation: sheen 7s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes sheen {
+  0%, 65%, 100% {
+    transform: translateX(-120%);
+  }
+  85% {
+    transform: translateX(120%);
+  }
+}
+
 .landing-dashboard-header {
   display: flex;
   align-items: center;
@@ -525,6 +546,150 @@ body {
 
 .landing-dashboard-body {
   padding: 24px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Haqiqiy ilovaga o'xshash: yon panel + asosiy qism */
+.landing-dashboard-shell {
+  display: flex;
+  align-items: stretch;
+}
+
+.landing-dash-sidebar {
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.landing-dash-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--gradient-1);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.landing-dash-nav {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: color 0.3s, background 0.3s;
+}
+
+.landing-dash-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.landing-dash-nav.active {
+  color: var(--primary-light);
+  background: rgba(5, 150, 105, 0.14);
+}
+
+.landing-dash-titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.landing-dash-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.landing-dash-chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.landing-dash-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-dash-listrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.landing-dash-ava {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-dash-ava.alt {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+}
+
+.landing-dash-listname {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.landing-dash-listgroup {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.landing-dash-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.landing-dash-pill.paid {
+  color: #34D399;
+  background: rgba(5, 150, 105, 0.15);
+}
+
+.landing-dash-pill.due {
+  color: #FCD34D;
+  background: rgba(252, 211, 77, 0.12);
 }
 
 .landing-dash-row {
@@ -579,18 +744,40 @@ body {
   flex: 1;
   border-radius: 6px 6px 0 0;
   background: var(--gradient-1);
-  opacity: 0.7;
+  opacity: 0.8;
+  transform-origin: bottom center;
   transition: opacity 0.3s;
-  animation: growBar 1s ease-out both;
+  /* Kirish: pastdan o'sadi; keyin: jonli ma'lumotdek uzluksiz to'lqin.
+     Inline animationDelay ikkalasiga ham qo'llanadi -> chapdan o'ngga tabiiy to'lqin. */
+  animation: growBar 0.9s ease-out both, barWave 2.8s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .landing-chart-bar:hover {
   opacity: 1;
 }
 
+/* Eng baland ustun — ko'zning fokus nuqtasi */
+.landing-chart-bar:last-child {
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 100%);
+  opacity: 1;
+  box-shadow: 0 0 18px rgba(45, 212, 191, 0.45);
+}
+
 @keyframes growBar {
   from {
     height: 0 !important;
+  }
+}
+
+@keyframes barWave {
+  0%, 100% {
+    transform: scaleY(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scaleY(1.06);
+    opacity: 1;
   }
 }
 
@@ -745,8 +932,21 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  color: var(--primary-light);
   margin-bottom: 20px;
+  transition: transform 0.4s ease, background 0.4s ease, color 0.4s ease;
+}
+
+.landing-feature-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Hover mikro-animatsiya: ikonka jonlanadi */
+.landing-feature-card:hover .landing-feature-icon {
+  background: rgba(5, 150, 105, 0.22);
+  color: var(--accent);
+  transform: scale(1.08) translateY(-2px);
 }
 
 .landing-feature-card h3 {
@@ -914,7 +1114,13 @@ body {
 }
 
 .landing-price-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
+  border-color: rgba(5, 150, 105, 0.45);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(5, 150, 105, 0.15);
+}
+
+.landing-price-card.featured:hover {
+  box-shadow: 0 28px 70px rgba(5, 150, 105, 0.28);
 }
 
 .landing-price-name {
@@ -1534,4 +1740,16 @@ body {
 .landing-reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Harakatni kamaytirish afzalligi — uzluksiz animatsiyalarni to'xtatish */
+@media (prefers-reduced-motion: reduce) {
+  .landing-chart-bar,
+  .landing-float-card,
+  .landing-dashboard-preview::after {
+    animation: none !important;
+  }
+  .landing-chart-bar {
+    transform: none;
+  }
 }

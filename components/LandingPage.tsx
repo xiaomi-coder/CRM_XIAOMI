@@ -185,6 +185,34 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const t = translations[lang];
 
+  // Izchil chiziqli ikonka to'plami (emoji o'rniga — professional ko'rinish)
+  const svgP = {
+    viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+    strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
+  };
+  const featureIcons: React.ReactNode[] = [
+    // 0 — O'quvchilar bazasi
+    <svg {...svgP}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
+    // 1 — To'lov eslatma (hamyon)
+    <svg {...svgP}><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" /><path d="M3 5v14a2 2 0 0 0 2 2h16v-5" /><path d="M18 12a2 2 0 0 0 0 4h4v-4Z" /></svg>,
+    // 2 — Davomat (clipboard-check)
+    <svg {...svgP}><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2" /><path d="M9 2h6a1 1 0 0 1 1 1v2H8V3a1 1 0 0 1 1-1Z" /><path d="m9 14 2 2 4-4" /></svg>,
+    // 3 — Mock Exam (target)
+    <svg {...svgP}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.5" /></svg>,
+    // 4 — Natijalar vitrini (award)
+    <svg {...svgP}><circle cx="12" cy="8" r="6" /><path d="M8.5 13.5 7 22l5-3 5 3-1.5-8.5" /></svg>,
+    // 5 — Rol tizimi (shield)
+    <svg {...svgP}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></svg>,
+    // 6 — Testlar (file-text)
+    <svg {...svgP}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M9 13h6" /><path d="M9 17h4" /></svg>,
+    // 7 — Telegram Bot (chat)
+    <svg {...svgP}><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2Z" /><circle cx="9" cy="10" r="1" /><circle cx="15" cy="10" r="1" /></svg>,
+    // 8 — Excel/Word eksport (download)
+    <svg {...svgP}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /><path d="M12 15V3" /></svg>,
+    // 9 — Xodimlar (briefcase)
+    <svg {...svgP}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><path d="M2 13h20" /></svg>,
+  ];
+
   useEffect(() => {
     // Add specific class to body for landing page isolation
     document.body.classList.add('landing-page-body');
@@ -216,6 +244,39 @@ const LandingPage: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Raqamlarni 0'dan sanab chiqarish (count-up) — element ko'ringanda ishga tushadi
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
+    const format = (el: HTMLElement, val: number) => {
+      const decimals = parseInt(el.dataset.decimals || '0', 10);
+      return (el.dataset.prefix || '') + val.toFixed(decimals) + (el.dataset.suffix || '');
+    };
+    const run = (el: HTMLElement) => {
+      const target = parseFloat(el.dataset.countup || '0');
+      if (reduce) { el.textContent = format(el, target); return; }
+      const duration = 1400;
+      const start = performance.now();
+      const step = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        el.textContent = format(el, target * easeOut(p));
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = format(el, target);
+      };
+      requestAnimationFrame(step);
+    };
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          run(e.target as HTMLElement);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll<HTMLElement>('[data-countup]').forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
   }, []);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -281,11 +342,11 @@ const LandingPage: React.FC = () => {
               </div>
               <div className="landing-hero-stats">
                 <div className="landing-hero-stat">
-                  <h3>3+</h3>
+                  <h3 data-countup="3" data-suffix="+">3+</h3>
                   <p>{t.stat_centers}</p>
                 </div>
                 <div className="landing-hero-stat">
-                  <h3>150+</h3>
+                  <h3 data-countup="150" data-suffix="+">150+</h3>
                   <p>{t.stat_students}</p>
                 </div>
                 <div className="landing-hero-stat">
@@ -300,34 +361,62 @@ const LandingPage: React.FC = () => {
                   <div className="landing-dot red"></div><div className="landing-dot yellow"></div><div className="landing-dot green"></div>
                   <span style={{ marginLeft: '12px', fontSize: '12px', color: 'var(--text-muted)' }}>EduControl Dashboard</span>
                 </div>
-                <div className="landing-dashboard-body">
-                  <div className="landing-dash-row">
-                    <div className="landing-dash-card">
-                      <div className="landing-dash-card-label">{t.dash_students}</div>
-                      <div className="landing-dash-card-value green">152</div>
+                <div className="landing-dashboard-shell">
+                  <aside className="landing-dash-sidebar">
+                    <span className="landing-dash-logo">E</span>
+                    <span className="landing-dash-nav active" aria-label="Boshqaruv"><svg {...svgP}><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg></span>
+                    <span className="landing-dash-nav" aria-label="O'quvchilar"><svg {...svgP}><circle cx="9" cy="7" r="3.2" /><path d="M3.5 20a5.5 5.5 0 0 1 11 0" /><path d="M16 4.2a3.2 3.2 0 0 1 0 5.6" /></svg></span>
+                    <span className="landing-dash-nav" aria-label="Guruhlar"><svg {...svgP}><path d="m12 3 9 5-9 5-9-5 9-5Z" /><path d="m3 13 9 5 9-5" /></svg></span>
+                    <span className="landing-dash-nav" aria-label="To'lovlar"><svg {...svgP}><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M3 10h18" /></svg></span>
+                    <span className="landing-dash-nav" aria-label="Natijalar"><svg {...svgP}><circle cx="12" cy="9" r="5" /><path d="m8.5 13-1 8 4.5-3 4.5 3-1-8" /></svg></span>
+                  </aside>
+                  <div className="landing-dashboard-body">
+                    <div className="landing-dash-titlerow">
+                      <span className="landing-dash-title">Boshqaruv paneli</span>
+                      <span className="landing-dash-chip">Iyul 2026</span>
                     </div>
-                    <div className="landing-dash-card">
-                      <div className="landing-dash-card-label">{t.dash_groups}</div>
-                      <div className="landing-dash-card-value purple">12</div>
+                    <div className="landing-dash-row">
+                      <div className="landing-dash-card">
+                        <div className="landing-dash-card-label">{t.dash_students}</div>
+                        <div className="landing-dash-card-value green" data-countup="152">152</div>
+                      </div>
+                      <div className="landing-dash-card">
+                        <div className="landing-dash-card-label">{t.dash_groups}</div>
+                        <div className="landing-dash-card-value purple" data-countup="12">12</div>
+                      </div>
+                      <div className="landing-dash-card">
+                        <div className="landing-dash-card-label">{t.dash_income}</div>
+                        <div className="landing-dash-card-value pink" data-countup="38.8" data-decimals="1" data-suffix="M">38.8M</div>
+                      </div>
                     </div>
-                    <div className="landing-dash-card">
-                      <div className="landing-dash-card-label">{t.dash_income}</div>
-                      <div className="landing-dash-card-value pink">38.8M</div>
+                    <div className="landing-dash-chart">
+                      <div className="landing-chart-bar" style={{ height: '40%', animationDelay: '0.1s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '65%', animationDelay: '0.2s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '45%', animationDelay: '0.3s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '80%', animationDelay: '0.4s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '55%', animationDelay: '0.5s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '90%', animationDelay: '0.6s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '70%', animationDelay: '0.7s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '95%', animationDelay: '0.8s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '60%', animationDelay: '0.9s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '85%', animationDelay: '1.0s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '75%', animationDelay: '1.1s' }}></div>
+                      <div className="landing-chart-bar" style={{ height: '100%', animationDelay: '1.2s' }}></div>
                     </div>
-                  </div>
-                  <div className="landing-dash-chart">
-                    <div className="landing-chart-bar" style={{ height: '40%', animationDelay: '0.1s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '65%', animationDelay: '0.2s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '45%', animationDelay: '0.3s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '80%', animationDelay: '0.4s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '55%', animationDelay: '0.5s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '90%', animationDelay: '0.6s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '70%', animationDelay: '0.7s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '95%', animationDelay: '0.8s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '60%', animationDelay: '0.9s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '85%', animationDelay: '1.0s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '75%', animationDelay: '1.1s' }}></div>
-                    <div className="landing-chart-bar" style={{ height: '100%', animationDelay: '1.2s' }}></div>
+                    <div className="landing-dash-list">
+                      <div className="landing-dash-listrow">
+                        <span className="landing-dash-ava">AV</span>
+                        <span className="landing-dash-listname">Ali Valiyev</span>
+                        <span className="landing-dash-listgroup">IELTS-1</span>
+                        <span className="landing-dash-pill paid">To'landi</span>
+                      </div>
+                      <div className="landing-dash-listrow">
+                        <span className="landing-dash-ava alt">MN</span>
+                        <span className="landing-dash-listname">Malika Nur</span>
+                        <span className="landing-dash-listgroup">CEFR-2</span>
+                        <span className="landing-dash-pill due">Kutilmoqda</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -370,58 +459,58 @@ const LandingPage: React.FC = () => {
           </div>
           <div className="landing-features-grid">
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">👥</div>
+              <div className="landing-feature-icon">{featureIcons[0]}</div>
               <h3>{t.f1_title}</h3>
               <p>{t.f1_desc}</p>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">💰</div>
+              <div className="landing-feature-icon">{featureIcons[1]}</div>
               <h3>{t.f2_title}</h3>
               <p>{t.f2_desc}</p>
               <span className="landing-feature-tag popular">{t.tag_popular}</span>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">📊</div>
+              <div className="landing-feature-icon">{featureIcons[2]}</div>
               <h3>{t.f3_title}</h3>
               <p>{t.f3_desc}</p>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">🎯</div>
+              <div className="landing-feature-icon">{featureIcons[3]}</div>
               <h3>{t.f4_title}</h3>
               <p>{t.f4_desc}</p>
               <span className="landing-feature-tag new">{t.tag_new}</span>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">🏆</div>
+              <div className="landing-feature-icon">{featureIcons[4]}</div>
               <h3>{t.f5_title}</h3>
               <p>{t.f5_desc}</p>
               <span className="landing-feature-tag new">{t.tag_new}</span>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">🔐</div>
+              <div className="landing-feature-icon">{featureIcons[5]}</div>
               <h3>{t.f6_title}</h3>
               <p>{t.f6_desc}</p>
               <span className="landing-feature-tag new">{t.tag_new}</span>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">📝</div>
+              <div className="landing-feature-icon">{featureIcons[6]}</div>
               <h3>{t.f7_title}</h3>
               <p>{t.f7_desc}</p>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">🤖</div>
+              <div className="landing-feature-icon">{featureIcons[7]}</div>
               <h3>{t.f8_title}</h3>
               <p>{t.f8_desc}</p>
               <span className="landing-feature-tag new">{t.tag_new}</span>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">📥</div>
+              <div className="landing-feature-icon">{featureIcons[8]}</div>
               <h3>{t.f9_title}</h3>
               <p>{t.f9_desc}</p>
               <span className="landing-feature-tag new">{t.tag_new}</span>
             </div>
             <div className="landing-feature-card landing-reveal">
-              <div className="landing-feature-icon">👨‍🏫</div>
+              <div className="landing-feature-icon">{featureIcons[9]}</div>
               <h3>{t.f10_title}</h3>
               <p>{t.f10_desc}</p>
             </div>
