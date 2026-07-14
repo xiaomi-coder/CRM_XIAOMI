@@ -497,7 +497,7 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
             <div className="landing-result-card landing-reveal">
-              <div className="landing-result-img" style={{ background: 'linear-gradient(135deg, #1a1423, #2d1b36)' }}>
+              <div className="landing-result-img" style={{ background: 'linear-gradient(135deg, #12211c, #163a30)' }}>
                 🎓
                 <div className="landing-result-badge-type uni">Universitet</div>
               </div>
@@ -600,7 +600,7 @@ const LandingPage: React.FC = () => {
               <div className="landing-testimonial-stars">★★★★★</div>
               <div className="landing-testimonial-text">{t.review2_text}</div>
               <div className="landing-testimonial-author">
-                <div className="landing-testimonial-avatar" style={{ background: 'linear-gradient(135deg, #06D6A0, #4F46E5)' }}>M</div>
+                <div className="landing-testimonial-avatar" style={{ background: 'linear-gradient(135deg, #2DD4BF, #059669)' }}>M</div>
                 <div>
                   <div className="landing-testimonial-name">Malika Toshmatova</div>
                   <div className="landing-testimonial-role">O'qituvchi</div>
@@ -611,7 +611,7 @@ const LandingPage: React.FC = () => {
               <div className="landing-testimonial-stars">★★★★★</div>
               <div className="landing-testimonial-text">{t.review3_text}</div>
               <div className="landing-testimonial-author">
-                <div className="landing-testimonial-avatar" style={{ background: 'linear-gradient(135deg, #EC4899, #F59E0B)' }}>S</div>
+                <div className="landing-testimonial-avatar" style={{ background: 'linear-gradient(135deg, #34D399, #047857)' }}>S</div>
                 <div>
                   <div className="landing-testimonial-name">Sardor Aliyev</div>
                   <div className="landing-testimonial-role">Administrator</div>

@@ -1,7 +1,7 @@
 /* Scoped styles for Landing Page when active */
 body.landing-page-body {
-  background-color: #0F0E17 !important;
-  color: #FFFFFE !important;
+  background-color: #0A0F0D !important;
+  color: #F4F7F5 !important;
   font-family: 'Outfit', sans-serif !important;
   margin: 0;
   padding: 0;
@@ -15,33 +15,33 @@ body.landing-page-body * {
 
 /* Reset for the landing page component wrapper if needed */
 .landing-page-wrapper {
-  background-color: #0F0E17;
+  background-color: #0A0F0D;
   min-height: 100vh;
-  color: #FFFFFE;
+  color: #F4F7F5;
 }
 
 :root {
-  --primary: #4F46E5;
-  --primary-light: #818CF8;
-  --primary-dark: #3730A3;
-  --accent: #06D6A0;
-  --accent-dark: #05B384;
-  --dark: #0F0E17;
-  --dark-surface: #1A1929;
-  --dark-card: #232136;
-  --text-primary: #FFFFFE;
-  --text-secondary: #A7A4C2;
-  --text-muted: #6B6890;
-  --bg-color: #0F0E17;
-  --text-color: #FFFFFE;
-  --primary-color: #FF8906;
-  --secondary-color: #E53170;
-  --card-bg: #16161E;
-  --gray-400: #A7A9BE;
-  --gradient-1: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
-  --gradient-2: linear-gradient(135deg, #06D6A0 0%, #4F46E5 100%);
+  --primary: #059669;
+  --primary-light: #34D399;
+  --primary-dark: #047857;
+  --accent: #2DD4BF;
+  --accent-dark: #14B8A6;
+  --dark: #0A0F0D;
+  --dark-surface: #111815;
+  --dark-card: #16201C;
+  --text-primary: #F4F7F5;
+  --text-secondary: #9FB0A8;
+  --text-muted: #6A7B72;
+  --bg-color: #0A0F0D;
+  --text-color: #F4F7F5;
+  --primary-color: #059669;
+  --secondary-color: #2DD4BF;
+  --card-bg: #131A17;
+  --gray-400: #9FB0A8;
+  --gradient-1: linear-gradient(135deg, #047857 0%, #059669 50%, #10B981 100%);
+  --gradient-2: linear-gradient(135deg, #2DD4BF 0%, #059669 100%);
   --radius: 16px;
-  --shadow-glow: 0 0 60px rgba(79, 70, 229, 0.3);
+  --shadow-glow: 0 0 60px rgba(5, 150, 105, 0.22);
 }
 
 * {
@@ -81,8 +81,8 @@ body {
   gap: 8px;
   padding: 6px 16px;
   border-radius: 100px;
-  background: rgba(79, 70, 229, 0.15);
-  border: 1px solid rgba(79, 70, 229, 0.3);
+  background: rgba(5, 150, 105, 0.15);
+  border: 1px solid rgba(5, 150, 105, 0.3);
   color: var(--primary-light);
   font-size: 13px;
   font-weight: 600;
@@ -150,14 +150,14 @@ body {
   right: 0;
   z-index: 1000;
   padding: 16px 0;
-  background: rgba(15, 14, 23, 0.6);
+  background: rgba(10, 15, 13, 0.6);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+  border-bottom: 1px solid rgba(5, 150, 105, 0.1);
   transition: all 0.3s;
 }
 
 .landing-navbar.scrolled {
-  background: rgba(15, 14, 23, 0.95);
+  background: rgba(10, 15, 13, 0.95);
   padding: 12px 0;
 }
 
@@ -286,7 +286,7 @@ body {
 
 .landing-btn-ghost:hover {
   border-color: var(--primary-light);
-  background: rgba(79, 70, 229, 0.1);
+  background: rgba(5, 150, 105, 0.1);
 }
 
 .landing-btn-primary-sm {
@@ -338,7 +338,7 @@ body {
   width: 800px;
   height: 800px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.2) 0%, transparent 70%);
   filter: blur(80px);
   pointer-events: none;
 }
@@ -351,7 +351,7 @@ body {
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(6, 214, 160, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.1) 0%, transparent 70%);
   filter: blur(80px);
   pointer-events: none;
 }
@@ -421,12 +421,12 @@ body {
   background: var(--gradient-1);
   color: white;
   border: none;
-  box-shadow: 0 4px 30px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 4px 30px rgba(5, 150, 105, 0.4);
 }
 
 .landing-btn-large.primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 40px rgba(79, 70, 229, 0.5);
+  box-shadow: 0 8px 40px rgba(5, 150, 105, 0.5);
 }
 
 .landing-btn-large.secondary {
@@ -561,7 +561,7 @@ body {
 }
 
 .landing-dash-card-value.pink {
-  color: #EC4899;
+  color: var(--accent);
 }
 
 .landing-dash-chart {
@@ -598,7 +598,7 @@ body {
   position: absolute;
   border-radius: 14px;
   padding: 16px 20px;
-  background: rgba(35, 33, 54, 0.95);
+  background: rgba(22, 32, 28, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
@@ -729,7 +729,7 @@ body {
 
 .landing-feature-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(79, 70, 229, 0.3);
+  border-color: rgba(5, 150, 105, 0.3);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
@@ -741,7 +741,7 @@ body {
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: rgba(79, 70, 229, 0.12);
+  background: rgba(5, 150, 105, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -773,12 +773,12 @@ body {
 }
 
 .landing-feature-tag.new {
-  background: rgba(6, 214, 160, 0.15);
+  background: rgba(45, 212, 191, 0.15);
   color: var(--accent);
 }
 
 .landing-feature-tag.popular {
-  background: rgba(79, 70, 229, 0.15);
+  background: rgba(5, 150, 105, 0.15);
   color: var(--primary-light);
 }
 
@@ -822,7 +822,7 @@ body {
   font-weight: 700;
   color: var(--primary-light);
   margin: 0 auto 20px;
-  box-shadow: 0 0 30px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 0 30px rgba(5, 150, 105, 0.2);
 }
 
 .landing-step h4 {
@@ -893,9 +893,9 @@ body {
 }
 
 .landing-price-card.featured {
-  background: linear-gradient(135deg, var(--dark-card), rgba(79, 70, 229, 0.15));
-  border-color: rgba(79, 70, 229, 0.4);
-  box-shadow: 0 20px 60px rgba(79, 70, 229, 0.2);
+  background: linear-gradient(135deg, var(--dark-card), rgba(5, 150, 105, 0.15));
+  border-color: rgba(5, 150, 105, 0.4);
+  box-shadow: 0 20px 60px rgba(5, 150, 105, 0.2);
 }
 
 .landing-price-card.featured .landing-popular-badge {
@@ -971,7 +971,7 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: rgba(6, 214, 160, 0.15);
+  background: rgba(45, 212, 191, 0.15);
   color: var(--accent);
   display: flex;
   align-items: center;
@@ -1011,17 +1011,17 @@ body {
 
 .landing-btn-price.outline:hover {
   border-color: var(--primary);
-  background: rgba(79, 70, 229, 0.1);
+  background: rgba(5, 150, 105, 0.1);
 }
 
 .landing-btn-price.filled {
   background: var(--gradient-1);
   color: white;
-  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.4);
 }
 
 .landing-btn-price.filled:hover {
-  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.5);
+  box-shadow: 0 8px 30px rgba(5, 150, 105, 0.5);
   transform: translateY(-2px);
 }
 
@@ -1048,7 +1048,7 @@ body {
 
 .landing-result-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(79, 70, 229, 0.3);
+  border-color: rgba(5, 150, 105, 0.3);
 }
 
 .landing-result-img {
@@ -1078,12 +1078,12 @@ body {
 }
 
 .landing-result-badge-type.cefr {
-  background: rgba(6, 214, 160, 0.2);
+  background: rgba(45, 212, 191, 0.2);
   color: var(--accent);
 }
 
 .landing-result-badge-type.uni {
-  background: rgba(79, 70, 229, 0.2);
+  background: rgba(5, 150, 105, 0.2);
   color: var(--primary-light);
 }
 
@@ -1130,7 +1130,7 @@ body {
 }
 
 .landing-testimonial-card:hover {
-  border-color: rgba(79, 70, 229, 0.2);
+  border-color: rgba(5, 150, 105, 0.2);
 }
 
 .landing-testimonial-stars {
@@ -1202,7 +1202,7 @@ body {
 }
 
 .landing-partner-card:hover {
-  border-color: rgba(79, 70, 229, 0.3);
+  border-color: rgba(5, 150, 105, 0.3);
   transform: translateY(-4px);
 }
 
@@ -1222,11 +1222,11 @@ body {
 }
 
 .landing-cta-box {
-  background: linear-gradient(135deg, var(--dark-card), rgba(79, 70, 229, 0.12));
+  background: linear-gradient(135deg, var(--dark-card), rgba(5, 150, 105, 0.12));
   border-radius: 28px;
   padding: 80px;
   text-align: center;
-  border: 1px solid rgba(79, 70, 229, 0.2);
+  border: 1px solid rgba(5, 150, 105, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -1240,7 +1240,7 @@ body {
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.2), transparent 70%);
   filter: blur(60px);
   pointer-events: none;
 }
