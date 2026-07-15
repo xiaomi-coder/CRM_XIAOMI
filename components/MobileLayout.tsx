@@ -3,6 +3,7 @@ import { User } from '../types';
 import { translations, Language } from '../services/languageContext';
 import MobileHeader from './MobileHeader';
 import MobileSidebar from './MobileSidebar';
+import MobileBottomNav from './MobileBottomNav';
 
 interface MobileLayoutProps {
     children: React.ReactNode;
@@ -58,7 +59,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
                 onLogout={onLogout}
             />
 
-            <div className={`flex flex-col h-full transition-transform duration-300 ${isSidebarOpen ? 'scale-95 opacity-80' : 'scale-100'}`}>
+            <div className={`flex flex-col flex-1 min-h-0 transition-transform duration-300 ${isSidebarOpen ? 'scale-95 opacity-80' : 'scale-100'}`}>
                 <MobileHeader
                     title={getTabTitle()}
                     onMenuClick={() => setIsSidebarOpen(true)}
@@ -67,6 +68,12 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
                 <main className="mobile-content">
                     {children}
                 </main>
+                <MobileBottomNav
+                    user={user}
+                    activeTab={activeTab}
+                    onSelectTab={setActiveTab}
+                    onMoreClick={() => setIsSidebarOpen(true)}
+                />
             </div>
         </div>
     );

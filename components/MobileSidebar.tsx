@@ -95,7 +95,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                 {/* Header */}
                 <div className="p-6 flex items-center justify-between border-b border-white/5">
                     <div className="flex items-center gap-3">
-                        <div className="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20">
+                        <div className="bg-emerald-600 p-2 rounded-xl shadow-lg shadow-emerald-500/20">
                             <BrainCircuit size={24} className="text-white" />
                         </div>
                         <div>
@@ -111,12 +111,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                 {/* User Info */}
                 <div className="px-6 py-6 border-b border-white/5 bg-white/[0.02]">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center justify-center font-black text-indigo-400 border border-indigo-500/20 text-lg">
+                        <div className="w-12 h-12 rounded-xl bg-emerald-600/20 flex items-center justify-center font-black text-emerald-400 border border-emerald-500/20 text-lg">
                             {user.name.charAt(0)}
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="text-sm font-black text-white truncate">{user.name}</span>
-                            <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest truncate mt-1">{roleLabel}</span>
+                            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest truncate mt-1">{roleLabel}</span>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                                 onClose();
                             }}
                             className={`w-full flex items-center space-x-4 px-5 py-4 rounded-xl transition-all duration-300 ${activeTab === item.id
-                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20'
+                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20'
                                 : 'text-slate-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
