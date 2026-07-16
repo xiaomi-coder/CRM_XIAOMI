@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 import { useAuth } from '@/lib/auth-context';
@@ -12,6 +13,7 @@ const money = (n: number) => new Intl.NumberFormat('uz-UZ').format(n ?? 0);
 
 export default function StudentsScreen() {
   const { t } = useAuth();
+  const router = useRouter();
   const { data, loading, refreshing, error, reload } = useCenterData<Student>('students');
   const [q, setQ] = useState('');
 
@@ -53,7 +55,10 @@ export default function StudentsScreen() {
         renderItem={({ item }) => {
           const debt = (item.balance ?? 0) < 0;
           return (
-            <View style={s.row}>
+            <Pressable
+              style={({ pressed }) => [s.row, pressed && s.rowPressed]}
+              onPress={() => router.push(`/(app)/student/${item.id}`)}
+            >
               <View style={s.avatar}>
                 <Text style={s.avatarTxt}>{item.name?.charAt(0) ?? '?'}</Text>
               </View>
@@ -71,7 +76,8 @@ export default function StudentsScreen() {
                   {money(item.balance)}
                 </Text>
               </View>
-            </View>
+              <Ionicons name="chevron-forward" size={16} color={brand.textMuted} />
+            </Pressable>
           );
         }}
       />
@@ -107,6 +113,7 @@ const s = StyleSheet.create({
     borderColor: brand.border,
     padding: space.md,
   },
+  rowPressed: { opacity: 0.6 },
   avatar: {
     width: 40,
     height: 40,
