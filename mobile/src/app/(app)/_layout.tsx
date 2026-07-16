@@ -63,7 +63,8 @@ function DrawerContent(props: any) {
       </View>
 
       {/* Menyu */}
-      <DrawerContentScrollView {...props} contentContainerStyle={s.list}>
+      {/* flex:1 shart — aks holda ro'yxat cho'zilib, oxirgi band footer ostida qolib ketadi */}
+      <DrawerContentScrollView {...props} style={s.scroll} contentContainerStyle={s.list}>
         {items.map((it) => {
           const active = current && it.href.endsWith(current);
           return (
@@ -170,7 +171,8 @@ const s = StyleSheet.create({
     marginTop: 2,
   },
 
-  list: { padding: space.md },
+  scroll: { flex: 1 },
+  list: { padding: space.md, paddingBottom: space.lg },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
