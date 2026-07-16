@@ -33,7 +33,9 @@ function DrawerContent(props: any) {
   const go = (href: string) => {
     Haptics.selectionAsync();
     props.navigation.closeDrawer();
-    router.push(href as any);
+    // navigate (push emas) — bir xil ekranni qayta stack'ga qo'ymaydi,
+    // tab ichidagi ekranga o'tganda "chiqarib yuborish" xatosini oldini oladi
+    router.navigate(href as any);
   };
 
   return (
