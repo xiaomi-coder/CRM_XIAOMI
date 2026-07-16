@@ -1,0 +1,185 @@
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo, useState } from 'react';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+
+import { AppHeader } from '@/components/app-header';
+import { Empty, ErrorBox, Loading } from '@/components/ui';
+import { useAuth } from '@/lib/auth-context';
+import { brand, radius, space } from '@/lib/theme';
+import { Lead, LeadStatus } from '@/lib/types';
+import { useCenterData } from '@/lib/use-center-data';
+
+/** Status -> yorliq/rang (web Leads.tsx bilan bir xil) */
+const STATUS: Record<string, { key: string; color: string; bg: string }> = {
+  [LeadStatus.NEW]: { key: 'lead_new', color: '#2563EB', bg: 'rgba(37,99,235,0.1)' },
+  [LeadStatus.CONTACTED]: { key: 'lead_contacted', color: '#D97706', bg: 'rgba(217,119,6,0.1)' },
+  [LeadStatus.TRIAL]: { key: 'lead_trial', color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
+  [LeadStatus.REGISTERED]: { key: 'lead_success', color: brand.primary, bg: 'rgba(5,150,105,0.1)' },
+  [LeadStatus.REJECTED]: { key: 'lead_rejected', color: brand.danger, bg: 'rgba(220,38,38,0.1)' },
+};
+
+const FILTERS = [
+  LeadStatus.NEW,
+  LeadStatus.CONTACTED,
+  LeadStatus.TRIAL,
+  LeadStatus.REGISTERED,
+] as const;
+
+export default function LeadsScreen() {
+  const { t } = useAuth();
+  const { data, loading, refreshing, error, reload } = useCenterData<Lead>('leads');
+  const [q, setQ] = useState('');
+  const [filter, setFilter] = useState<string | null>(null);
+
+  /** Har status bo'yicha nechta lid bor */
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    data.forEach((l) => (c[l.status] = (c[l.status] ?? 0) + 1));
+    return c;
+  }, [data]);
+
+  const list = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    let rows = filter ? data.filter((l) => l.status === filter) : data;
+    if (s) {
+      rows = rows.filter(
+        (l) => l.name?.toLowerCase().includes(s) || l.phone?.includes(s) || l.subject?.toLowerCase().includes(s)
+      );
+    }
+    return [...rows].sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''));
+  }, [data, q, filter]);
+
+  return (
+    <View style={s.root}>
+      <AppHeader title={t.leads} />
+
+      {loading ? (
+        <Loading />
+      ) : error ? (
+        <ErrorBox message={error} />
+      ) : (
+        <>
+          {/* Status filtri */}
+          <View style={s.filters}>
+            {FILTERS.map((st) => {
+              const cfg = STATUS[st];
+              const active = filter === st;
+              return (
+                <Pressable
+                  key={st}
+                  onPress={() => setFilter(active ? null : st)}
+                  style={[s.chip, { backgroundColor: active ? cfg.color : cfg.bg }]}
+                >
+                  <Text style={[s.chipTxt, { color: active ? '#fff' : cfg.color }]}>
+                    {(t as any)[cfg.key] ?? st} {counts[st] ?? 0}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <View style={s.searchWrap}>
+            <Ionicons name="search" size={18} color={brand.textMuted} />
+            <TextInput
+              style={s.search}
+              value={q}
+              onChangeText={setQ}
+              placeholder={t.search || 'Qidirish...'}
+              placeholderTextColor={brand.textMuted}
+            />
+            {q.length > 0 && (
+              <Ionicons name="close-circle" size={18} color={brand.textMuted} onPress={() => setQ('')} />
+            )}
+          </View>
+
+          <FlatList
+            data={list}
+            keyExtractor={(i) => i.id}
+            contentContainerStyle={s.list}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={reload} tintColor={brand.primary} />
+            }
+            ListEmptyComponent={<Empty text={t.no_data || "Ma'lumot yo'q"} icon="person-add-outline" />}
+            renderItem={({ item }) => {
+              const cfg = STATUS[item.status] ?? STATUS[LeadStatus.NEW];
+              return (
+                <View style={s.row}>
+                  <View style={[s.avatar, { backgroundColor: cfg.bg }]}>
+                    <Text style={[s.avatarTxt, { color: cfg.color }]}>{item.name?.charAt(0) ?? '?'}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.name} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    <Text style={s.sub} numberOfLines={1}>
+                      {item.phone || '—'}
+                      {item.subject ? ` · ${item.subject}` : ''}
+                    </Text>
+                  </View>
+                  <View style={[s.badge, { backgroundColor: cfg.bg }]}>
+                    <Text style={[s.badgeTxt, { color: cfg.color }]}>
+                      {(t as any)[cfg.key] ?? item.status}
+                    </Text>
+                  </View>
+                </View>
+              );
+            }}
+          />
+        </>
+      )}
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  root: { flex: 1, backgroundColor: brand.bg },
+
+  filters: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space.sm,
+    paddingHorizontal: space.lg,
+    paddingTop: space.lg,
+  },
+  chip: { paddingHorizontal: space.md, paddingVertical: 7, borderRadius: 100 },
+  chipTxt: { fontSize: 10, fontWeight: '900', textTransform: 'uppercase' },
+
+  searchWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    backgroundColor: brand.card,
+    margin: space.lg,
+    marginBottom: space.sm,
+    paddingHorizontal: space.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: brand.border,
+  },
+  search: { flex: 1, paddingVertical: 12, fontSize: 14, color: brand.text },
+
+  list: { padding: space.lg, paddingTop: space.sm, gap: space.sm, flexGrow: 1 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    backgroundColor: brand.card,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: brand.border,
+    padding: space.md,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarTxt: { fontWeight: '900', fontSize: 15 },
+  name: { color: brand.text, fontSize: 14, fontWeight: '800' },
+  sub: { color: brand.textMuted, fontSize: 12, marginTop: 2 },
+
+  badge: { paddingHorizontal: space.md, paddingVertical: 5, borderRadius: 100 },
+  badgeTxt: { fontSize: 9, fontWeight: '900', textTransform: 'uppercase' },
+});
