@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
@@ -18,9 +19,20 @@ const ROLES: Record<string, { key: string; color: string; bg: string }> = {
 };
 
 export default function StaffScreen() {
-  const { t } = useAuth();
+  const { t, user } = useAuth();
+  const router = useRouter();
   const { data, loading, refreshing, error, reload } = useCenterData<User>('users');
   const [q, setQ] = useState('');
+
+  // Yangi xodim qo'shish — faqat direktor/super admin
+  const canAdd = user?.role === UserRole.DIRECTOR || user?.role === UserRole.SUPER_ADMIN;
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+  );
 
   const list = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -41,7 +53,16 @@ export default function StaffScreen() {
 
   return (
     <View style={s.root}>
-      <AppHeader title={t.staff} />
+      <AppHeader
+        title={t.staff}
+        right={
+          canAdd ? (
+            <Pressable onPress={() => router.push('/(app)/staff-new')} hitSlop={10} style={s.addBtn}>
+              <Ionicons name="add" size={22} color="#fff" />
+            </Pressable>
+          ) : undefined
+        }
+      />
 
       {loading ? (
         <Loading />
@@ -105,6 +126,15 @@ export default function StaffScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: brand.bg },
+
+  addBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.sm,
+    backgroundColor: brand.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   searchWrap: {
     flexDirection: 'row',

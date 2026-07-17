@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useMemo } from 'react';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 import { useAuth } from '@/lib/auth-context';
@@ -10,7 +11,15 @@ import { useCenterData } from '@/lib/use-center-data';
 
 export default function GroupsScreen() {
   const { t, user } = useAuth();
+  const router = useRouter();
   const { data, loading, refreshing, error, reload } = useCenterData<Group>('groups');
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+  );
 
   /** O'qituvchi faqat o'z guruhlarini ko'radi */
   const list = useMemo(() => {
@@ -34,7 +43,10 @@ export default function GroupsScreen() {
       }
       ListEmptyComponent={<Empty text={t.no_data || "Guruh yo'q"} icon="layers-outline" />}
       renderItem={({ item }) => (
-        <View style={s.card}>
+        <Pressable
+          style={({ pressed }) => [s.card, pressed && { opacity: 0.6 }]}
+          onPress={() => router.push(`/(app)/group/${item.id}`)}
+        >
           <View style={s.head}>
             <View style={s.icon}>
               <Ionicons name="layers" size={18} color="#fff" />
@@ -65,7 +77,7 @@ export default function GroupsScreen() {
               </Text>
             </View>
           </View>
-        </View>
+        </Pressable>
       )}
     />
   );
