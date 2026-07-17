@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
@@ -13,9 +14,19 @@ const money = (n: number) => new Intl.NumberFormat('uz-UZ').format(n ?? 0);
 
 export default function PaymentsScreen() {
   const { t } = useAuth();
+  const router = useRouter();
   const payments = useCenterData<Payment>('payments');
   const students = useCenterData<Student>('students');
   const [q, setQ] = useState('');
+
+  // Formadan qaytganda ro'yxatni yangilash (yangi to'lov ko'rinishi uchun)
+  useFocusEffect(
+    useCallback(() => {
+      payments.reload();
+      students.reload();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+  );
 
   /** studentId -> ism (ro'yxatda ko'rsatish uchun) */
   const nameById = useMemo(() => {
@@ -56,7 +67,14 @@ export default function PaymentsScreen() {
 
   return (
     <View style={s.root}>
-      <AppHeader title={t.payments} />
+      <AppHeader
+        title={t.payments}
+        right={
+          <Pressable onPress={() => router.push('/(app)/payment-new')} hitSlop={10} style={s.addBtn}>
+            <Ionicons name="add" size={22} color="#fff" />
+          </Pressable>
+        }
+      />
 
       {loading ? (
         <Loading />
@@ -151,6 +169,15 @@ export default function PaymentsScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: brand.bg },
+
+  addBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.sm,
+    backgroundColor: brand.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   stats: { flexDirection: 'row', gap: space.md, padding: space.lg, paddingBottom: space.sm },
   stat: {

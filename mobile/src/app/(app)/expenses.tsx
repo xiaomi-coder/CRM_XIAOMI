@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
 import { Empty, ErrorBox, Loading } from '@/components/ui';
@@ -21,8 +22,16 @@ const CATS: Record<Expense['category'], { key: string; color: string; bg: string
 
 export default function ExpensesScreen() {
   const { t } = useAuth();
+  const router = useRouter();
   const { data, loading, refreshing, error, reload } = useCenterData<Expense>('expenses');
   const [q, setQ] = useState('');
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+  );
 
   const total = useMemo(() => data.reduce((sum, e) => sum + (e.amount ?? 0), 0), [data]);
 
@@ -34,7 +43,14 @@ export default function ExpensesScreen() {
 
   return (
     <View style={s.root}>
-      <AppHeader title={t.expenses} />
+      <AppHeader
+        title={t.expenses}
+        right={
+          <Pressable onPress={() => router.push('/(app)/expense-new')} hitSlop={10} style={s.addBtn}>
+            <Ionicons name="add" size={22} color="#fff" />
+          </Pressable>
+        }
+      />
 
       {loading ? (
         <Loading />
@@ -109,6 +125,15 @@ export default function ExpensesScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: brand.bg },
+
+  addBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.sm,
+    backgroundColor: brand.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   totalCard: {
     flexDirection: 'row',
