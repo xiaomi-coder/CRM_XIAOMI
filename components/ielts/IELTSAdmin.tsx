@@ -44,34 +44,36 @@ const IELTSAdmin: React.FC<IELTSAdminProps> = ({ t, centerId, userRole, testId }
     // Database mapping helpers
     const toCamelCase = (item: any) => {
         if (!item) return item;
+        // DIQQAT: jadvallarda ustunlar aralash (asosan camelCase, faqat test_id snake_case).
+        // ?? bo'lmasa, mavjud camelCase qiymat undefined bilan o'chib ketadi.
         return {
             ...item,
-            centerId: item.center_id,
-            testId: item.test_id,
-            examType: item.exam_type,
+            centerId: item.center_id ?? item.centerId,
+            testId: item.test_id ?? item.testId,
+            examType: item.exam_type ?? item.examType,
             // Reading
-            passageNumber: item.passage_number,
-            passageTitle: item.passage_title,
-            passageText: item.passage_text,
-            questionNumber: item.question_number,
-            questionType: item.question_type,
-            questionText: item.question_text,
-            correctAnswer: item.correct_answer,
+            passageNumber: item.passage_number ?? item.passageNumber,
+            passageTitle: item.passage_title ?? item.passageTitle,
+            passageText: item.passage_text ?? item.passageText,
+            questionNumber: item.question_number ?? item.questionNumber,
+            questionType: item.question_type ?? item.questionType,
+            questionText: item.question_text ?? item.questionText,
+            correctAnswer: item.correct_answer ?? item.correctAnswer,
             // Listening
-            sectionNumber: item.section_number,
-            sectionTitle: item.section_title,
-            audioUrl: item.audio_url,
+            sectionNumber: item.section_number ?? item.sectionNumber,
+            sectionTitle: item.section_title ?? item.sectionTitle,
+            audioUrl: item.audio_url ?? item.audioUrl,
             // Writing
-            taskNumber: item.task_number,
-            taskPrompt: item.task_prompt,
-            wordLimitMin: item.word_limit_min,
-            timeMinutes: item.time_minutes,
+            taskNumber: item.task_number ?? item.taskNumber,
+            taskPrompt: item.task_prompt ?? item.taskPrompt,
+            wordLimitMin: item.word_limit_min ?? item.wordLimitMin,
+            timeMinutes: item.time_minutes ?? item.timeMinutes,
             // Speaking
-            partNumber: item.part_number,
-            cueCardTopic: item.cue_card_topic,
-            cueCardPoints: item.cue_card_points,
-            preparationTime: item.preparation_time,
-            speakingTime: item.speaking_time
+            partNumber: item.part_number ?? item.partNumber,
+            cueCardTopic: item.cue_card_topic ?? item.cueCardTopic,
+            cueCardPoints: item.cue_card_points ?? item.cueCardPoints,
+            preparationTime: item.preparation_time ?? item.preparationTime,
+            speakingTime: item.speaking_time ?? item.speakingTime
         };
     };
 

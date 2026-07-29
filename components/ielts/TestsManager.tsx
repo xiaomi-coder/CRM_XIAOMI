@@ -37,22 +37,24 @@ const TestsManager: React.FC<TestsManagerProps> = ({ t, centerId, userRole }) =>
         try {
             const data = await db.get('ielts_tests');
             if (Array.isArray(data)) {
+                // Jadvalda ikkala uslub ham bor (center_id va "centerId") — ikkalasini o'qiymiz
+                const ownerOf = (t: any) => t.center_id ?? t.centerId;
                 const mapTest = (t: any): IELTSTest => ({
                     id: t.id,
-                    centerId: t.center_id,
+                    centerId: ownerOf(t),
                     title: t.title,
-                    examType: t.exam_type,
+                    examType: t.exam_type ?? t.examType,
                     status: t.status,
-                    createdAt: t.created_at
+                    createdAt: t.created_at ?? t.createdAt
                 });
 
                 const centerTests = (data as any[])
-                    .filter(t => t.center_id === centerId)
+                    .filter(t => ownerOf(t) === centerId)
                     .map(mapTest)
                     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
                 const globalTests = (data as any[])
-                    .filter(t => t.center_id === PLATFORM_CENTER_ID)
+                    .filter(t => ownerOf(t) === PLATFORM_CENTER_ID)
                     .map(mapTest)
                     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 

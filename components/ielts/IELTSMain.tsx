@@ -88,15 +88,18 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
             const toCamelCase = (item: any) => {
                 if (!item) return item;
                 // Basic mapping for all types
+                // DIQQAT: jadvallarda ustunlar aralash — ba'zilari camelCase ("questionText"),
+                // faqat test_id snake_case. Shuning uchun ?? bilan ikkalasini ham qo'llab-quvvatlaymiz,
+                // aks holda mavjud camelCase qiymat undefined bilan o'chib ketadi.
                 const base = {
                     ...item,
-                    centerId: item.center_id,
-                    testId: item.test_id,
-                    examType: item.exam_type,
-                    questionText: item.question_text,
-                    questionType: item.question_type,
-                    questionNumber: item.question_number,
-                    correctAnswer: item.correct_answer,
+                    centerId: item.center_id ?? item.centerId,
+                    testId: item.test_id ?? item.testId,
+                    examType: item.exam_type ?? item.examType,
+                    questionText: item.question_text ?? item.questionText,
+                    questionType: item.question_type ?? item.questionType,
+                    questionNumber: item.question_number ?? item.questionNumber,
+                    correctAnswer: item.correct_answer ?? item.correctAnswer,
                 };
                 // Specific fields
                 if (item.passage_title) base.passageTitle = item.passage_title;
