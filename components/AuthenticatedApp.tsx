@@ -362,7 +362,27 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       case 'salary': return <SalaryCalculation t={t} users={users} groups={groups} payments={payments} students={students} currentUser={currentUser} />;
       case 'staff': return <StaffManagement t={t} users={users} groups={groups} onAddUser={u => db.insert('users', { ...u, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDeleteUser={id => db.delete('users', id).then(loadAllData)} onUpdateUser={(id, d) => db.update('users', id, d).then(loadAllData)} />;
       case 'leads':
-      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={l => db.delete('leads', l.id).then(() => { loadAllData(); setActiveTab('students'); })} onUpdateLead={(id, d) => db.update('leads', id, d).then(loadAllData)} />;
+      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={async (l) => {
+        // Lid o'quvchiga aylanadi: avval o'quvchi yaratiladi, keyin lid o'chiriladi.
+        // (Avval faqat lid o'chirilardi — ma'lumot butunlay yo'qolib ketardi.)
+        await db.insert('students', {
+          id: crypto.randomUUID(),
+          "centerId": centerId,
+          name: l.name,
+          phone: l.phone || '',
+          parentName: l.parentName || '',
+          parentPhone: l.parentPhone || '',
+          balance: 0,
+          coins: 0,
+          joinedDate: new Date().toISOString().split('T')[0],
+          tgEnabled: false,
+          tgConnectionCode: '',
+          status: StudentStatus.ACTIVE,
+        });
+        await db.delete('leads', l.id);
+        loadAllData();
+        setActiveTab('students');
+      }} onUpdateLead={(id, d) => db.update('leads', id, d).then(loadAllData)} />;
       case 'ielts': return <IELTSMain t={t} centerId={centerId} studentName={currentUser.name} testId={testData?.id || null} pinCode={testData?.pin || null} onBack={() => { setActiveTab('dashboard'); }} onComplete={(attempt) => { loadAllData(); }} />;
       case 'ielts_admin': return <IELTSAdmin t={t} centerId={centerId} userRole={currentUser.role} />;
       case 'tests_manager': return <TestsManager t={t} centerId={centerId} userRole={currentUser.role} />;
