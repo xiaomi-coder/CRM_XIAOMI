@@ -12,6 +12,7 @@
  * Ishlatish:
  *   node scripts/ielts-seed/seed.mjs            # yuklash
  *   node scripts/ielts-seed/seed.mjs --dry      # faqat tekshirish, yozmaydi
+ *   node scripts/ielts-seed/seed.mjs --strict   # blueprint (IELTS tuzilma) xatolari ham to'siq
  *   node scripts/ielts-seed/seed.mjs --list     # bazadagi platforma testlari
  *   node scripts/ielts-seed/seed.mjs --remove "Test nomi"
  */
@@ -19,6 +20,7 @@
 import { readdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateReadingBlueprint } from './blueprint.mjs';
 
 const API = process.env.CRM_API_URL || 'https://api.eduprocrm.uz';
 const KEY =
@@ -167,6 +169,7 @@ async function loadDefs() {
 async function main() {
   const args = process.argv.slice(2);
   const dry = args.includes('--dry');
+  const strict = args.includes('--strict');
 
   if (args.includes('--list')) {
     const tests = await rest('ielts_tests?select=id,title,status,center_id,exam_type');
@@ -209,6 +212,13 @@ async function main() {
   let added = 0;
   for (const def of defs) {
     const errs = validate(def);
+    // IELTS rasmiy tuzilmasi (blueprint.mjs) — savol turlari bloklari va qiyinlik gradienti
+    const blueprintErrs = validateReadingBlueprint(def.reading);
+    if (blueprintErrs.length) {
+      console.log(`${strict ? '❌' : '⚠️ '} ${def.file} — IELTS tuzilma (blueprint):`);
+      for (const e of blueprintErrs) console.log(`     ${e}`);
+      if (strict) continue;
+    }
     if (errs.length) {
       console.log(`❌ ${def.file} — ${def.title}`);
       for (const e of errs) console.log(`     ${e}`);

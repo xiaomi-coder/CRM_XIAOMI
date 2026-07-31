@@ -2,6 +2,18 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { BookOpen, Clock, ChevronLeft, ChevronRight, AlertTriangle, CheckCircle, ArrowLeft } from 'lucide-react';
 import { IELTSReadingQuestion, IELTSExamType, IELTSQuestionType } from '../../types';
 import { getReadingBandScore } from '../../services/ieltsGradingService';
+import {
+    buildQuestionBlocks,
+    isAnswerCorrect,
+    exceedsWordLimit,
+    optionLetter,
+    optionLabel,
+    parseOptions,
+    splitLabelledParagraphs,
+    LETTER_CHOICE_TYPES,
+    COMPLETION_TYPES,
+    QuestionBlock,
+} from '../../services/ieltsQuestionBlocks';
 
 interface IELTSReadingProps {
     t: any;
@@ -65,9 +77,7 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
         // Calculate score
         let correct = 0;
         questions.forEach(q => {
-            const userAnswer = (answers[q.questionNumber] || '').trim().toLowerCase();
-            const correctAnswer = q.correctAnswer.trim().toLowerCase();
-            if (userAnswer === correctAnswer) correct++;
+            if (isAnswerCorrect(answers[q.questionNumber] || '', q.correctAnswer)) correct++;
         });
 
         const bandScore = getReadingBandScore(correct, examType);
@@ -82,6 +92,8 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
 
     const isUrgent = timeLeft < 300; // < 5 min
     const currentQuestions = passages[currentPassage] || [];
+    // Savollarni rasmiy IELTS bloklariga bo'lish (har blok o'z ko'rsatmasi bilan)
+    const currentBlocks = useMemo(() => buildQuestionBlocks(currentQuestions), [passages, currentPassage]);
     const passageText = currentQuestions[0]?.passageText || '';
     const passageTitle = currentQuestions[0]?.passageTitle || `Passage ${currentPassage}`;
     const answeredCount = Object.keys(answers).filter(k => answers[parseInt(k)]?.trim()).length;
@@ -90,8 +102,12 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
         setAnswers(prev => ({ ...prev, [qNum]: value }));
     };
 
-    const renderQuestion = (q: IELTSReadingQuestion) => {
+    const renderQuestion = (q: IELTSReadingQuestion, block: QuestionBlock<IELTSReadingQuestion>) => {
         const value = answers[q.questionNumber] || '';
+        const isLetterChoice = LETTER_CHOICE_TYPES.includes(q.questionType);
+        const isCompletion = COMPLETION_TYPES.includes(q.questionType);
+        const wordLimit = block.wordLimit || '';
+        const overLimit = isCompletion && exceedsWordLimit(value, wordLimit);
 
         return (
             <div key={q.questionNumber} className="bg-white rounded-2xl border border-slate-100 p-5 hover:border-indigo-200 transition-all">
@@ -106,8 +122,8 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
                 {/* Multiple Choice */}
                 {q.questionType === IELTSQuestionType.MULTIPLE_CHOICE && q.options && (
                     <div className="ml-11 space-y-2">
-                        {q.options.map((opt, i) => {
-                            const letter = String.fromCharCode(65 + i); // A, B, C, D
+                        {parseOptions(q.options).items.map((opt, i) => {
+                            const letter = optionLetter(opt, i); // A, B, C, D
                             return (
                                 <button key={i} onClick={() => setAnswer(q.questionNumber, letter)}
                                     className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-3 ${value === letter
@@ -116,7 +132,7 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
                                         }`}>
                                     <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black flex-shrink-0 ${value === letter ? 'bg-white/20 text-white' : 'bg-white text-slate-400 border border-slate-200'
                                         }`}>{letter}</span>
-                                    {opt}
+                                    {optionLabel(opt)}
                                 </button>
                             );
                         })}
@@ -141,16 +157,43 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
                     </div>
                 )}
 
+                {/* Matching — harf tanlash (A, B, C ...) */}
+                {isLetterChoice && block.options.length > 0 && (
+                    <div className="ml-11 flex gap-2 flex-wrap">
+                        {block.options.map((opt, i) => {
+                            const letter = optionLetter(opt, i);
+                            return (
+                                <button key={letter} onClick={() => setAnswer(q.questionNumber, letter)}
+                                    title={optionLabel(opt)}
+                                    className={`w-11 h-11 rounded-xl text-sm font-black transition-all ${value === letter
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
+                                        : 'bg-slate-50 text-slate-500 hover:bg-indigo-50'
+                                        }`}>
+                                    {letter}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+
                 {/* Text Input (gap fill, short answer, completion) */}
-                {['sentence_completion', 'summary_completion', 'short_answer', 'matching_headings', 'matching_features'].includes(q.questionType) && (
+                {isCompletion && (
                     <div className="ml-11">
                         <input
                             type="text"
                             value={value}
                             onChange={(e) => setAnswer(q.questionNumber, e.target.value)}
-                            placeholder={t.type_answer || "Javobni yozing..."}
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder={wordLimit || t.type_answer || "Javobni yozing..."}
+                            className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl outline-none text-sm font-bold focus:ring-2 focus:border-transparent ${overLimit
+                                ? 'border-amber-300 focus:ring-amber-500'
+                                : 'border-slate-200 focus:ring-indigo-500'
+                                }`}
                         />
+                        {overLimit && (
+                            <p className="text-[10px] font-black text-amber-600 uppercase tracking-wide mt-1.5">
+                                ⚠️ {wordLimit} — {t.word_limit_exceeded || "so'z chegarasidan oshdi, javob noto'g'ri sanaladi"}
+                            </p>
+                        )}
                     </div>
                 )}
             </div>
@@ -213,8 +256,21 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
                 {/* Left: Passage Text */}
                 <div className="bg-white rounded-[2rem] border border-slate-100 p-6 lg:p-8 max-h-[calc(100vh-180px)] overflow-y-auto lg:sticky lg:top-[140px]">
                     <h3 className="text-lg font-black text-slate-800 mb-4 uppercase tracking-tight">{passageTitle}</h3>
-                    <div className="text-sm text-slate-600 leading-[1.8] whitespace-pre-wrap font-medium">
-                        {passageText || (
+                    <div className="text-sm text-slate-600 leading-[1.8] font-medium">
+                        {passageText ? (
+                            <div className="space-y-4">
+                                {splitLabelledParagraphs(passageText).map((p, i) => (
+                                    <div key={i} className={p.letter ? 'flex gap-3' : ''}>
+                                        {p.letter && (
+                                            <span className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-black flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                {p.letter}
+                                            </span>
+                                        )}
+                                        <p className="whitespace-pre-wrap">{p.body}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
                             <div className="text-center py-12 text-slate-400">
                                 <BookOpen size={48} className="mx-auto mb-4 opacity-30" />
                                 <p className="font-bold">{t.no_questions || "Bu passage uchun savollar topilmadi"}</p>
@@ -226,8 +282,40 @@ const IELTSReading: React.FC<IELTSReadingProps> = ({ t, questions, examType, onC
 
                 {/* Right: Questions */}
                 <div className="space-y-4 max-h-[calc(100vh-180px)] overflow-y-auto pr-2 mt-4 lg:mt-0">
-                    {currentQuestions.length > 0 ? (
-                        currentQuestions.map(q => renderQuestion(q))
+                    {currentBlocks.length > 0 ? (
+                        currentBlocks.map(block => (
+                            <div key={`${block.questionType}-${block.firstNumber}`} className="space-y-3">
+                                {/* Blok ko'rsatmasi — rasmiy IELTS rubrikasi */}
+                                <div className="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-5">
+                                    <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">
+                                        {block.rangeLabel}
+                                    </p>
+                                    {block.instructions.map((line, i) => (
+                                        <p key={i} className={`text-sm leading-relaxed ${i === 0 ? 'font-bold text-slate-700' : 'text-slate-600'}`}>
+                                            {line}
+                                        </p>
+                                    ))}
+                                    {block.repeatNote && (
+                                        <p className="text-xs font-bold text-slate-500 italic mt-2">
+                                            NB You may use any letter more than once.
+                                        </p>
+                                    )}
+                                    {/* Variantlar ro'yxati — faqat harfdan boshqa matni bo'lsa
+                                        ("Which paragraph contains..." da harflar passaj xatboshilari) */}
+                                    {block.options.some((o, i) => optionLabel(o) !== optionLetter(o, i)) && (
+                                        <div className="mt-3 bg-white rounded-xl border border-indigo-100 p-3 space-y-1">
+                                            {block.options.map((opt, i) => (
+                                                <p key={i} className="text-sm font-bold text-slate-700">
+                                                    <span className="text-indigo-600">{optionLetter(opt, i)}</span>
+                                                    {'  '}{optionLabel(opt)}
+                                                </p>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                {block.questions.map(q => renderQuestion(q, block))}
+                            </div>
+                        ))
                     ) : (
                         <div className="bg-white rounded-[2rem] border border-slate-100 p-12 text-center text-slate-400">
                             <AlertTriangle size={48} className="mx-auto mb-4 opacity-30" />

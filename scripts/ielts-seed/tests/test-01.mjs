@@ -61,11 +61,16 @@ undo decades of progress. What is not in dispute is that the wolf's future in Eu
 by biology than by whether societies that have grown unaccustomed to living alongside a large predator
 are willing to learn to do so again.`;
 
-const P2 = `Walk through any large city on a summer afternoon and you will feel something that the
+// Xatboshilar A–G bilan harflangan — "Which paragraph contains..." savollari uchun shart.
+const P2 = `A
+
+Walk through any large city on a summer afternoon and you will feel something that the
 official temperature reading does not fully capture. The air above asphalt shimmers; brick walls radiate
 heat long after sunset; the breeze, when it comes, is warm. Cities are measurably hotter than the
 countryside that surrounds them, a phenomenon known as the urban heat island. On a still, clear night
 the difference between a dense city centre and nearby farmland can reach seven degrees Celsius.
+
+B
 
 The causes are structural. Concrete, asphalt and brick have a high thermal mass, meaning they absorb
 solar energy through the day and release it slowly through the night, so cities never fully cool down.
@@ -75,6 +80,8 @@ that trap radiation through repeated reflection and block the sky view that woul
 escape upwards. Vegetation, which cools the air by evaporating water through its leaves, is scarce.
 Finally, cities generate their own heat directly, from engines, industry and, ironically, from the air
 conditioning units that residents use to escape the warmth.
+
+C
 
 For a long time the heat island was treated as a curiosity of local climatology. It is now understood as
 a public health issue. Heat kills more people in Europe each year than any other extreme weather event,
@@ -86,12 +93,16 @@ American cities found that districts subjected to discriminatory lending policie
 on average, several degrees hotter than wealthier districts in the same city today, largely because they
 were never planted.
 
+D
+
 The responses now being tested fall into three broad groups. The first is to change what cities are made
 of. Coating roofs with reflective white membranes can lower internal building temperatures by several
 degrees, and in cities such as New York volunteers have painted millions of square metres of rooftop.
 Permeable paving and lighter-coloured road surfaces work on the same principle. These interventions are
 cheap and immediate, though they do nothing for the pedestrian at street level and can, if overused,
 increase glare.
+
+E
 
 The second approach is to bring vegetation back. A mature street tree provides shade that can reduce the
 temperature felt by a pedestrian beneath it by ten degrees or more, and unlike a reflective roof it acts
@@ -101,6 +112,8 @@ the conditions where water is scarcest, they take twenty years to reach useful s
 poorly may not survive the climate expected by mid-century. Some cities are therefore planting a deliberately
 diverse mixture rather than the uniform avenues of the past.
 
+F
+
 The third strategy is water. Barcelona has installed networks of drinking fountains and shaded "climate
 shelters" in schools and libraries, open to the public during heatwaves. Vienna uses fine mist sprays in
 public squares. Seoul removed an elevated motorway to uncover the Cheonggyecheon stream buried beneath
@@ -108,17 +121,24 @@ it, and measurements along the restored corridor recorded temperatures three to 
 on parallel streets. Such projects are expensive and slow, but they deliver benefits beyond cooling,
 including recreation, drainage and higher property values, which makes them easier to justify politically.
 
+G
+
 Underlying all of this is a question of priorities. Every square metre of a city is contested, and shade
 competes with parking, delivery bays and building footprints. The evidence increasingly suggests that
 cooling should be treated not as decoration but as infrastructure, as essential as drainage or lighting.
 That reframing has begun in a handful of places. Whether it spreads quickly enough is a separate matter,
 because the summers against which these measures are designed are arriving faster than the trees can grow.`;
 
-const P3 = `Forgetting is usually described as a failure. We speak of memory letting us down, of names
+// Xatboshilar A–H bilan harflangan + to'rt tadqiqotchi nomlangan (36–40 matching uchun).
+const P3 = `A
+
+Forgetting is usually described as a failure. We speak of memory letting us down, of names
 that escape us, of facts that will not come when called. Yet a growing body of research in cognitive
 psychology suggests that this framing is mistaken. Forgetting, on this view, is not a flaw in an otherwise
 efficient system but an active process that the brain performs deliberately, and one without which
 memory would be close to useless.
+
+B
 
 The classic evidence comes from rare individuals whose memories do not fade. The Russian journalist
 studied by the neuropsychologist Alexander Luria in the 1920s could reproduce lists of dozens of items
@@ -128,6 +148,8 @@ whole. He struggled to recognise faces, because each expression registered as a 
 than a variation of one person. A memory that discards nothing, it appears, cannot generalise, and
 generalisation is what makes past experience useful in new situations.
 
+C
+
 Contemporary work has moved from such case studies to controlled experiments, and the most influential
 findings concern what researchers call retrieval-induced forgetting. In a typical study, participants
 learn a set of related items and then practise retrieving only some of them. When tested later, they
@@ -136,36 +158,51 @@ from the same category worse than items from categories they never practised at 
 retrieving one memory appears to actively suppress its competitors. Forgetting here is not decay through
 disuse; it is the by-product of successful remembering.
 
-Why should the brain be built this way? The dominant explanation is that memory exists to support
-prediction rather than to preserve a record. An organism does not need to know every place it has ever
+D
+
+Why should the brain be built this way? The dominant explanation, argued most forcefully by the memory
+researcher Hannah Reisz, is that memory exists to support prediction rather than to preserve a record.
+A system of this kind, she insists, should be judged by how accurately it anticipates what is coming,
+not by how much of the past it has managed to keep. An organism does not need to know every place it has ever
 found food; it needs a reliable estimate of where food is likely to be now. Information that is no longer
 predictive is not merely useless but harmful, because it competes for attention with information that is
 current. Under this account, the rate at which a memory fades ought to track how likely it is to be needed
 again, and there is evidence that it does. Memories tied to strong emotion, which usually signals
 significance, persist far longer than neutral ones.
 
-The mechanism is increasingly well described at the biological level. Studies in rodents have identified
+E
+
+The mechanism is increasingly well described at the biological level. Studies in rodents led by Tomas
+Bergqvist, who has spent two decades tracing the cellular basis of memory loss, have identified
 neurons that generate new cells in the hippocampus, a structure central to forming memories. Periods of
 rapid neurogenesis are associated with the loss of previously stored information, apparently because new
 cells are integrated into existing circuits and disturb the patterns held there. Infant animals, in which
 neurogenesis is fastest, forget most rapidly, which may explain why human beings retain almost nothing
 from their first years. Slowing neurogenesis pharmacologically preserves old memories; accelerating it,
-through exercise for instance, erases them more quickly. Forgetting, in other words, has dedicated
-machinery, and machinery is not usually maintained for a defect.
+through exercise for instance, erases them more quickly. Forgetting, Bergqvist concludes, has dedicated
+machinery, and machinery is not usually built and maintained in order to produce a defect.
 
-There are practical consequences. If forgetting is competitive rather than passive, then the traditional
-student practice of rereading material is close to worthless, because it never forces retrieval. Testing
+F
+
+There are practical consequences. Daniel Oyelaran, who studies how students actually revise, points out
+that if forgetting is competitive rather than passive, then the traditional practice of rereading
+material is close to worthless, because it demands no effort and never forces retrieval. Testing
 oneself, by contrast, both strengthens the target memory and suppresses interfering ones, which is why
 retrieval practice consistently outperforms rereading in classroom studies, often dramatically. Spacing
-those attempts matters too. Reviewing material just as it begins to slip produces more durable learning
-than reviewing it while it is still fresh, because difficulty during retrieval is itself the signal that
-drives consolidation.
+those attempts matters too. The best moment to review something, on Oyelaran's account, is precisely the
+moment at which it begins to slip; reviewing it while it is still fresh produces weaker learning, because
+difficulty during retrieval is itself the signal that drives consolidation.
+
+G
 
 There are clinical implications as well. In post-traumatic stress disorder, a memory that ought to have
-faded remains permanently available, intruding without invitation. Treatments increasingly aim not to
-delete such memories, which is neither possible nor obviously desirable, but to restore the normal
-process by which their emotional charge diminishes. Seen this way, the disorder is a failure of
-forgetting rather than of memory.
+faded remains permanently available, intruding without invitation. Priya Nandakumar, a clinical
+psychologist who works with trauma patients, stresses that treatment does not aim to delete such
+memories, which is neither possible nor obviously desirable, but to restore the normal process by which
+their emotional charge diminishes. Seen this way, she argues, the condition is better described as
+retaining too much than as remembering badly — a failure of forgetting rather than of memory.
+
+H
 
 None of this means that everything lost was worth losing. The point is narrower but still substantial:
 a system that retained everything would drown in its own detail. What we experience as the frustration of
@@ -222,38 +259,23 @@ export default {
       title: 'How Cities Cool Themselves',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'The difference between a city centre and nearby farmland can reach seven degrees Celsius.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'A grass field reflects less sunlight than fresh asphalt.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Air conditioning contributes to the heat of a city.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Heat causes more deaths in Europe than any other extreme weather event.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Reflective roofs significantly reduce temperatures at street level.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Barcelona has planted more trees than Paris.', answer: 'NOT GIVEN' },
-        { type: 'true_false_not_given', text: 'The Cheonggyecheon project recorded temperatures lower than on nearby streets.', answer: 'TRUE' },
-        {
-          type: 'multiple_choice',
-          text: 'Street canyons increase urban temperatures mainly because they',
-          options: ['A) contain more vehicles', 'B) trap radiation and block heat escaping upwards', 'C) prevent rainfall reaching the ground', 'D) are built from lighter materials'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The research on American cities mentioned in the passage found that hotter districts',
-          options: [
-            'A) had the newest housing',
-            'B) were mainly industrial areas',
-            'C) had been affected by discriminatory lending policies',
-            'D) contained the most air conditioning units',
-          ],
-          answer: 'C',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'One disadvantage of street trees identified in the passage is that they',
-          options: ['A) reflect too much light', 'B) need water when it is least available', 'C) reduce property values', 'D) block drainage systems'],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'The phenomenon by which cities are hotter than surrounding areas is called the urban ________ island.', answer: 'heat' },
-        { type: 'sentence_completion', text: 'Barcelona has created shaded climate ________ in schools and libraries.', answer: 'shelters' },
+        // Questions 14–18 — Which paragraph contains the following information? (A–G)
+        { type: 'matching_information', text: 'a reference to a past policy whose effect on temperature can still be measured today', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'C' },
+        { type: 'matching_information', text: 'an explanation of why built surfaces continue to give off heat after dark', answer: 'B' },
+        { type: 'matching_information', text: 'an example of transport infrastructure being removed', answer: 'F' },
+        { type: 'matching_information', text: 'a warning that a measure can have a negative side effect if it is overused', answer: 'D' },
+        { type: 'matching_information', text: 'a statement about how long a cooling measure takes to become useful', answer: 'E' },
+
+        // Questions 19–21 — Matching features (A, B yoki C)
+        { type: 'matching_features', text: 'fine sprays of water in public squares', options: ['@Match each cooling measure with the city where it was introduced, A, B or C.', 'A) Barcelona', 'B) Vienna', 'C) Seoul'], answer: 'B' },
+        { type: 'matching_features', text: 'cool public buildings opened to residents during heatwaves', answer: 'A' },
+        { type: 'matching_features', text: 'uncovering a watercourse that had been built over', answer: 'C' },
+
+        // Questions 22–26 — Sentence completion (ONE WORD ONLY)
+        { type: 'sentence_completion', text: 'City building materials have a high thermal ________, so they release heat slowly through the night.', answer: 'mass' },
+        { type: 'sentence_completion', text: 'A fresh asphalt road reflects less than five per cent of the ________ falling on it.', answer: 'sunlight' },
+        { type: 'sentence_completion', text: 'Tall buildings create narrow street ________ that trap radiation by repeated reflection.', answer: 'canyons' },
+        { type: 'sentence_completion', text: 'In New York, volunteers have coated rooftops with reflective white ________.', answer: 'membranes' },
         { type: 'sentence_completion', text: 'The passage argues that cooling should be treated as ________ rather than decoration.', answer: 'infrastructure' },
       ],
     },
@@ -262,45 +284,25 @@ export default {
       title: 'The Science of Forgetting',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'The passage argues that forgetting is an active process rather than a simple failure.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: "Luria's subject found it easy to summarise the meaning of written passages.", answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Retrieval-induced forgetting affects items in categories that were never practised.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Emotional memories tend to last longer than neutral ones.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Infant animals forget more quickly than adults.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Exercise has been shown to slow the rate of neurogenesis.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Most students are now taught to use retrieval practice rather than rereading.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: "The case of Luria's subject is used to show that",
-          options: [
-            'A) exceptional memory is usually inherited',
-            'B) a memory that discards nothing cannot generalise',
-            'C) forgetting is caused by emotional stress',
-            'D) memory improves with deliberate practice',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'According to the dominant explanation given, memory primarily exists to',
-          options: ['A) preserve an accurate record of the past', 'B) support prediction', 'C) strengthen emotional bonds', 'D) reduce mental effort'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The passage suggests that in post-traumatic stress disorder',
-          options: [
-            'A) memories are destroyed too quickly',
-            'B) treatment aims to delete the memory entirely',
-            'C) the normal process of forgetting has failed',
-            'D) neurogenesis stops completely',
-          ],
-          answer: 'C',
-        },
-        { type: 'sentence_completion', text: 'New cells are generated in the ________, a structure central to forming memories.', answer: 'hippocampus' },
-        { type: 'sentence_completion', text: 'Retrieving one memory appears to actively ________ its competitors.', answer: 'suppress' },
-        { type: 'sentence_completion', text: 'Reviewing material as it begins to slip is more effective because ________ during retrieval drives consolidation.', answer: 'difficulty' },
-        { type: 'sentence_completion', text: 'The passage claims that a system retaining everything would drown in its own ________.', answer: 'detail' },
+        // Questions 27–31 — Which section contains the following information? (A–H)
+        { type: 'matching_information', text: 'a description of a treatment whose goal stops short of removing a memory', options: ['@Which section contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], answer: 'G' },
+        { type: 'matching_information', text: 'an experimental result that researchers did not expect', answer: 'C' },
+        { type: 'matching_information', text: 'an account of how newly created cells disturb information already stored', answer: 'E' },
+        { type: 'matching_information', text: 'the case of a man who could not extract meaning from what he read', answer: 'B' },
+        { type: 'matching_information', text: 'the claim that memory serves the future rather than the past', answer: 'D' },
+
+        // Questions 32–35 — Summary completion (ONE WORD ONLY)
+        { type: 'summary_completion', text: 'Why the brain forgets — Researchers argue that memory exists mainly to support ________ rather than to preserve a record of the past.', options: ['@Complete the summary below.'], answer: 'prediction' },
+        { type: 'summary_completion', text: 'Information that is no longer useful is actively harmful, because it competes for ________ with information that is current.', answer: 'attention' },
+        { type: 'summary_completion', text: 'At the biological level, new cells produced in the ________ are integrated into existing circuits and disturb the patterns held there.', answer: 'hippocampus' },
+        { type: 'summary_completion', text: 'Because this process is fastest in ________ animals, they lose stored information most quickly of all.', answer: 'infant' },
+
+        // Questions 36–40 — Match each statement with the correct person (A–D)
+        { type: 'matching_features', text: 'Memory should be judged by how accurately it anticipates what is coming, not by how much it stores.', options: ['@Look at the following statements and the list of people below. Match each statement with the correct person, A, B, C or D.', 'A) Hannah Reisz', 'B) Tomas Bergqvist', 'C) Daniel Oyelaran', 'D) Priya Nandakumar'], answer: 'A' },
+        { type: 'matching_features', text: 'The brain maintains dedicated physical machinery whose function appears to be removing information.', answer: 'B' },
+        { type: 'matching_features', text: 'A revision method used by many students fails because it demands no effort from them.', answer: 'C' },
+        { type: 'matching_features', text: 'A psychiatric condition is better described as retaining too much than as remembering badly.', answer: 'D' },
+        { type: 'matching_features', text: 'The best moment to review material is the moment at which it starts to become hard to recall.', answer: 'C' },
       ],
     },
   ],

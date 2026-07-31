@@ -174,6 +174,8 @@ export enum IELTSQuestionType {
   YES_NO_NOT_GIVEN = 'yes_no_not_given',
   MATCHING_HEADINGS = 'matching_headings',
   MATCHING_FEATURES = 'matching_features',
+  /** "Which paragraph/section contains the following information?" */
+  MATCHING_INFORMATION = 'matching_information',
   SENTENCE_COMPLETION = 'sentence_completion',
   SUMMARY_COMPLETION = 'summary_completion',
   SHORT_ANSWER = 'short_answer',
