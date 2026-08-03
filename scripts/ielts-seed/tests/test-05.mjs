@@ -53,15 +53,21 @@ apartments with no windows. Meanwhile the ability to hire without regard to loca
 salaries in unexpected directions, raising them in smaller cities and putting downward pressure on the
 premium that expensive ones could once command.`;
 
-const P2 = `The most valuable ore deposits on earth are, by concentration, no longer underground. A tonne of
+const P2 = `A
+
+The most valuable ore deposits on earth are, by concentration, no longer underground. A tonne of
 discarded mobile phones contains roughly a hundred times more gold than a tonne of gold ore. It also
 contains copper, silver, palladium and a range of rare earth elements whose extraction from rock requires
 enormous quantities of energy and produces significant pollution. Electronic waste is, viewed correctly,
 an unusually rich and conveniently located mine.
 
+B
+
 It is also the fastest-growing waste stream in the world. Global production is estimated at over sixty
 million tonnes a year and rising several times faster than the population. Less than a quarter is formally
 collected and recycled. The remainder is incinerated, buried, stored in cupboards, or exported.
+
+C
 
 The reasons for this failure are partly technical. A modern smartphone contains around sixty different
 elements, combined in assemblies that were designed for thinness and durability rather than separation.
@@ -70,6 +76,8 @@ minute: a single device may contain thirty milligrams of gold. Recovering it req
 temperature smelting, which destroys the plastics and releases the more volatile metals, or chemical
 leaching, which is effective but generates hazardous effluent. No process currently recovers everything, and
 each is economic only at scale.
+
+D
 
 The rest of the explanation is economic and legal. For decades the cheapest solution was to ship the
 material to countries with low labour costs and limited regulation, where it was dismantled by hand.
@@ -81,11 +89,15 @@ hazardous waste, but shipments were routinely declared as second-hand goods for 
 genuinely important in countries where refurbished equipment extends access to technology, and which is
 therefore difficult to police.
 
+E
+
 Three approaches are now being pursued. The first is to build capacity in the countries that generate the
 waste, and modern facilities can recover more than ninety-five per cent of the metals in a circuit board
 under controlled conditions. The obstacle is collection rather than processing: plants operate below
 capacity because consumers do not return devices, and roughly half of unused phones in wealthy countries
 are simply kept in drawers.
+
+F
 
 The second approach is to change the design of the products themselves. Extended producer responsibility
 makes manufacturers financially liable for the disposal of what they sell, on the reasoning that a firm
@@ -93,6 +105,8 @@ paying for recycling will design for it. Repairability has become the subject of
 European Union and several American states, requiring manufacturers to supply spare parts and manuals, and
 to score devices on how easily they can be opened. Critics point out that repairability scores measure
 what is easy to measure and can be improved without any real change in how long a product lasts.
+
+G
 
 The third and least developed approach is to reduce the number of devices produced. Average replacement
 intervals for smartphones have lengthened, from roughly two years to three, largely because improvements
@@ -160,44 +174,44 @@ export default {
       title: 'The Future of the Office',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'The modern office depended on the elevator, telephone and typewriter.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The Chinese travel agency trial took place during the pandemic.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Software engineers spent less time in meetings when working remotely.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Remote working caused employees to form fewer connections outside their group.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Junior employees were the least affected by remote working.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Converting offices into housing is economically straightforward.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Most companies chose their hybrid model after careful research.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The office was made possible partly by the invention of the elevator.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'The constraint that produced the office disappeared only in 2020.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Call handling improved among home workers in the Chinese travel agency trial.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Software engineers produced more code per hour when working from home.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Collaboration networks became more static when employees worked remotely.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Companies that adopted hybrid working reported higher profits than those that did not.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Employees with caring responsibilities find remote work easiest of all.', answer: 'FALSE' },
+        { type: 'sentence_completion', text: 'Remote work particularly favours those with a spare ________ and a reliable connection.', answer: 'room' },
+        { type: 'sentence_completion', text: 'Several organisations show a proximity ________ when deciding on promotions.', answer: 'bias' },
+        { type: 'sentence_completion', text: 'Converting offices into homes is difficult because deep floor ________ produce apartments with no windows.', answer: 'plans' },
         {
           type: 'multiple_choice',
-          text: 'Productivity gains in the travel agency trial came mainly from',
-          options: ['A) better technology', 'B) fewer breaks and sick days', 'C) longer working hours', 'D) improved training'],
+          text: 'According to the passage, the original purpose of the office was to',
+          options: ['A) reduce the cost of rent', 'B) bring workers to information', 'C) display the status of a company', 'D) shorten the journey to work'],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'The passage says proximity bias means that',
+          text: 'Firms that report satisfaction with hybrid working tend to',
           options: [
-            'A) office workers produce more',
-            'B) visibility is rewarded independently of output',
-            'C) remote workers earn higher salaries',
-            'D) managers prefer video calls',
+            'A) require attendance five days a week',
+            'B) leave the choice entirely to employees',
+            'C) reserve office days for work that benefits from being together',
+            'D) abolish meetings altogether',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'The passage says that hiring without regard to location has',
+          options: [
+            'A) lowered salaries in every market',
+            'B) raised salaries in smaller cities',
+            'C) had no measurable effect on pay',
+            'D) increased demand for central offices',
           ],
           answer: 'B',
         },
-        {
-          type: 'multiple_choice',
-          text: 'Firms satisfied with hybrid working tend to use the office for',
-          options: [
-            'A) all routine tasks',
-            'B) activities that benefit from being together',
-            'C) individual concentrated work',
-            'D) a fixed number of days regardless of need',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'Collaboration networks became more ________ during remote working.', answer: 'static' },
-        { type: 'sentence_completion', text: 'Deep floor plans produce apartments with no ________.', answer: 'windows' },
-        { type: 'sentence_completion', text: 'Hiring without regard to location has raised salaries in ________ cities.', answer: 'smaller' },
       ],
     },
     {
@@ -205,44 +219,19 @@ export default {
       title: 'The Problem of Electronic Waste',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'Discarded phones contain more gold per tonne than gold ore.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'More than half of electronic waste is formally recycled.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'A single smartphone may contain about thirty milligrams of gold.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Chemical leaching recovers metals without producing hazardous waste.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The Basel Convention has been easy to enforce.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Modern recycling plants often operate below capacity.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Smartphone replacement intervals have shortened in recent years.', answer: 'FALSE' },
-        {
-          type: 'multiple_choice',
-          text: 'The main obstacle to recycling in wealthy countries is described as',
-          options: ['A) processing technology', 'B) collection', 'C) labour costs', 'D) government regulation'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Extended producer responsibility is based on the idea that',
-          options: [
-            'A) consumers should pay for disposal',
-            'B) firms paying for recycling will design for it',
-            'C) exports should be banned',
-            'D) devices should last forever',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Critics of repairability scores argue that they',
-          options: [
-            'A) are too expensive to calculate',
-            'B) can improve without products lasting longer',
-            'C) discourage innovation',
-            'D) apply only to phones',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'Global e-waste production exceeds ________ million tonnes a year.', answer: 'sixty' },
-        { type: 'sentence_completion', text: 'Shipments were often declared as ________-hand goods for reuse.', answer: 'second' },
-        { type: 'sentence_completion', text: 'About half of unused phones in wealthy countries are kept in ________.', answer: 'drawers' },
+        { type: 'matching_features', text: 'Manufacturers are made financially liable for the disposal of what they sell.', options: ['@Match each statement with the correct approach, A, B or C.', 'A) building recycling capacity', 'B) changing product design', 'C) reducing the number of devices'], answer: 'B' },
+        { type: 'matching_features', text: 'Plants run below capacity because consumers do not return their old devices.', answer: 'A' },
+        { type: 'matching_features', text: 'Replacement intervals have lengthened as differences between generations shrink.', answer: 'C' },
+        { type: 'matching_features', text: 'Legislation requires spare parts and manuals to be made available.', answer: 'B' },
+        { type: 'sentence_completion', text: 'A tonne of discarded mobile phones contains about a hundred times more ________ than a tonne of ore.', answer: 'gold' },
+        { type: 'sentence_completion', text: 'A modern smartphone contains around ________ different elements.', answer: 'sixty' },
+        { type: 'sentence_completion', text: 'Components are ________ rather than screwed, which makes separation harder.', answer: 'glued' },
+        { type: 'sentence_completion', text: 'Chemical ________ recovers metals effectively but generates hazardous effluent.', answer: 'leaching' },
+        { type: 'sentence_completion', text: 'Shipments of waste were routinely declared as second-hand goods for ________.', answer: 'reuse' },
+        { type: 'matching_information', text: 'a comparison between the metal content of waste and that of natural ore', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'A' },
+        { type: 'matching_information', text: 'figures showing how small a share of the waste stream is properly handled', answer: 'B' },
+        { type: 'matching_information', text: 'an explanation of why the devices themselves are hard to take apart', answer: 'C' },
+        { type: 'matching_information', text: 'an account of health damage recorded in particular settlements', answer: 'D' },
       ],
     },
     {
@@ -250,40 +239,45 @@ export default {
       title: 'The Long Road to Machine Translation',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Researchers in 1954 predicted the problem would be solved within five years.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Rule-based systems failed mainly because of limited vocabulary.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Statistical systems understood the meaning of the text.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Statistical translation produced output that was locally plausible.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Neural systems handle most of the world\'s languages equally well.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Gender bias in output results from patterns in the training data.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Demand for translation has fallen since machine translation improved.', answer: 'FALSE' },
+        { type: 'yes_no_not_given', text: 'The prediction made in 1954 about machine translation proved to be accurate.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Ambiguity rather than vocabulary was the main obstacle for rule-based systems.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Statistical systems understood the texts that they translated.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Neural systems allow the beginning of a sentence to influence its ending.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Machine translation works about equally well for most of the languages of the world.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Deciding how biased output should be corrected is a question about values.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Most professional translators have now retrained for other kinds of work.', answer: 'NOT GIVEN' },
+        { type: 'summary_completion', text: 'Three approaches — The earliest systems were given a dictionary together with a set of ________ rules.', options: ['@Complete the summary below.'], answer: 'grammatical' },
+        { type: 'summary_completion', text: 'From the late 1980s researchers instead calculated the ________ that a sequence in one language corresponded to a sequence in the other.', answer: 'probability' },
+        { type: 'summary_completion', text: 'The typical weakness of that method was output that was locally plausible but globally ________.', answer: 'incoherent' },
+        { type: 'summary_completion', text: 'Neural systems encode an entire sentence into a numerical ________ of its meaning.', answer: 'representation' },
         {
           type: 'multiple_choice',
-          text: 'The trophy and suitcase example is used to show that resolving ambiguity requires',
-          options: ['A) a larger dictionary', 'B) knowledge of the world', 'C) stricter grammar rules', 'D) longer sentences'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Attention mechanisms introduced in 2017 allowed models to',
+          text: 'The example of the trophy and the suitcase is used to show that',
           options: [
-            'A) translate word by word',
-            'B) weigh the relevance of every word to every other word',
-            'C) work without training data',
-            'D) detect the speaker\'s emotion',
+            'A) dictionaries remain incomplete',
+            'B) knowledge of the world is needed to resolve a pronoun',
+            'C) grammatical rules alone are sufficient',
+            'D) Russian is unusually difficult to translate',
           ],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'According to the passage, translators today increasingly',
-          options: ['A) work from scratch', 'B) edit machine output', 'C) specialise in rare languages', 'D) refuse machine assistance'],
+          text: 'The attention mechanisms introduced in 2017 allowed models to',
+          options: [
+            'A) train without any data at all',
+            'B) operate in real time',
+            'C) weigh the relevance of every word to every other word',
+            'D) remove bias automatically',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'According to the passage, demand for translation has',
+          options: ['A) disappeared entirely', 'B) grown', 'C) remained unchanged', 'D) moved completely to machines'],
           answer: 'B',
         },
-        { type: 'sentence_completion', text: 'Statistical systems were trained on collections of ________ text.', answer: 'parallel' },
-        { type: 'sentence_completion', text: 'There are around ________ thousand languages in the world.', answer: 'seven' },
-        { type: 'sentence_completion', text: 'Machines struggle with humour, idiom and levels of ________.', answer: 'formality' },
-        { type: 'sentence_completion', text: 'Editing machine output is generally paid at a ________ rate.', answer: 'lower' },
       ],
     },
   ],

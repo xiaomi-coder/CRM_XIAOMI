@@ -101,10 +101,14 @@ a case study in evaluation: a plausible idea, implemented widely and enthusiasti
 before anyone tested whether it did what was claimed, and found on testing to do something real but much
 smaller.`;
 
-const P3 = `Advertising is unusual among industries in that its central claim about itself is difficult to
+const P3 = `A
+
+Advertising is unusual among industries in that its central claim about itself is difficult to
 verify. Firms spend around six hundred billion dollars a year globally, and the most quoted remark in the
 business — that half of it is wasted, but nobody knows which half — was made over a century ago and remains
 uncomfortably close to accurate.
+
+B
 
 The measurement problem is one of attribution. A company advertises and sales rise; the difficulty is
 establishing that the second was caused by the first. Advertising expenditure is usually increased when
@@ -116,6 +120,8 @@ systematically composed of those who would have been most likely to purchase any
 in which advertising is randomly withheld from some users have repeatedly found returns far below those
 reported by the platforms' own attribution models, in several published cases by an order of magnitude.
 
+C
+
 What advertising demonstrably does is less concerned with information than the industry's older
 self-description suggested. Very little advertising conveys facts about a product. Its more reliable
 functions appear to be maintaining awareness, which decays if spending stops, and signalling. The signalling
@@ -124,12 +130,16 @@ that it expects to remain in business and to attract repeat custom, which a firm
 could not afford to do. This explains an otherwise puzzling feature of brand campaigns, which frequently say
 almost nothing about the product while making it obvious that a great deal of money was spent.
 
+D
+
 Regulation has focused on falsehood, which is the least common problem. Explicitly false claims are
 straightforward to prohibit and are prohibited nearly everywhere. Most contested advertising is literally
 true and misleading in implication, and the boundary is difficult to draw in law. Restrictions on
 advertising to children are the clearest area of agreement, on the reasoning that children below a certain
 age do not reliably recognise persuasive intent, and several countries have banned it outright during
 children's programming.
+
+E
 
 The economics have been transformed by the shift to digital. Two companies now receive roughly half of
 global digital advertising revenue, and because they also control the systems that measure effectiveness,
@@ -138,6 +148,8 @@ loads, in which advertisers bid for the attention of a specific individual on th
 behavioural data. This has funded services used by billions of people at no monetary cost, and it has
 simultaneously produced a business model whose revenue depends on time spent and engagement, which are not
 the same thing as user benefit and sometimes oppose it.
+
+F
 
 The consequences for the industries that advertising formerly supported have been severe. Newspaper
 advertising revenue in most wealthy countries has fallen by seventy per cent or more since 2005, because
@@ -158,44 +170,44 @@ export default {
       title: 'How People Really Decide',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'The errors people make in decisions are systematic rather than random.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Physicians were less affected by framing than students.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The errors people make when choosing are random.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Trained physicians showed the framing reversal as reliably as students did.', answer: 'TRUE' },
         { type: 'true_false_not_given', text: 'Losses are felt roughly twice as strongly as equivalent gains.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Default options have only a small effect on choices.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Automatic pension enrolment increased participation.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'All celebrated behavioural effects have replicated at scale.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Behavioural units have now been closed in most countries.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Consent rates for organ donation differ mainly because populations hold different views.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Automatic enrolment in pension schemes is now compulsory in most countries.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Effects measured in laboratories usually become larger when applied to whole populations.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Commercial firms have taken up these findings more enthusiastically than policymakers.', answer: 'TRUE' },
         {
           type: 'multiple_choice',
-          text: 'The reason firms present a card "fee" rather than a cash "discount" is that',
-          options: [
-            'A) it is legally required',
-            'B) people respond more strongly to surcharges',
-            'C) cards cost more to process',
-            'D) discounts are harder to calculate',
-          ],
+          text: 'In the framing experiment, the second group chose the gamble when the options were described in terms of',
+          options: ['A) lives saved', 'B) deaths', 'C) money', 'D) probability alone'],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'Differences in organ donation rates between similar countries are explained mainly by',
-          options: ['A) religious belief', 'B) medical capacity', 'C) whether the form is opt-in or opt-out', 'D) public campaigns'],
+          text: 'The experiment involving a coffee mug is used to illustrate',
+          options: [
+            'A) the power of defaults',
+            'B) the effect of inertia',
+            'C) that sellers demand more to give up an object than they would have paid for it',
+            'D) the framing of public health choices',
+          ],
           answer: 'C',
         },
         {
           type: 'multiple_choice',
-          text: 'The substantive objection to nudging is that it',
+          text: 'The substantive objection to nudging described in the passage is that it',
           options: [
-            'A) removes people\'s options',
-            'B) leaves the structures producing poor outcomes untouched',
-            'C) is expensive to implement',
-            'D) works only in laboratories',
+            'A) costs governments too much',
+            'B) removes options from the person choosing',
+            'C) treats symptoms while leaving the underlying structures untouched',
+            'D) is unlawful in several countries',
           ],
-          answer: 'B',
+          answer: 'C',
         },
-        { type: 'sentence_completion', text: 'The asymmetry between losses and gains is called loss ________.', answer: 'aversion' },
-        { type: 'sentence_completion', text: 'Tax letters worked by stating that most people in the recipient\'s ________ had already paid.', answer: 'area' },
-        { type: 'sentence_completion', text: 'The findings have been adopted most enthusiastically by ________ firms.', answer: 'commercial' },
+        { type: 'short_answer', text: 'What kind of units did governments establish in order to apply these findings?', answer: 'behavioural' },
+        { type: 'short_answer', text: 'Payment of what rose when letters mentioned that neighbours had already paid?', answer: 'tax' },
+        { type: 'short_answer', text: 'Which everyday object was used to demonstrate the gap between sellers and buyers?', answer: 'mug' },
       ],
     },
     {
@@ -203,39 +215,49 @@ export default {
       title: 'The Microfinance Experiment',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'The first loans were made from the professor\'s own money.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Group lending replaced collateral with social pressure.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Microfinance repayment rates were lower than those of commercial banks.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The randomised studies found large increases in household income.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Many borrowers used loans for purposes other than business.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Savings accounts produced effects that microcredit did not.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'M-Pesa has now been introduced in every African country.', answer: 'NOT GIVEN' },
+        { type: 'matching_features', text: 'It produced no measurable average effect on household income.', options: ['@Match each finding with the correct financial service, A, B or C.', 'A) microcredit', 'B) secure savings accounts', 'C) mobile money'], answer: 'A' },
+        { type: 'matching_features', text: 'It lifted a substantial number of households out of extreme poverty.', answer: 'C' },
+        { type: 'matching_features', text: 'It had effects on business investment that lending did not produce.', answer: 'B' },
+        { type: 'matching_features', text: 'It replaced collateral with social pressure inside a group.', answer: 'A' },
+        { type: 'matching_features', text: 'Its main benefit was making help from relatives cheap and quick to receive.', answer: 'C' },
+        { type: 'sentence_completion', text: 'The first loan in 1976 was made to villagers who made bamboo ________.', answer: 'furniture' },
+        { type: 'sentence_completion', text: 'Repayment rates above ninety-five per cent were reported ________.', answer: 'consistently' },
+        { type: 'sentence_completion', text: 'A fourth vegetable ________ competes with the three that already exist in a village.', answer: 'stall' },
+        { type: 'sentence_completion', text: 'Substantial proportions of the loans went on medical costs, school fees and ________.', answer: 'funerals' },
+        { type: 'sentence_completion', text: 'A household with no safe place to keep money is under continuous pressure to ________ it.', answer: 'spend' },
         {
           type: 'multiple_choice',
-          text: 'One explanation for the limited effect is that microenterprises',
-          options: ['A) are illegal', 'B) are generally not scalable', 'C) require too much capital', 'D) fail within months'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The reinterpretation of the evidence suggests poor households mainly lacked',
+          text: 'The randomised evaluations of microcredit found',
           options: [
-            'A) investment capital',
-            'B) a way to manage irregular income and shocks',
-            'C) business training',
-            'D) access to markets',
+            'A) a large rise in average household income',
+            'B) no measurable average effect on income or consumption',
+            'C) a decline in business activity',
+            'D) a large rise in school attendance',
           ],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'M-Pesa reduced poverty principally by making it easier to',
-          options: ['A) borrow from banks', 'B) receive help from relatives quickly', 'C) buy equipment', 'D) pay school fees'],
-          answer: 'B',
+          text: 'According to the reinterpretation described, what many poor households lacked was',
+          options: [
+            'A) capital to invest',
+            'B) training in business skills',
+            'C) a way to manage irregular income and absorb shocks',
+            'D) access to distant markets',
+          ],
+          answer: 'C',
         },
-        { type: 'sentence_completion', text: 'Grameen Bank\'s founder was awarded the Nobel ________ Prize in 2006.', answer: 'Peace' },
-        { type: 'sentence_completion', text: 'Attention has moved towards savings, insurance and ________ systems.', answer: 'payment' },
-        { type: 'sentence_completion', text: 'The episode is cited as a case study in ________.', answer: 'evaluation' },
+        {
+          type: 'multiple_choice',
+          text: 'The passage concludes that microcredit',
+          options: [
+            'A) ought to be abandoned altogether',
+            'B) was a complete failure',
+            'C) delivers something real but much smaller than was claimed',
+            'D) works only in Bangladesh',
+          ],
+          answer: 'C',
+        },
       ],
     },
     {
@@ -243,50 +265,20 @@ export default {
       title: 'Does Advertising Work?',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Global advertising spending is around six hundred billion dollars a year.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Digital advertising solved the problem of measuring effectiveness.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Randomised experiments found returns far below platform estimates.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Most advertising conveys detailed factual information.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Explicitly false advertising claims are prohibited nearly everywhere.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Subscription models have succeeded at local newspaper level.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Advertising to children is banned in all European countries.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: 'The signalling argument holds that heavy advertising spending shows a firm',
-          options: [
-            'A) has a superior product specification',
-            'B) expects to stay in business and gain repeat custom',
-            'C) is entering a new market',
-            'D) has excess profits',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The problem with platform attribution models is that the audience shown adverts is',
-          options: [
-            'A) too small',
-            'B) composed of those most likely to buy anyway',
-            'C) randomly selected',
-            'D) unable to click',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer says local journalism declined because',
-          options: [
-            'A) readers lost interest',
-            'B) the funding mechanism had no necessary connection to it',
-            'C) costs rose sharply',
-            'D) regulation increased',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'Restrictions are clearest where children cannot recognise persuasive ________.', answer: 'intent' },
-        { type: 'sentence_completion', text: 'Digital advertising is sold through an ________ conducted as a page loads.', answer: 'auction' },
-        { type: 'sentence_completion', text: 'Newspaper advertising revenue has fallen by ________ per cent or more since 2005.', answer: 'seventy' },
-        { type: 'sentence_completion', text: 'Because platforms also measure effectiveness, they mark their own ________.', answer: 'examination' },
+        { type: 'matching_information', text: 'a remark about wasted expenditure made more than a century ago', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'A' },
+        { type: 'matching_information', text: 'an explanation of why measured returns are lower than platforms report', answer: 'B' },
+        { type: 'matching_information', text: 'an argument that the spending itself is the message', answer: 'C' },
+        { type: 'matching_information', text: 'an area of regulation on which there is clear agreement', answer: 'D' },
+        { type: 'matching_information', text: 'a description of how the price of a single advertisement is decided', answer: 'E' },
+        { type: 'matching_information', text: 'a figure for the fall in newspaper advertising revenue', answer: 'F' },
+        { type: 'summary_completion', text: 'What advertising actually does — Very little advertising conveys ________ about the product itself.', options: ['@Complete the summary below.'], answer: 'facts' },
+        { type: 'summary_completion', text: 'Its more reliable functions are maintaining ________, which decays if spending stops, and signalling.', answer: 'awareness' },
+        { type: 'summary_completion', text: 'The ________ argument holds that heavy spending shows that a firm expects to stay in business.', answer: 'signalling' },
+        { type: 'summary_completion', text: 'Two companies now receive roughly half of global digital advertising ________.', answer: 'revenue' },
+        { type: 'yes_no_not_given', text: 'Explicitly false claims are the least common problem in advertising.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Digital advertising solved the problem of establishing what caused a sale.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Subscription models have successfully replaced advertising revenue at local level.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Advertising aimed at children ought to be banned in every country.', answer: 'NOT GIVEN' },
       ],
     },
   ],

@@ -101,11 +101,15 @@ arrest. Sensors embedded in new structures now report strain and corrosion conti
 maintenance to be scheduled by condition rather than by calendar — an unglamorous development that will
 probably save more lives than any advance in span length.`;
 
-const P3 = `Antarctica is governed by an agreement that should not have worked. Signed in 1959 by twelve
+const P3 = `A
+
+Antarctica is governed by an agreement that should not have worked. Signed in 1959 by twelve
 countries, including the United States and the Soviet Union at the height of the Cold War, the Antarctic
 Treaty set aside all territorial claims without resolving them, prohibited military activity and nuclear
 testing, and dedicated the continent to peaceful scientific research with a requirement that findings be
 freely exchanged. It has been observed ever since, and now has more than fifty parties.
+
+B
 
 The scientific case for the continent is that it preserves records available nowhere else. Ice accumulates
 annually and does not melt, so a vertical core through the sheet is a chronological sequence. Bubbles
@@ -114,6 +118,8 @@ past concentrations of carbon dioxide and methane to be measured directly rather
 the East Antarctic plateau extend back eight hundred thousand years, covering eight glacial cycles, and a
 project drilling for older ice aims to reach a period, around a million years ago, when the rhythm of the
 ice ages changed for reasons that remain unexplained.
+
+C
 
 The single most consequential Antarctic discovery was not planned. The British Antarctic Survey had
 monitored stratospheric ozone at Halley Station since 1957, an unremarkable routine that continued for
@@ -125,6 +131,8 @@ Antarctica led within two years to the Montreal Protocol, the most effective env
 concluded, and the ozone layer is now recovering. The episode is regularly cited as an argument for
 long-term monitoring whose value cannot be demonstrated in advance.
 
+D
+
 Working there remains difficult in ways that are easy to underestimate. The interior receives no sunlight
 for months, temperatures at the highest stations fall below minus eighty degrees Celsius, and the air is
 extremely dry. Everything must be transported in, and everything, including waste, must now be transported
@@ -133,6 +141,8 @@ of evacuation, and the psychological effects have been studied closely enough th
 Antarctic stations as analogues for long-duration missions, examining sleep disruption, group conflict and
 the cognitive effects of monotony.
 
+E
+
 The most urgent current research concerns the stability of the ice itself. West Antarctica's ice sheet
 rests on bedrock that lies below sea level and slopes downward inland, a configuration that may be unstable:
 warm ocean water can reach the grounding line where ice begins to float, melt it from beneath, and cause
@@ -140,6 +150,8 @@ the line to retreat into deeper water, where melting is faster still. Whether th
 particular glaciers is contested, and it matters enormously, since the ice held in that sheet corresponds to
 several metres of global sea level. The uncertainty in long-range sea level projections is dominated by this
 single question.
+
+F
 
 The political settlement is under quieter pressure than the ice. The treaty's prohibition on mineral
 extraction is subject to review after 2048, and interest in fisheries, particularly krill, has grown
@@ -158,39 +170,54 @@ export default {
       title: 'The Problem of Space Debris',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'Fewer than a quarter of tracked objects in orbit are working satellites.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Shielding can protect against debris of any size.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The 2007 Chinese missile test was the largest debris-creating event in history.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The Kessler syndrome would make space impassable immediately.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Debris mitigation guidelines are legally binding.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'A launching state keeps ownership of its object indefinitely.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Debris removal missions have already been funded by an international body.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Fewer than a quarter of the tracked objects in orbit are working satellites.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Shielding can be designed to protect a spacecraft against debris of any size.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The 2007 missile test was the largest single debris-creating event in history.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'The Kessler syndrome means that space would become impassable within days.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Explosions have created more debris than collisions have.', answer: 'NOT GIVEN' },
+        { type: 'sentence_completion', text: 'Rocket stages are ________ of residual fuel so that they do not explode later.', answer: 'vented' },
+        { type: 'sentence_completion', text: 'Satellites in the geostationary belt are raised into a ________ orbit at the end of their lives.', answer: 'graveyard' },
+        { type: 'sentence_completion', text: 'Under the Outer Space Treaty a launching state keeps ________ of its object indefinitely.', answer: 'ownership' },
+        { type: 'sentence_completion', text: 'Astronomers have objected to reflected ________ interfering with observation.', answer: 'sunlight' },
         {
           type: 'multiple_choice',
-          text: 'The danger from small debris arises mainly from its',
-          options: ['A) mass', 'B) speed', 'C) shape', 'D) material'],
+          text: 'The danger presented by debris arises mainly from',
+          options: ['A) the mass of the objects', 'B) the speed at which they travel', 'C) extremes of temperature', 'D) magnetic effects'],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'Satellites in geostationary orbit are disposed of by',
+          text: 'The collision that occurred over Siberia in 2009 involved',
           options: [
-            'A) burning up in the atmosphere',
-            'B) raising them into a graveyard orbit',
-            'C) capturing them with nets',
-            'D) leaving them in place',
+            'A) two American satellites',
+            'B) two Russian satellites',
+            'C) an operational American satellite and a defunct Russian one',
+            'D) a satellite and the International Space Station',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'Removal missions are described as economically unattractive because',
+          options: [
+            'A) they are technically impossible at present',
+            'B) lasers have never been demonstrated in orbit',
+            'C) each mission removes very few objects at high cost and no one is obliged to pay',
+            'D) they are forbidden by treaty',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'According to the counter-argument, collision risk in a given shell rises with',
+          options: [
+            'A) the number of objects',
+            'B) the square of the number of objects',
+            'C) the cube of the number of objects',
+            'D) the altitude of the shell',
           ],
           answer: 'B',
         },
-        {
-          type: 'multiple_choice',
-          text: 'Removal technology is diplomatically sensitive because it could also be used to',
-          options: ['A) launch weapons', 'B) disable satellites', 'C) intercept signals', 'D) claim territory'],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'The self-sustaining collision process is named the ________ syndrome.', answer: 'Kessler' },
-        { type: 'sentence_completion', text: 'Rocket stages are ________ of residual fuel to prevent explosions.', answer: 'vented' },
-        { type: 'sentence_completion', text: 'Collision risk in a shell rises with the ________ of the number of objects.', answer: 'square' },
       ],
     },
     {
@@ -198,39 +225,19 @@ export default {
       title: 'How Bridges Stand Up',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'A beam bridge loses capacity quickly as its span increases.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Stone is stronger in tension than in compression.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Arch bridges require abutments that resist outward thrust.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The Tacoma Narrows Bridge collapsed in winds above its design load.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The collapse is best explained as simple resonance.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Cable-stayed bridges require massive anchorages.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Most deficient bridges have now been replaced.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: 'Suspension bridges achieve the longest spans because steel is very strong in',
-          options: ['A) compression', 'B) tension', 'C) bending', 'D) shear'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The accepted explanation for the Tacoma Narrows collapse is',
-          options: ['A) material failure', 'B) aeroelastic flutter', 'C) foundation movement', 'D) overloading'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Reinforced concrete deteriorates because rust',
-          options: [
-            'A) weakens the steel only',
-            'B) occupies more volume and cracks the concrete',
-            'C) dissolves the cement',
-            'D) attracts road salt',
-          ],
-          answer: 'B',
-        },
+        { type: 'matching_features', text: 'Its capacity falls sharply as the span becomes longer.', options: ['@Match each statement with the correct type of bridge, A, B, C or D.', 'A) the beam', 'B) the arch', 'C) the suspension bridge', 'D) the cable-stayed bridge'], answer: 'A' },
+        { type: 'matching_features', text: 'It requires the ground at each end to resist a strong outward thrust.', answer: 'B' },
+        { type: 'matching_features', text: 'It achieves the longest spans but is light and flexible.', answer: 'C' },
+        { type: 'matching_features', text: 'It can be built outwards from each tower in balanced segments.', answer: 'D' },
+        { type: 'matching_features', text: 'It turns a downward load into compression running along a curve.', answer: 'B' },
+        { type: 'sentence_completion', text: 'Stone is very strong in compression and weak in ________.', answer: 'tension' },
+        { type: 'sentence_completion', text: 'The accepted explanation for the Tacoma Narrows collapse is aeroelastic ________.', answer: 'flutter' },
         { type: 'sentence_completion', text: 'Modern long-span decks are shaped like ________ and tested in wind tunnels.', answer: 'aerofoils' },
-        { type: 'sentence_completion', text: 'Cable-stayed bridges became practical because of advances in ________.', answer: 'computation' },
-        { type: 'sentence_completion', text: 'Embedded ________ allow maintenance to be scheduled by condition.', answer: 'sensors' },
+        { type: 'sentence_completion', text: 'Rust occupies more ________ than the steel it replaces, so it cracks the concrete from inside.', answer: 'volume' },
+        { type: 'true_false_not_given', text: 'The Tacoma Narrows Bridge failed in a wind stronger than the load it was designed for.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Cable-stayed bridges require massive anchorages in the ground.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Embedded sensors allow maintenance to be scheduled by condition rather than by calendar.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Most of the bridges classified as deficient are in coastal regions.', answer: 'NOT GIVEN' },
       ],
     },
     {
@@ -238,45 +245,50 @@ export default {
       title: 'Science at the End of the Earth',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'The Antarctic Treaty resolved all territorial claims.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Ice cores allow past atmospheric gases to be measured directly.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Satellite instruments had discarded the low ozone readings automatically.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The ozone layer is now recovering.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Waste may be left at Antarctic stations under current protocols.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The West Antarctic ice sheet rests on bedrock below sea level.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Krill fishing has been banned in coastal feeding areas.', answer: 'FALSE' },
+        { type: 'matching_information', text: 'an explanation of why trapped bubbles allow past air to be measured directly', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'B' },
+        { type: 'matching_information', text: 'an account of readings that an automatic system rejected as implausible', answer: 'C' },
+        { type: 'matching_information', text: 'a description of how the stations are used to study isolation', answer: 'D' },
+        { type: 'matching_information', text: 'an explanation of why a particular bedrock configuration may be unstable', answer: 'E' },
+        { type: 'matching_information', text: 'a reference to a prohibition that is due to be reviewed', answer: 'F' },
         {
           type: 'multiple_choice',
-          text: 'The ozone discovery is cited as an argument for',
+          text: 'The Antarctic Treaty was signed in',
+          options: ['A) 1948', 'B) 1957', 'C) 1959', 'D) 1991'],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'Ice cores from the East Antarctic plateau extend back approximately',
+          options: ['A) eight thousand years', 'B) eighty thousand years', 'C) eight hundred thousand years', 'D) eight million years'],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'The ozone result was withheld for two years because the team',
           options: [
-            'A) satellite monitoring',
-            'B) long-term monitoring whose value cannot be shown in advance',
-            'C) international treaties',
-            'D) rapid publication of results',
+            'A) lacked the funding needed to publish',
+            'B) were verifying the measurement',
+            'C) were waiting for government permission',
+            'D) had lost their original records',
           ],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'Space agencies study Antarctic stations because they resemble',
-          options: ['A) desert environments', 'B) long-duration space missions', 'C) submarine crews', 'D) mountain expeditions'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer suggests that the consensus requirement in the treaty now',
+          text: 'Decisions on proposed marine protected areas require',
           options: [
-            'A) prevents military activity',
-            'B) makes protection difficult to agree',
-            'C) speeds up decision-making',
-            'D) allows mineral extraction',
+            'A) a simple majority vote',
+            'B) approval by the United Nations',
+            'C) consensus among the parties',
+            'D) proof of harm to wildlife',
           ],
-          answer: 'B',
+          answer: 'C',
         },
-        { type: 'sentence_completion', text: 'The Antarctic Treaty was signed in ________.', answer: '1959' },
-        { type: 'sentence_completion', text: 'East Antarctic cores extend back ________ hundred thousand years.', answer: 'eight' },
-        { type: 'sentence_completion', text: 'The 1985 paper led to the ________ Protocol within two years.', answer: 'Montreal' },
-        { type: 'sentence_completion', text: 'Warm water reaches the ________ line where ice begins to float.', answer: 'grounding' },
+        { type: 'summary_completion', text: 'The Antarctic Treaty — The agreement set aside all ________ claims without resolving them.', options: ['@Complete the summary below.'], answer: 'territorial' },
+        { type: 'summary_completion', text: 'It prohibited military activity and ________ testing on the continent.', answer: 'nuclear' },
+        { type: 'summary_completion', text: 'Under protocols agreed in 1991, everything brought in, including ________, must be taken out again.', answer: 'waste' },
+        { type: 'summary_completion', text: 'Warm ocean water can reach the ________ line, where the ice begins to float.', answer: 'grounding' },
+        { type: 'summary_completion', text: 'Interest in fisheries, and particularly in ________, has grown substantially.', answer: 'krill' },
       ],
     },
   ],

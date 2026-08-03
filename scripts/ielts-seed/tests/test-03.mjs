@@ -102,11 +102,15 @@ library that lends fewer novels but helps a hundred people apply for benefits ma
 metric, to be failing. Several national bodies are now attempting to measure social value instead,
 though what to count, and how, remains unresolved.`;
 
-const P3 = `Writing was invented independently at most four times in human history: in Mesopotamia around
+const P3 = `A
+
+Writing was invented independently at most four times in human history: in Mesopotamia around
 3200 BCE, in China by 1200 BCE, in Mesoamerica by 300 BCE, and possibly in Egypt, where the evidence for
 independence rather than borrowing is still debated. Every other script on earth, including this one,
 descends from one of those beginnings. Given that spoken language is universal and probably older than our
 species, the rarity of writing requires explanation.
+
+B
 
 Part of the answer is that writing was not invented to record language. The earliest Mesopotamian marks are
 accounting notations: impressions on clay recording quantities of grain, oil and livestock. For roughly six
@@ -115,12 +119,16 @@ hundred years the system could represent numbers and commodities but not sentenc
 implied by context. Writing began as bookkeeping, and it emerged in the first societies large enough that
 transactions could no longer be remembered by the people involved.
 
+C
+
 The transition to full writing required a conceptual leap that is easy to underestimate: the realisation that
 a symbol could represent a sound rather than a thing. The mechanism appears to have been something like a
 rebus, in which a picture is used for its phonetic value regardless of meaning, as if a drawing of an eye
 were used to write the word "I". Once that step was taken, anything sayable became writable, including names,
 verbs and abstractions. Scripts that made this move survived; those that did not remained limited to
 inventories.
+
+D
 
 The consequences of full writing were not straightforwardly beneficial, and contemporaries said so. Plato has
 Socrates argue that writing would weaken memory, that a text cannot answer a question or defend itself, and
@@ -130,6 +138,8 @@ Comparable anxieties accompanied printing, the newspaper and the internet, which
 generation is unusually foolish or that something real is at stake each time a technology changes how
 knowledge is stored.
 
+E
+
 Writing systems differ enormously in how much they demand of the learner. An alphabet with twenty-six
 characters can be taught in a year; the Chinese system requires memorising several thousand characters over
 a decade of schooling. It does not follow that alphabets are superior. Chinese characters are read directly
@@ -137,12 +147,16 @@ for meaning, which allows speakers of mutually unintelligible dialects to read t
 modern readers access to documents two thousand years old. Any script represents a trade-off between the
 effort of learning and the work the system can do.
 
+F
+
 The invention of writing also created a new form of inequality. In every early literate society, the ability
 to read was restricted to a small class of scribes, priests and administrators, and that restriction was
 often deliberate. Literacy conferred access to law, contracts, taxation records and sacred texts, and those
 who controlled it controlled a great deal else. Mass literacy is a recent phenomenon: it was achieved in
 northern Europe only in the nineteenth century, and globally the adult literacy rate passed fifty per cent
 within living memory.
+
+G
 
 Modern communication has begun to blur the boundary that writing established. Text messages and social media
 posts are written but often behave like speech: they are informal, immediate, unedited and increasingly
@@ -160,44 +174,54 @@ export default {
       title: 'Rethinking the Silk Road',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'The term "Silk Road" was invented in the nineteenth century.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Most merchants travelled the entire length of the route.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Seneca approved of the silk fabric imported to Rome.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The phrase "Silk Road" was used by the merchants who travelled the routes.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Most merchants moved goods along only one section of the network.', answer: 'TRUE' },
         { type: 'true_false_not_given', text: 'More cargo travelled by sea than overland.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Buddhism was carried east by merchants before missionaries.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Papermaking reached Europe before it reached Samarkand.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The Mongols built paved roads across the network.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Buddhism was carried into China by missionaries before it was carried by merchants.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The plague reduced the populations of the markets that supported the trade.', answer: 'TRUE' },
         {
           type: 'multiple_choice',
-          text: 'According to the passage, the Silk Road declined mainly because of',
+          text: 'According to the passage, Ferdinand von Richthofen coined the term',
+          options: [
+            'A) at the height of the trade he described',
+            'B) in the sixteenth century',
+            'C) more than four centuries after that trade began to decline',
+            'D) while he was travelling in China',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'One Roman objection to silk mentioned in the passage concerned',
+          options: ['A) its weight', 'B) the transparency of the fabric', 'C) its poor durability', 'D) the difficulty of dyeing it'],
+          answer: 'B',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'The passage argues that the network declined because of',
           options: [
             'A) the discovery of the sea route to Asia alone',
-            'B) a combination of political fragmentation, plague and cheaper shipping',
-            'C) the collapse of demand for silk',
-            'D) the closure of Central Asian oases',
+            'B) a ban on trade imposed by the Han dynasty',
+            'C) the exhaustion of silk supplies in China',
+            'D) imperial fragmentation, plague and cheaper shipping together',
           ],
-          answer: 'B',
+          answer: 'D',
         },
         {
           type: 'multiple_choice',
-          text: 'The "heavenly horses" mentioned in the passage came from',
-          options: ['A) Mongolia', 'B) the Ferghana Valley', 'C) northern India', 'D) Persia'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer suggests that the weakness of the term "Silk Road" is that it',
+          text: 'Historians value the concept today mainly because it',
           options: [
-            'A) exaggerates the volume of trade',
-            'B) flattens the diversity of the peoples involved',
-            'C) ignores maritime routes entirely',
-            'D) was invented by a geographer',
+            'A) proves that China dominated world trade',
+            'B) makes visible the contact between civilisations usually studied separately',
+            'C) simplifies the writing of national histories',
+            'D) preserves the names of most of the traders involved',
           ],
           answer: 'B',
         },
-        { type: 'sentence_completion', text: 'The phrase was coined by the geographer Ferdinand von ________.', answer: 'Richthofen' },
-        { type: 'sentence_completion', text: 'The cave complexes at ________ and Bamiyan were funded by trading wealth.', answer: 'Dunhuang' },
-        { type: 'sentence_completion', text: 'The ________ Death of the 1340s appears to have spread along trade corridors.', answer: 'Black' },
+        { type: 'short_answer', text: 'Which German geographer invented the phrase in 1877?', answer: 'Richthofen' },
+        { type: 'short_answer', text: 'Which valley produced the horses that Chinese emperors went to war to obtain?', answer: 'Ferghana' },
+        { type: 'short_answer', text: 'Which city did papermaking reach in the eighth century?', answer: 'Samarkand' },
+        { type: 'short_answer', text: 'Which European family travelled east during the period of Mongol unity?', answer: 'Polo' },
       ],
     },
     {
@@ -205,49 +229,19 @@ export default {
       title: 'The Rise of the Public Library',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'The library at Alexandria was open to the general public.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Medieval manuscripts were sometimes chained to shelves.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Subscription libraries were affordable for most of the population.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The 1850 Act was passed by a large majority.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Carnegie required local authorities to contribute to running costs.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Librarians initially welcomed fiction into their collections.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Library visits have increased in every country since the internet.', answer: 'FALSE' },
-        {
-          type: 'multiple_choice',
-          text: 'Supporters of the 1850 Act argued mainly that libraries would',
-          options: [
-            'A) increase the pleasure of reading',
-            'B) reduce drunkenness and improve productivity',
-            'C) preserve rare manuscripts',
-            'D) create employment for librarians',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Carnegie attached conditions to his grants in order to',
-          options: [
-            'A) reduce his own costs',
-            'B) ensure communities had a stake in the library',
-            'C) control which books were bought',
-            'D) speed up construction',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The passage argues that judging libraries by books borrowed is problematic because it',
-          options: [
-            'A) is expensive to measure',
-            'B) captures less and less of what libraries do',
-            'C) favours large city libraries',
-            'D) excludes children',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'The Public Libraries Act allowed authorities to levy a ________ rate.', answer: 'halfpenny' },
-        { type: 'sentence_completion', text: 'Carnegie funded more than ________ thousand library buildings.', answer: 'two and a half' },
-        { type: 'sentence_completion', text: 'National bodies are now trying to measure ________ value instead.', answer: 'social' },
+        { type: 'matching_features', text: 'Entry was limited to scholars, priests or the household of a ruler.', options: ['@Match each statement with the correct kind of library, A, B or C.', 'A) ancient and monastic libraries', 'B) subscription libraries', 'C) the modern public library'], answer: 'A' },
+        { type: 'matching_features', text: 'Members paid a yearly fee set high enough to exclude most of the population.', answer: 'B' },
+        { type: 'matching_features', text: 'Books were valuable enough to be fastened physically to the shelves.', answer: 'A' },
+        { type: 'matching_features', text: 'Its heaviest users are now those on the lowest incomes.', answer: 'C' },
+        { type: 'matching_features', text: 'It became popular in British and American towns during the eighteenth century.', answer: 'B' },
+        { type: 'true_false_not_given', text: 'Supporters of the 1850 Act argued mainly that reading was enjoyable.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The Public Libraries Act was approved by a large majority.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Carnegie required the local authority to provide the site for the building.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Librarians welcomed fiction into their collections from the beginning.', answer: 'FALSE' },
+        { type: 'sentence_completion', text: 'The 1850 Act allowed local authorities to levy a ________ rate.', answer: 'halfpenny' },
+        { type: 'sentence_completion', text: 'Carnegie paid for the structure only if the council committed to an annual ________ budget.', answer: 'maintenance' },
+        { type: 'sentence_completion', text: 'Opponents of the Act feared that education would make the labouring classes ________ with their position.', answer: 'discontented' },
+        { type: 'sentence_completion', text: 'Funding decisions still tend to depend on the number of books ________.', answer: 'borrowed' },
       ],
     },
     {
@@ -255,40 +249,50 @@ export default {
       title: 'How Writing Was Invented',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Writing was invented independently at most four times.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The earliest Mesopotamian writing recorded spoken sentences.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The independence of Egyptian writing is still debated.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Socrates believed writing would strengthen memory.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The writer claims alphabets are superior to character systems.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Global adult literacy passed fifty per cent relatively recently.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Emoji are now taught in schools in several countries.', answer: 'NOT GIVEN' },
+        { type: 'matching_information', text: 'examples of the goods recorded by the earliest written marks', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
+        { type: 'matching_information', text: 'an explanation of why letting a symbol stand for a sound was decisive', answer: 'C' },
+        { type: 'matching_information', text: 'the observation that objections to a new technology recur in every era', answer: 'D' },
+        { type: 'matching_information', text: 'a comparison of how long different systems take to learn', answer: 'E' },
+        { type: 'matching_information', text: 'a reference to how recently widespread reading ability was achieved', answer: 'F' },
+        { type: 'matching_information', text: 'a suggestion that some modern written messages behave like speech', answer: 'G' },
+        { type: 'summary_completion', text: 'How writing began — The earliest Mesopotamian marks were ________ notations impressed into clay.', options: ['@Complete the summary below.'], answer: 'accounting' },
+        { type: 'summary_completion', text: 'For roughly six hundred years the system could represent commodities and numbers but not ________.', answer: 'sentences' },
+        { type: 'summary_completion', text: 'Full writing required the realisation that a symbol could stand for a ________ rather than for a thing.', answer: 'sound' },
+        { type: 'summary_completion', text: 'The mechanism resembled a ________, in which a picture is used for its phonetic value alone.', answer: 'rebus' },
         {
           type: 'multiple_choice',
-          text: 'According to the passage, writing originally developed in order to',
-          options: ['A) record religious texts', 'B) keep accounts', 'C) write laws', 'D) send messages over distance'],
+          text: 'According to the passage, writing was invented independently',
+          options: ['A) only once', 'B) at most four times', 'C) in every literate society', 'D) first of all in Egypt'],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'The rebus principle involves using a symbol for its',
-          options: ['A) original meaning', 'B) numerical value', 'C) phonetic value', 'D) decorative appearance'],
+          text: 'The objection attributed to Socrates was that writing would',
+          options: [
+            'A) prove too expensive for ordinary people',
+            'B) be restricted to a class of scribes',
+            'C) weaken memory and produce only the appearance of wisdom',
+            'D) fail to record numbers accurately',
+          ],
           answer: 'C',
         },
         {
           type: 'multiple_choice',
-          text: 'One advantage of Chinese characters mentioned in the passage is that they',
+          text: 'The passage identifies as an advantage of Chinese characters that',
           options: [
-            'A) are quicker to learn',
-            'B) allow speakers of different dialects to read the same text',
-            'C) require fewer strokes',
-            'D) are easier to type',
+            'A) they can be learned more quickly than an alphabet',
+            'B) they represent individual sounds directly',
+            'C) speakers of mutually unintelligible dialects can read the same text',
+            'D) they require no formal schooling',
           ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'In early literate societies, the restriction of reading to a small class was',
+          options: ['A) largely accidental', 'B) frequently deliberate', 'C) confined to priests', 'D) abandoned within a generation'],
           answer: 'B',
         },
-        { type: 'sentence_completion', text: 'Writing in Mesopotamia began around ________ BCE.', answer: '3200' },
-        { type: 'sentence_completion', text: 'In early literate societies, reading was restricted to a class of ________, priests and administrators.', answer: 'scribes' },
-        { type: 'sentence_completion', text: 'Any script represents a ________-off between learning effort and capability.', answer: 'trade' },
-        { type: 'sentence_completion', text: 'Modern messages are written but often behave like ________.', answer: 'speech' },
       ],
     },
   ],

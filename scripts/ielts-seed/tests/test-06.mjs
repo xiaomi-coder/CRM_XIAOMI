@@ -52,12 +52,16 @@ childhood. What predicts success most strongly at any age is not talent but the 
 interaction in the language, a finding that is consistent across every study but that curricula built
 around grammatical exercises continue to ignore.`;
 
-const P2 = `In 2010, a group of researchers examined how children in a Chinese city spent their afternoons
+const P2 = `A
+
+In 2010, a group of researchers examined how children in a Chinese city spent their afternoons
 and found that the average eight-year-old had less than half an hour of unstructured free time a day. The
 figure was widely reported as evidence of an unusually pressured educational culture. Comparable surveys in
 Britain and the United States have since produced similar findings, and the decline has been steady across
 three generations: children today spend substantially less time playing without adult direction than their
 parents did, and dramatically less than their grandparents.
+
+B
 
 The reasons are neither mysterious nor irrational. Parents cite traffic, unfamiliar neighbours and a
 perception that public space is unsafe, though recorded rates of crime against children have fallen in most
@@ -67,6 +71,8 @@ supervised sports and educational classes are counted as play by adults, but the
 kind in the respect that matters most to developmental psychologists, which is that an adult decides what
 happens.
 
+C
+
 The argument that this loss is significant rests on evidence from several directions. Play in mammals is
 biologically expensive. Young animals at play burn energy, sustain injuries and expose themselves to
 predators, and behaviours with those costs are not usually preserved by evolution unless they serve some
@@ -74,12 +80,16 @@ function. In rats, individuals deprived of rough-and-tumble play with peers, but
 grow into adults that overreact to mild threats and behave inappropriately in social encounters. The
 deficit is specific to peer play; contact with adults does not substitute for it.
 
+D
+
 The proposed explanation is that free play is where children practise handling situations without an
 authority present. When a group of children invents a game, they must agree on rules, resolve
 disagreements, and calibrate their behaviour so that others continue to want to play, since the ultimate
 sanction of exclusion is always available. Failure is immediate, minor and instructive. In supervised
 activities, by contrast, disputes are settled by the adult, and the child practises appealing to authority
 rather than negotiating with equals.
+
+E
 
 Risk plays a related role. Children in unsupervised play consistently seek out experiences that frighten
 them slightly: climbing higher than is comfortable, moving fast, playing near water or in the dark. A
@@ -90,11 +100,15 @@ anxious rather than less, and studies of playground redesign are consistent with
 replaced flat rubber surfaces and low equipment with more challenging structures, injury rates have
 generally not risen, while reported bullying has fallen and concentration in class has improved.
 
+F
+
 Several education systems have responded. Finland has long protected fifteen minutes of outdoor break for
 every forty-five minutes of teaching, regardless of weather. New Zealand schools that abolished playground
 rules as an experiment reported fewer injuries and less disruptive behaviour, a result that surprised the
 researchers involved. In several countries, legislation has been introduced to protect the right of
 children to move independently in their neighbourhoods.
+
+G
 
 The objection to all of this is worth stating clearly. The evidence linking play deprivation to anxiety is
 largely correlational in humans, since one cannot randomly assign childhoods, and the same decades that saw
@@ -164,34 +178,49 @@ export default {
       title: 'Growing Up with Two Languages',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'Early studies of bilingual children were methodologically flawed.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The 1962 Montreal study has never been criticised.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: "Bilinguals' combined vocabulary across both languages is equal or larger.", answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Bilinguals retrieve individual words slightly more slowly.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Studies finding no bilingual advantage were as likely to be published as those finding one.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Bilingualism appears to prevent the physical damage of dementia.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Immersion harms achievement in the first language.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Early studies compared the children of recent immigrants with middle-class native speakers.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'The Montreal study of 1962 has been criticised for the participants it selected.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Bilingual children have a larger vocabulary in each single language than monolinguals do.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The delay in retrieving individual words disappears once bilinguals reach adulthood.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Bilingual children learn to read earlier than monolingual children.', answer: 'NOT GIVEN' },
+        { type: 'sentence_completion', text: 'Managing two languages is thought to exercise a set of processes known as ________ function.', answer: 'executive' },
+        { type: 'sentence_completion', text: 'Lifelong bilinguals show the symptoms of dementia four to five ________ later than monolinguals.', answer: 'years' },
+        { type: 'sentence_completion', text: 'The explanation offered for this delay is cognitive ________.', answer: 'reserve' },
+        { type: 'sentence_completion', text: 'Success at any age is predicted most strongly by the quantity of meaningful ________ in the language.', answer: 'interaction' },
         {
           type: 'multiple_choice',
-          text: 'The mental processes exercised by managing two languages are known as',
-          options: ['A) working memory', 'B) executive function', 'C) cognitive reserve', 'D) semantic retrieval'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The current consensus on the bilingual advantage is that it is',
-          options: ['A) large and universal', 'B) real but small', 'C) entirely disproved', 'D) limited to children'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'According to the passage, success in learning a language at any age depends most on',
-          options: ['A) natural talent', 'B) starting young', 'C) quantity of meaningful interaction', 'D) grammatical instruction'],
+          text: 'The advice given to parents for most of the twentieth century rested on the belief that',
+          options: [
+            'A) children dislike learning languages',
+            'B) speech naturally develops late',
+            'C) a young mind has a fixed capacity',
+            'D) immigrants learn more slowly than others',
+          ],
           answer: 'C',
         },
-        { type: 'sentence_completion', text: 'The idea that a complex brain compensates for damage is called cognitive ________.', answer: 'reserve' },
-        { type: 'sentence_completion', text: 'Bilingual dementia patients show symptoms about four to five ________ later.', answer: 'years' },
-        { type: 'sentence_completion', text: 'Age matters most for acquiring native-like ________.', answer: 'pronunciation' },
+        {
+          type: 'multiple_choice',
+          text: 'The current view of the bilingual advantage in executive function is that it is',
+          options: ['A) large and consistent', 'B) real but small', 'C) entirely absent', 'D) confined to early childhood'],
+          answer: 'B',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'Brain imaging of bilingual patients with dementia indicates that',
+          options: [
+            'A) the underlying disease is prevented',
+            'B) the damage cannot be detected by imaging',
+            'C) physical damage is often more advanced at the point of diagnosis',
+            'D) damage appears many years later than in monolinguals',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'For the acquisition of a native-like accent, the passage says that age',
+          options: ['A) matters little', 'B) matters a great deal', 'C) matters only for adult learners', 'D) has never been investigated'],
+          answer: 'B',
+        },
       ],
     },
     {
@@ -199,39 +228,19 @@ export default {
       title: 'The Disappearance of Free Play',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'Children today play unsupervised less than their grandparents did.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Crime against children has risen in most of the countries mentioned.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Adults often count supervised sports as play.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'In rats, contact with adults compensates for a lack of peer play.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'More challenging playgrounds generally increased injury rates.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Finland protects outdoor breaks regardless of weather.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The New Zealand results confirmed what researchers had predicted.', answer: 'FALSE' },
-        {
-          type: 'multiple_choice',
-          text: 'The key difference between free play and structured activity is that in the latter',
-          options: ['A) children are more active', 'B) an adult decides what happens', 'C) there are no rules', 'D) injuries are more common'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The Norwegian researchers argue that frightening play allows children to',
-          options: [
-            'A) demonstrate courage to peers',
-            'B) learn that fear is survivable',
-            'C) develop physical strength',
-            'D) avoid supervision',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The main weakness of the evidence, according to the passage, is that it is',
-          options: ['A) based on animals only', 'B) largely correlational in humans', 'C) too recent', 'D) limited to one country'],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'The ultimate sanction available to children in free play is ________.', answer: 'exclusion' },
-        { type: 'sentence_completion', text: 'Rats deprived of rough-and-________ play overreact to mild threats.', answer: 'tumble' },
-        { type: 'sentence_completion', text: 'In supervised activities children practise appealing to ________.', answer: 'authority' },
+        { type: 'matching_information', text: 'figures showing how little unstructured time children now have', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'A' },
+        { type: 'matching_information', text: 'evidence from animals that were deprived of play with their peers', answer: 'C' },
+        { type: 'matching_information', text: 'an explanation of why the possibility of exclusion makes children moderate their behaviour', answer: 'D' },
+        { type: 'matching_information', text: 'an argument that frightening experiences chosen voluntarily reduce later anxiety', answer: 'E' },
+        { type: 'matching_information', text: 'examples of countries that have changed school policy', answer: 'F' },
+        { type: 'matching_information', text: 'an admission that the human evidence cannot establish cause', answer: 'G' },
+        { type: 'true_false_not_given', text: 'Recorded rates of crime against children have risen over the period described.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Children in Chinese cities have less free time than children in Britain.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Schools in New Zealand that removed playground rules reported fewer injuries.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Finland protects fifteen minutes of outdoor break for every forty-five minutes of teaching.', answer: 'TRUE' },
+        { type: 'sentence_completion', text: 'Play in mammals is described as biologically ________.', answer: 'expensive' },
+        { type: 'sentence_completion', text: 'Rats deprived of rough-and-tumble play grow into adults that overreact to mild ________.', answer: 'threats' },
+        { type: 'sentence_completion', text: 'A Norwegian group argues that risky play is an evolved mechanism for managing ________.', answer: 'fear' },
       ],
     },
     {
@@ -239,50 +248,20 @@ export default {
       title: 'What Examinations Measure',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Imperial China used written examinations from the seventh century.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The Chinese system aimed to limit the power of aristocratic families.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Teacher assessment is less influenced by social background than examinations.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'High-stakes testing regimes often show rising scores without real improvement.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Marker agreement is higher for portfolios than for examinations.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Adaptive testing works well for all types of material.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Most countries have now abolished final examinations.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: "Goodhart's law is used in the passage to explain why",
-          options: [
-            'A) examinations are expensive',
-            'B) a measure stops being good when it becomes a target',
-            'C) students suffer anxiety',
-            'D) coursework is unreliable',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer says the strongest argument for examinations is that they',
-          options: [
-            'A) improve learning',
-            'B) are cheap to administer',
-            'C) allocate scarce places impersonally',
-            'D) are popular with teachers',
-          ],
-          answer: 'C',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The deeper difficulty identified at the end of the passage is that examinations must',
-          options: [
-            'A) be marked quickly',
-            'B) do two incompatible jobs at once',
-            'C) cover the whole curriculum',
-            'D) satisfy parents and employers',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'The British civil service adopted competitive examination in the ________.', answer: '1850s' },
-        { type: 'sentence_completion', text: 'Coursework is vulnerable to unequal help at home and to text generated by ________.', answer: 'machines' },
-        { type: 'sentence_completion', text: 'Reform has moved towards reporting results as ________ rather than a single figure.', answer: 'profiles' },
-        { type: 'sentence_completion', text: 'Supporting learning requires frequent low-________ feedback.', answer: 'stakes' },
+        { type: 'matching_features', text: 'It is vulnerable to unequal help at home and to text produced by machines.', options: ['@Match each statement with the correct method of assessment, A, B, C or D.', 'A) the timed examination', 'B) coursework', 'C) portfolios', 'D) adaptive computer testing'], answer: 'B' },
+        { type: 'matching_features', text: 'It is retained in reformed systems because its results can be compared.', answer: 'A' },
+        { type: 'matching_features', text: 'Agreement between the people marking it is generally lower than for other methods.', answer: 'C' },
+        { type: 'matching_features', text: 'It works only for material that can be tested by questions with definite answers.', answer: 'D' },
+        { type: 'summary_completion', text: 'What assessment does to teaching — Once results are used to judge schools and teachers, effort shifts towards the ________ itself.', options: ['@Complete the summary below.'], answer: 'test' },
+        { type: 'summary_completion', text: 'This is an instance of ________ law, which holds that a measure stops being a good measure once it becomes a target.', answer: 'Goodhart|Goodhart\'s' },
+        { type: 'summary_completion', text: 'In practice it appears as a ________ of the curriculum towards the subjects that are examined.', answer: 'narrowing' },
+        { type: 'summary_completion', text: 'Studies of high-stakes regimes find rising scores with no improvement on ________ measures of the same knowledge.', answer: 'independent' },
+        { type: 'summary_completion', text: 'Test-taking is itself a skill, unevenly distributed and ________ at considerable expense.', answer: 'coachable' },
+        { type: 'yes_no_not_given', text: 'Examinations are crude, but their crudeness treats candidates impersonally.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Teacher assessment is less influenced by social background than examination results are.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Reporting results as profiles makes selection decisions simpler.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'A system that uses one instrument for both learning and ranking tends to sacrifice learning.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Adaptive computer testing will replace written examinations within a decade.', answer: 'NOT GIVEN' },
       ],
     },
   ],

@@ -50,12 +50,16 @@ lower-altitude regions where most smallholders farm. Adaptation is possible — 
 exist, shade-growing under trees, and breeding or grafting more tolerant varieties — but each requires
 capital and a time horizon of years, which is precisely what a farmer selling below cost does not have.`;
 
-const P2 = `Inside a converted warehouse near a European city, lettuces grow in stacked trays under magenta
+const P2 = `A
+
+Inside a converted warehouse near a European city, lettuces grow in stacked trays under magenta
 light, their roots suspended in a circulating film of nutrient solution. There is no soil, no sunlight and
 no season. The building produces the equivalent yield of a field many times its footprint, uses a fraction
 of the water, and delivers its harvest to supermarkets within hours of cutting. Vertical farming has been
 presented for two decades as the answer to feeding an urbanising world. Its record so far is more
 instructive than that description suggests.
+
+B
 
 The advantages are real and easy to state. Growing indoors removes the constraints of climate and pests, so
 the crop can be produced anywhere, year-round, without pesticides. Water use falls by around ninety-five
@@ -64,6 +68,8 @@ metre are extraordinary: stacking ten layers multiplies the growing area, and co
 temperature, humidity and carbon dioxide allows plants to grow considerably faster than outdoors. Because
 production sits near consumers, transport distances and post-harvest losses shrink, which matters for leafy
 crops that lose quality within days.
+
+C
 
 The limitation is energy, and it is fundamental rather than a matter of engineering refinement. Outdoors,
 sunlight is free. Indoors, every photon must be generated, and although LED efficiency has improved
@@ -74,12 +80,16 @@ Staple crops do not: producing wheat this way would require roughly the energy c
 and the world's calories come overwhelmingly from grains grown across vast areas where land is cheap and
 sunlight is free.
 
+D
+
 The industry's recent history illustrates the point. A wave of investment through the late 2010s funded
 increasingly large facilities on the assumption that scale would reduce costs. Several of the
 best-capitalised companies then failed or contracted sharply, as energy prices rose and it became clear
 that the dominant cost did not fall with scale in the way that construction costs did. Firms that survived
 tended to be those that had concentrated on a narrow range of crops, secured cheap electricity, and sold
 into markets where local, pesticide-free produce commanded a premium.
+
+E
 
 Where the model has proved genuinely valuable is in situations that make its weaknesses irrelevant.
 Countries importing most of their fresh produce, particularly in the Gulf and in Singapore, accept a higher
@@ -88,6 +98,8 @@ plants that are then transplanted outdoors, capturing the advantage of precision
 phase without paying to light a full growing cycle. Pharmaceutical and research crops, where value per
 kilogram is enormous, are grown this way routinely. Iceland and parts of Scandinavia run greenhouse and
 indoor operations on geothermal and hydroelectric power, which removes the objection entirely.
+
+F
 
 The realistic assessment is therefore neither the revolution promised nor the failure sometimes declared.
 Vertical farming is a specialised tool that performs well when energy is cheap or clean, when the crop is
@@ -155,39 +167,44 @@ export default {
       title: 'The Economics of Coffee',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'Coffee is the most heavily traded agricultural commodity after sugar.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Arabica takes three to four years to produce its first harvest.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Mechanical stripping produces higher quality coffee than hand picking.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The natural processing method uses more water than the washed method.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Coffee prices fell below production cost in some countries between 2018 and 2020.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'All certified fair trade coffee is sold at fair trade prices.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Robusta coffee is more affected by climate change than arabica.', answer: 'NOT GIVEN' },
+        { type: 'true_false_not_given', text: 'Growers typically receive between one and three per cent of the price paid for a cup in Europe.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Arabica accounts for around sixty per cent of world production.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Stripping branches mechanically produces higher quality than picking by hand.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Between 2018 and 2020 the traded price fell below the cost of production in several countries.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Tariffs become lower as the degree of processing increases.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Ethiopian farmers receive a larger share of the retail price than Honduran farmers.', answer: 'NOT GIVEN' },
+        { type: 'note_completion', text: 'Washed method: the fruit is pulped and the beans are fermented in ________ for a day or two.', options: ['@Complete the notes below.'], answer: 'water' },
+        { type: 'note_completion', text: 'Washed method: produces a cleaner and more ________ profile.', answer: 'acidic' },
+        { type: 'note_completion', text: 'Natural method: the whole cherry is dried and must be turned constantly to prevent ________.', answer: 'mould' },
+        { type: 'note_completion', text: 'Natural method: yields a heavier and ________ flavour.', answer: 'fruitier' },
         {
           type: 'multiple_choice',
-          text: 'Most of the value in the coffee chain is added during',
-          options: ['A) growing', 'B) processing at origin', 'C) roasting', 'D) shipping'],
-          answer: 'C',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Tariffs that rise with processing have the effect of',
+          text: 'Growers cannot respond quickly to price signals because',
           options: [
-            'A) protecting farmers from price falls',
-            'B) discouraging value-added manufacturing at origin',
-            'C) reducing retail prices',
-            'D) improving coffee quality',
+            'A) they lack information about the market',
+            'B) the plants take years to establish',
+            'C) governments control what may be planted',
+            'D) transport to market is unreliable',
           ],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'The boom-and-bust price cycle occurs because coffee plants',
-          options: ['A) are vulnerable to disease', 'B) cannot respond quickly to price signals', 'C) yield unpredictably', 'D) require certification'],
+          text: 'According to the passage, roasting',
+          options: [
+            'A) adds very little to the value of the crop',
+            'B) is carried out mainly in producing countries',
+            'C) is the stage at which most value is added',
+            'D) has become impossible to perform at origin',
+          ],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'Modelling suggests that the land area suitable for arabica could',
+          options: ['A) double by 2050', 'B) halve by 2050', 'C) remain broadly stable', 'D) move to lower altitudes'],
           answer: 'B',
         },
-        { type: 'sentence_completion', text: 'Coffee is traded against the price of ________ contracts in New York.', answer: 'futures' },
-        { type: 'sentence_completion', text: 'In the washed method, beans are ________ in water to remove mucilage.', answer: 'fermented' },
-        { type: 'sentence_completion', text: 'Land suitable for arabica could ________ by 2050.', answer: 'halve' },
       ],
     },
     {
@@ -195,39 +212,44 @@ export default {
       title: 'The Promise and Limits of Vertical Farming',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'Vertical farms use around 95 per cent less water.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Indoor growing eliminates the need for pesticides.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Lighting usually accounts for over half of operating costs.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Growing wheat indoors is economically viable at scale.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Larger facilities reduced the dominant cost as investors expected.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Iceland uses geothermal and hydroelectric power for indoor growing.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Singapore produces most of its own fresh vegetables indoors.', answer: 'NOT GIVEN' },
+        { type: 'matching_information', text: 'a figure for the reduction in the amount of water used', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'B' },
+        { type: 'matching_information', text: 'a list of the crops for which the economics of the method work', answer: 'C' },
+        { type: 'matching_information', text: 'an account of well-funded companies that failed when costs did not fall with scale', answer: 'D' },
+        { type: 'matching_information', text: 'examples of places where cheap clean power removes the main objection', answer: 'E' },
+        { type: 'matching_information', text: 'a summary of the conditions under which the method performs well', answer: 'F' },
+        { type: 'sentence_completion', text: 'The roots of the plants are suspended in a circulating film of ________ solution.', answer: 'nutrient' },
+        { type: 'sentence_completion', text: 'Water use falls sharply because the solution is ________ rather than lost to the soil.', answer: 'recirculated' },
+        { type: 'sentence_completion', text: 'Lighting alone typically accounts for over half of the ________ cost of a vertical farm.', answer: 'operating' },
+        { type: 'sentence_completion', text: 'Producers of ________ use controlled environments to raise young plants for transplanting outdoors.', answer: 'seedlings' },
+        { type: 'sentence_completion', text: 'Countries in the Gulf accept a higher cost in exchange for supply ________.', answer: 'security' },
         {
           type: 'multiple_choice',
-          text: 'The fundamental limitation of vertical farming is described as',
-          options: ['A) construction cost', 'B) energy', 'C) labour', 'D) crop disease'],
+          text: 'The passage describes the fundamental limitation of vertical farming as',
+          options: ['A) damage from pests', 'B) the cost of energy', 'C) the supply of water', 'D) the availability of labour'],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'Companies that survived the industry contraction tended to',
+          text: 'Producing wheat in a vertical farm would require',
           options: [
-            'A) expand into staple crops',
-            'B) focus on a narrow range of crops and cheap electricity',
-            'C) build the largest facilities',
-            'D) move production abroad',
+            'A) slightly more energy than growing it outdoors',
+            'B) roughly the energy content of the wheat itself',
+            'C) no artificial light at all',
+            'D) less land than conventional grain farming',
           ],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'The writer concludes that vertical farming is best understood as',
-          options: ['A) a revolution in agriculture', 'B) a complete failure', 'C) a specialised tool', 'D) a temporary trend'],
+          text: 'The strongest claim the passage makes for vertical farming is that it can',
+          options: [
+            'A) feed an urbanising world',
+            'B) replace the growing of grain',
+            'C) remove a kind of production that was never efficient',
+            'D) reduce food prices everywhere',
+          ],
           answer: 'C',
         },
-        { type: 'sentence_completion', text: 'Roots are suspended in a circulating film of ________ solution.', answer: 'nutrient' },
-        { type: 'sentence_completion', text: 'Producers use controlled environments to raise ________ for transplanting outdoors.', answer: 'seedlings' },
-        { type: 'sentence_completion', text: 'The strongest claim is that it can replace salad crops grown in heated ________.', answer: 'glasshouses' },
       ],
     },
     {
@@ -235,45 +257,20 @@ export default {
       title: 'Keeping Food Before Refrigeration',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Drying prevents spoilage by removing the moisture microbes need.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The word "salary" derives from salt.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Fermentation works by excluding all microorganisms.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Appert understood why his preservation method worked.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The can opener was invented before the can.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Irradiation is considered unsafe by major health authorities.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Freeze-drying is cheaper than heat drying.', answer: 'FALSE' },
-        {
-          type: 'multiple_choice',
-          text: 'Salting preserves food primarily by',
-          options: ['A) killing bacteria with heat', 'B) drawing water out through osmosis', 'C) adding acid', 'D) excluding oxygen'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer describes fermentation as interesting because it',
-          options: [
-            'A) requires no equipment',
-            'B) recruits microbes rather than excluding them',
-            'C) was invented only once',
-            'D) needs no time',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'Refrigerated shipping from the 1880s mainly resulted in',
-          options: [
-            'A) cheaper canned goods',
-            'B) restructuring of agriculture across continents',
-            'C) the end of salting',
-            'D) larger domestic kitchens',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'Appert developed his method after the French government offered a ________.', answer: 'reward' },
-        { type: 'sentence_completion', text: 'Freeze-drying removes water by ________ under vacuum.', answer: 'sublimation' },
-        { type: 'sentence_completion', text: 'Modified atmosphere packaging replaces air with nitrogen and carbon ________.', answer: 'dioxide' },
-        { type: 'sentence_completion', text: 'Fermented foods are now marketed for their effect on the gut ________.', answer: 'microbiome' },
+        { type: 'matching_features', text: 'It draws water out of cells by osmosis.', options: ['@Match each statement with the correct method of preservation, A, B, C or D.', 'A) drying', 'B) salting', 'C) fermentation', 'D) sealing and heating in jars'], answer: 'B' },
+        { type: 'matching_features', text: 'It recruits microbes instead of removing or excluding them.', answer: 'C' },
+        { type: 'matching_features', text: 'It was developed in response to a prize offered by a government.', answer: 'D' },
+        { type: 'matching_features', text: 'It requires no equipment beyond time and suitable weather.', answer: 'A' },
+        { type: 'matching_features', text: 'It can produce vitamins that the raw ingredient does not contain.', answer: 'C' },
+        { type: 'summary_completion', text: 'From ships to supermarkets — Refrigerated ships from the 1880s allowed Argentine beef and New Zealand ________ to reach Europe.', options: ['@Complete the summary below.'], answer: 'lamb' },
+        { type: 'summary_completion', text: 'The domestic refrigerator made possible the ________, which depends on customers being able to store what they buy.', answer: 'supermarket' },
+        { type: 'summary_completion', text: 'Freeze-drying removes water by ________ under vacuum, preserving structure and flavour.', answer: 'sublimation' },
+        { type: 'summary_completion', text: 'Modified atmosphere packaging replaces the air in a pack with nitrogen and carbon ________.', answer: 'dioxide' },
+        { type: 'summary_completion', text: 'Irradiation remains commercially marginal because of consumer ________.', answer: 'resistance' },
+        { type: 'true_false_not_given', text: 'The can opener was invented before the can itself.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Appert understood the reason why his preservation method worked.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'About a third of the food produced today is lost or wasted.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Fermented foods now cost more than they did in the past.', answer: 'NOT GIVEN' },
       ],
     },
   ],

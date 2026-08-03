@@ -51,16 +51,22 @@ the visitors who reach them do so by a method that contributes to it. No policy 
 that contradiction, and most proposals amount to reducing the number of people who fly, which returns the
 question of who is permitted to travel and on what basis.`;
 
-const P2 = `There are roughly seven thousand languages spoken today, and by conservative estimates around
+const P2 = `A
+
+There are roughly seven thousand languages spoken today, and by conservative estimates around
 half will have no fluent speakers by the end of this century. Some linguists put the proportion
 considerably higher. Languages have always disappeared, but the current rate is without precedent, and the
 pattern is unusual: the number of languages is falling while the number of speakers of the largest ones
 continues to grow.
 
+B
+
 The distribution explains why. About four per cent of the world's languages are spoken by ninety-six per
 cent of its people. The remainder are held by small communities, frequently fewer than a thousand speakers,
 concentrated in regions of high linguistic diversity such as Papua New Guinea, which alone has over eight
 hundred languages, the Amazon basin, and parts of West Africa and northern Australia.
+
+C
 
 A language rarely dies because it is forbidden, though that has happened, and children punished for
 speaking their own language in school is a documented history across several continents. More often it
@@ -72,12 +78,16 @@ young; within two it is understood but not produced; within three it is gone. Th
 interruption of transmission to children, and it can occur while hundreds of adults still speak the
 language fluently, which is why speaker counts alone are misleading indicators of health.
 
+D
+
 What is lost is debated, and the debate is worth conducting carefully because inflated claims have damaged
 the argument. The strong version of linguistic relativity — that language determines what its speakers can
 think — is not supported by evidence. The weaker version, that language influences habitual attention, has
 experimental support: speakers of languages that use compass directions rather than left and right maintain
 orientation with unusual accuracy, and languages differ in whether grammar obliges a speaker to specify the
 source of information, which appears to affect what is routinely noticed and remembered.
+
+E
 
 The more concrete loss is knowledge. Small languages are frequently spoken by communities with long
 residence in a particular environment, and their vocabularies encode detailed information about local
@@ -86,6 +96,8 @@ proportion of documented ethnobotanical knowledge is held in languages with no w
 remaining speakers. When such a language ends, the information generally ends with it, since it was never
 transferred into the language that replaced it.
 
+F
+
 Revitalisation is possible but difficult, and Hebrew is the only clear case of a language with no native
 speakers being restored to full everyday use, under conditions unlikely to recur. More representative are
 partial successes. Welsh, in long decline, has stabilised and grown among the young through compulsory
@@ -93,6 +105,8 @@ teaching and Welsh-medium schools. Māori was supported by kōhanga reo, languag
 pre-school children spend their days with fluent elders, a model since adopted in Hawaii and elsewhere.
 Both required decades of sustained public funding and, crucially, the creation of contexts in which the
 language was necessary rather than symbolic.
+
+G
 
 The lesson from failed attempts is consistent. Recording a language is not the same as maintaining it;
 archives preserve data, not use. Teaching it as a school subject for a few hours a week produces pupils who
@@ -153,44 +167,59 @@ export default {
       title: 'The Costs and Benefits of Mass Tourism',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'International tourist journeys exceeded 1.5 billion by 2019.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Tourism provides employment for people without formal qualifications.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Most tourist spending remains in developing destination countries.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: "Venice's resident population has more than halved since 1970.", answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Protests against overtourism were directed at individual visitors.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Wildlife tourism revenue has helped conserve some species.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Bhutan has recently abolished its visitor fee.', answer: 'NOT GIVEN' },
         {
           type: 'multiple_choice',
-          text: 'Cruise ships attract particular criticism because they',
+          text: 'Between 1950 and 2019 international tourist journeys rose from approximately',
           options: [
-            'A) damage harbours',
-            'B) concentrate arrivals without proportionate spending',
-            'C) employ few local staff',
-            'D) arrive only in summer',
+            'A) twenty-five million to one and a half billion',
+            'B) twenty-five million to one hundred and fifty million',
+            'C) two hundred and fifty million to one and a half billion',
+            'D) twenty-five million to five hundred million',
+          ],
+          answer: 'A',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'In the passage, leakage refers to',
+          options: [
+            'A) the loss of water supplies to hotels',
+            'B) the share of a visitor payment that leaves the country almost immediately',
+            'C) the avoidance of tax by tour operators',
+            'D) unemployment outside the tourist season',
           ],
           answer: 'B',
         },
         {
           type: 'multiple_choice',
-          text: 'The problem identified with the dispersal strategy is that it may',
-          options: ['A) cost too much', 'B) export the problem elsewhere', 'C) reduce revenue', 'D) anger tour operators'],
-          answer: 'B',
+          text: 'Cruise ships attract particular anger because',
+          options: [
+            'A) they pollute the harbours they enter',
+            'B) they charge their passengers too much',
+            'C) they concentrate arrivals without proportionate spending',
+            'D) they employ very few local people',
+          ],
+          answer: 'C',
         },
         {
           type: 'multiple_choice',
-          text: 'The asymmetry the writer describes at the end is that destinations dependent on tourism are often',
+          text: 'Dispersal as a policy is described as',
           options: [
-            'A) the most expensive to reach',
-            'B) most exposed to climate change',
-            'C) the least developed',
-            'D) the furthest from airports',
+            'A) the most effective of the three responses',
+            'B) illegal in most countries',
+            'C) unpopular with governments',
+            'D) politically comfortable but liable to export the problem',
           ],
-          answer: 'B',
+          answer: 'D',
         },
-        { type: 'sentence_completion', text: 'The loss of tourist spending abroad is known as ________.', answer: 'leakage' },
+        { type: 'true_false_not_given', text: 'Tourism provides employment for people who have no formal qualifications.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Venice has lost more than half of its resident population since 1970.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'The protests described as overtourism were directed at individual visitors.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Bhutan has long required a substantial daily fee from foreign visitors.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'A technological substitute for jet fuel on long routes is expected shortly.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Barcelona has lost a larger share of its residents than Venice has.', answer: 'NOT GIVEN' },
+        { type: 'sentence_completion', text: 'Studies of tourist spending repeatedly find substantial ________ in developing destinations.', answer: 'leakage' },
         { type: 'sentence_completion', text: 'The term ________ entered general use around 2017.', answer: 'overtourism' },
-        { type: 'sentence_completion', text: 'Charging entry fees makes access dependent on ________.', answer: 'wealth' },
+        { type: 'sentence_completion', text: 'The third kind of response, ________, tries to redistribute visitors to less-known areas.', answer: 'dispersal' },
       ],
     },
     {
@@ -198,44 +227,19 @@ export default {
       title: 'Why Languages Disappear',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'About half of current languages may have no fluent speakers by 2100.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Four per cent of languages are spoken by most of the world\'s people.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Languages usually disappear because they are legally banned.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Speaker counts are a reliable indicator of a language\'s health.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The strong version of linguistic relativity is supported by evidence.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Hebrew is the clearest case of a fully revived language.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Welsh-medium schools were introduced before Māori language nests.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: 'The decisive stage in language death is described as',
-          options: [
-            'A) the death of the oldest speakers',
-            'B) the interruption of transmission to children',
-            'C) the loss of written records',
-            'D) migration to cities',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The most concrete loss when a language dies is said to be',
-          options: ['A) cultural identity', 'B) grammatical diversity', 'C) environmental knowledge', 'D) literary heritage'],
-          answer: 'C',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'According to the passage, revitalisation succeeds when',
-          options: [
-            'A) the language is recorded thoroughly',
-            'B) it is taught as a school subject',
-            'C) domains are created where it is the ordinary medium',
-            'D) speaker numbers are counted regularly',
-          ],
-          answer: 'C',
-        },
-        { type: 'sentence_completion', text: 'Papua New Guinea alone has over ________ hundred languages.', answer: 'eight' },
-        { type: 'sentence_completion', text: 'Māori pre-school language nests are called kōhanga ________.', answer: 'reo' },
-        { type: 'sentence_completion', text: 'Archives preserve data, not ________.', answer: 'use' },
+        { type: 'matching_information', text: 'a figure for the number of languages spoken within a single country', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
+        { type: 'matching_information', text: 'a description of the stages by which transmission to children stops', answer: 'C' },
+        { type: 'matching_information', text: 'an assessment of a claim about the relationship between language and thought', answer: 'D' },
+        { type: 'matching_information', text: 'examples of programmes that brought a language back into everyday use', answer: 'F' },
+        { type: 'matching_information', text: 'a warning that recording a language is not the same as keeping it alive', answer: 'G' },
+        { type: 'sentence_completion', text: 'About four per cent of the languages of the world are spoken by ninety-six per cent of its ________.', answer: 'people' },
+        { type: 'sentence_completion', text: 'The decisive stage in the loss of a language is the interruption of ________ to children.', answer: 'transmission' },
+        { type: 'sentence_completion', text: 'Maori was supported by language ________, where pre-school children spend the day with fluent elders.', answer: 'nests' },
+        { type: 'sentence_completion', text: 'A language survives where there are ________ in which it is the ordinary medium of life.', answer: 'domains' },
+        { type: 'true_false_not_given', text: 'Around half of the languages spoken today may have no fluent speakers by 2100.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Languages usually disappear because their use has been forbidden.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'The number of speakers is a reliable guide to how healthy a language is.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Hebrew is the only clear case of a language being restored to full everyday use.', answer: 'TRUE' },
       ],
     },
     {
@@ -243,45 +247,20 @@ export default {
       title: 'Who Owns the Past?',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Greece has requested the sculptures since 1832.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The removal permit was issued by a Greek authority.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'A museum in Athens has left space for the sculptures.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Germany agreed to transfer ownership of the Benin Bronzes.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Returns have generally emptied European collections as predicted.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Repatriation of human remains is now widely accepted ethically.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The British Museum has agreed to a long-term loan of the sculptures.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: 'The concept of the "universal museum" is used to argue that',
-          options: [
-            'A) objects belong to their country of origin',
-            'B) collections allow civilisations to be seen in relation to one another',
-            'C) museums should charge for entry',
-            'D) digitisation makes objects unnecessary',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer says the capacity objection is weakened because it is often made about countries that',
-          options: [
-            'A) have no museums',
-            'B) have already built suitable facilities',
-            'C) refuse loans',
-            'D) lack legal claims',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'According to the passage, the question being asked about disputed objects has shifted towards',
-          options: ['A) who has legal title', 'B) what the object is for', 'C) how much it is worth', 'D) where it was made'],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'The sculptures were removed between 1801 and ________.', answer: '1812' },
-        { type: 'sentence_completion', text: 'The Benin Bronzes were looted from Benin City in ________.', answer: '1897' },
-        { type: 'sentence_completion', text: 'Returning museums have often retained items on long-term ________.', answer: 'loan' },
-        { type: 'sentence_completion', text: 'High-resolution ________ changes what an institution loses by giving up an object.', answer: 'recording' },
+        { type: 'yes_no_not_given', text: 'The fear that one return would empty major collections is rarely expressed openly.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'A digital scan can serve as a full substitute for the object it records.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Loan agreements serve the stated aim of the universal museum better than permanent possession.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'The objection about capacity should be dismissed without serious discussion.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'The Parthenon dispute will be settled within the next ten years.', answer: 'NOT GIVEN' },
+        { type: 'matching_features', text: 'Objects from many civilisations can be seen in relation to one another by an international public.', options: ['@Match each statement with the correct position, A, B or C.', 'A) the case for return', 'B) the case for retention', 'C) recent practice'], answer: 'B' },
+        { type: 'matching_features', text: 'The permit under which the objects were removed was of contested validity.', answer: 'A' },
+        { type: 'matching_features', text: 'Ownership has been transferred while items remain on long-term loan.', answer: 'C' },
+        { type: 'matching_features', text: 'A purpose-built museum stands beside the original building with space left empty.', answer: 'A' },
+        { type: 'matching_features', text: 'Human remains have been given back by numerous institutions.', answer: 'C' },
+        { type: 'summary_completion', text: 'How the debate has moved — Germany agreed to transfer ownership of the Benin ________ to Nigeria.', options: ['@Complete the summary below.'], answer: 'Bronzes' },
+        { type: 'summary_completion', text: '________ now allows objects to be recorded in high resolution before they are transferred.', answer: 'Digitisation' },
+        { type: 'summary_completion', text: 'For most of the twentieth century the question asked was whether a museum held legal ________.', answer: 'title' },
+        { type: 'summary_completion', text: 'The capacity objection concerns the environmental and ________ standards that fragile objects require.', answer: 'security' },
       ],
     },
   ],

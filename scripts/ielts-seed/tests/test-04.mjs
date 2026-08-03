@@ -51,10 +51,14 @@ medication but cognitive behavioural therapy, which typically involves restricti
 becomes efficient again, an approach that patients often find counterintuitive and that works reliably
 nonetheless.`;
 
-const P2 = `The bicycle is an old technology. Its modern form, with a chain drive and two equal wheels, was
+const P2 = `A
+
+The bicycle is an old technology. Its modern form, with a chain drive and two equal wheels, was
 essentially complete by 1890, and for several decades afterwards it was the dominant means of personal
 transport in much of Europe. What happened next is usually described as inevitable: the car arrived and the
 bicycle retreated. The Dutch case shows that it was nothing of the kind.
+
+B
 
 In the Netherlands, as elsewhere, cycling collapsed after the Second World War. Between 1950 and 1975 the
 proportion of journeys made by bicycle in Amsterdam fell by around three-quarters. Streets were widened,
@@ -65,6 +69,8 @@ campaigning movement took its name from a newspaper article: Stop de Kindermoord
 The oil crisis of 1973 then made petrol scarce, and the government introduced car-free Sundays that gave
 an entire population an unplanned demonstration of what quiet streets felt like.
 
+C
+
 The response was not a publicity campaign urging people to cycle. It was thirty years of construction.
 Dutch policy is built on the principle of separation: where traffic moves faster than about thirty
 kilometres per hour, bicycles are given their own physical space, protected by a kerb rather than a painted
@@ -74,6 +80,8 @@ through one-way systems that force cars onto arterial roads while allowing bicyc
 directions. The result is a network in which an unaccompanied twelve-year-old can cross a city, which is
 the standard Dutch planners use to judge success.
 
+D
+
 The evidence on safety is initially puzzling. Countries with the highest cycling rates have the lowest
 injury rates per kilometre travelled, which appears to reverse the expected relationship. Part of the
 explanation is infrastructure, but part is a phenomenon known as safety in numbers: as cyclist numbers rise,
@@ -81,12 +89,16 @@ drivers encounter them constantly, anticipate them, and are more likely to be cy
 effect is non-linear, which means that measures which increase cycling can improve safety even before the
 infrastructure is complete.
 
+E
+
 Health economists have found the overall calculation strongly favourable. Physical inactivity is among the
 leading risk factors for premature death, and studies following large populations report that regular
 cycle commuters have substantially lower rates of cardiovascular disease and cancer. When these gains are
 weighed against the risks of collision and of inhaling roadside pollution, the benefits outweigh the harms
 by a wide margin in almost every setting examined, typically by a factor of somewhere between five and
 twenty to one.
+
+F
 
 Copying the Dutch model has proved difficult, and the reasons are political rather than technical. Cycle
 infrastructure requires space, and in a built-up street the only available space belongs to parked cars or
@@ -155,39 +167,49 @@ export default {
       title: 'The Architecture of Sleep',
       text: P1,
       questions: [
-        { type: 'true_false_not_given', text: 'REM sleep was identified in 1953.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'A typical sleep cycle lasts around ninety minutes.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Deep sleep dominates the later cycles of the night.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The glymphatic system works mainly during REM sleep.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'It is proven that poor sleep causes Alzheimer\'s disease.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Humans spend a higher proportion of sleep in REM than other primates.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Sleep tracking devices match laboratory accuracy.', answer: 'FALSE' },
         {
           type: 'multiple_choice',
-          text: 'Someone sleeping five hours instead of eight loses disproportionately more',
-          options: ['A) light sleep', 'B) slow-wave sleep', 'C) REM sleep', 'D) time falling asleep'],
-          answer: 'C',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'During slow-wave sleep the space between brain cells expands by around',
-          options: ['A) 20 per cent', 'B) 40 per cent', 'C) 60 per cent', 'D) 90 per cent'],
-          answer: 'C',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The passage says adolescents struggle with early school starts because puberty',
+          text: 'The observation made in 1953 that changed scientific views of sleep concerned',
           options: [
-            'A) increases the need for sleep',
-            'B) delays the circadian clock',
-            'C) reduces melatonin permanently',
-            'D) causes frequent waking',
+            'A) the temperature of the sleeping brain',
+            'B) rapid eye movement in sleeping infants',
+            'C) the total length of the night',
+            'D) written dream diaries kept by volunteers',
           ],
           answer: 'B',
         },
-        { type: 'sentence_completion', text: 'The waste clearance system described in 2013 is called the ________ system.', answer: 'glymphatic' },
-        { type: 'sentence_completion', text: 'Pre-industrial records describe a first and ________ sleep.', answer: 'second' },
-        { type: 'sentence_completion', text: 'Anxiety about sleep scores has been informally named ________.', answer: 'orthosomnia' },
+        {
+          type: 'multiple_choice',
+          text: 'Someone who sleeps five hours instead of eight loses',
+          options: ['A) an equal share of each type of sleep', 'B) mainly deep sleep', 'C) most of their REM sleep', 'D) only light sleep'],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'The glymphatic system is described as operating chiefly during',
+          options: ['A) REM sleep', 'B) light sleep', 'C) slow-wave sleep', 'D) quiet waking rest'],
+          answer: 'C',
+        },
+        {
+          type: 'multiple_choice',
+          text: 'The passage describes the link between chronic poor sleep and dementia as',
+          options: [
+            'A) firmly established',
+            'B) uncertain in the direction of causation',
+            'C) completely disproved',
+            'D) irrelevant to neurological research',
+          ],
+          answer: 'B',
+        },
+        { type: 'true_false_not_given', text: 'Human beings spend a higher proportion of their sleep in REM than their closest relatives do.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Records from pre-industrial Europe describe sleep taken in two separate blocks.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Puberty shifts the circadian clock to an earlier hour.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Schools that moved their start times later reported better attendance.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'Wearable trackers estimate sleep stages as accurately as laboratory equipment.', answer: 'FALSE' },
+        { type: 'sentence_completion', text: 'The receptors that set the circadian rhythm are most sensitive to short-wavelength ________ light.', answer: 'blue' },
+        { type: 'sentence_completion', text: 'During slow-wave sleep the space between brain cells expands by around ________ per cent.', answer: 'sixty' },
+        { type: 'sentence_completion', text: 'One substance cleared by the system is beta-________, the protein that accumulates in Alzheimer\'s disease.', answer: 'amyloid' },
+        { type: 'sentence_completion', text: 'Anxiety about achieving good sleep scores has been informally named ________.', answer: 'orthosomnia' },
       ],
     },
     {
@@ -195,44 +217,19 @@ export default {
       title: 'Why the Dutch Cycle',
       text: P2,
       questions: [
-        { type: 'true_false_not_given', text: 'Cycling in Amsterdam declined between 1950 and 1975.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Over 400 children died on Dutch roads in 1971.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'The Dutch recovery was achieved mainly through advertising campaigns.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Painted lines are considered sufficient on fast roads in the Netherlands.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Countries with high cycling rates have low injury rates per kilometre.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Dutch cities have banned cars from residential areas entirely.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Seville built its network faster than Paris.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: 'The standard Dutch planners use to judge a network is whether',
-          options: [
-            'A) commuting times are reduced',
-            'B) an unaccompanied twelve-year-old can cross the city',
-            'C) car ownership falls',
-            'D) the network covers every street',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: '"Safety in numbers" refers to the finding that',
-          options: [
-            'A) cyclists travel in groups for protection',
-            'B) more cyclists leads to drivers anticipating them',
-            'C) accidents are reported less often',
-            'D) wider paths reduce collisions',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The main obstacle to copying the Dutch model is described as',
-          options: ['A) technical', 'B) financial', 'C) political', 'D) climatic'],
-          answer: 'C',
-        },
-        { type: 'sentence_completion', text: 'The campaigning movement was called Stop de ________.', answer: 'Kindermoord' },
-        { type: 'sentence_completion', text: 'The 1973 oil crisis led the government to introduce car-free ________.', answer: 'Sundays' },
-        { type: 'sentence_completion', text: 'Dutch policy is built on the principle of ________.', answer: 'separation' },
+        { type: 'matching_information', text: 'a figure for the number of people killed on the roads in one year', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'B' },
+        { type: 'matching_information', text: 'the test that planners use to decide whether a network is good enough', answer: 'C' },
+        { type: 'matching_information', text: 'an explanation of why greater numbers of cyclists make cycling safer', answer: 'D' },
+        { type: 'matching_information', text: 'a weighing of health gains against the risks of collision and pollution', answer: 'E' },
+        { type: 'matching_information', text: 'the reason why building this infrastructure is politically difficult', answer: 'F' },
+        { type: 'sentence_completion', text: 'Bicycles are separated from traffic wherever vehicles move faster than about thirty ________ per hour.', answer: 'kilometres' },
+        { type: 'sentence_completion', text: 'Cyclists are protected by a ________ rather than by a painted line.', answer: 'kerb' },
+        { type: 'sentence_completion', text: 'The campaigning movement took its name from a newspaper ________.', answer: 'article' },
+        { type: 'sentence_completion', text: 'Successful cities built a ________ network quickly instead of adding separate fragments.', answer: 'connected' },
+        { type: 'true_false_not_given', text: 'Cycling in Amsterdam fell by roughly three-quarters between 1950 and 1975.', answer: 'TRUE' },
+        { type: 'true_false_not_given', text: 'The Dutch response consisted mainly of campaigns urging people to cycle.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Countries with the highest cycling rates have the highest injury rates per kilometre.', answer: 'FALSE' },
+        { type: 'true_false_not_given', text: 'Seville built its cycle network more cheaply than Paris did.', answer: 'NOT GIVEN' },
       ],
     },
     {
@@ -240,45 +237,20 @@ export default {
       title: 'Understanding the Placebo Effect',
       text: P3,
       questions: [
-        { type: 'true_false_not_given', text: 'Placebo pain relief can be blocked by naloxone.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Placebos are equally effective for all medical conditions.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'A placebo can reduce asthma discomfort without improving airway obstruction.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'White tablets tend to outperform coloured ones.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'The nocebo effect has been studied more thoroughly than the placebo effect.', answer: 'FALSE' },
-        { type: 'true_false_not_given', text: 'Open-label placebos have shown improvements in chronic back pain.', answer: 'TRUE' },
-        { type: 'true_false_not_given', text: 'Most doctors now use open-label placebos in practice.', answer: 'NOT GIVEN' },
-        {
-          type: 'multiple_choice',
-          text: 'The irritable bowel syndrome trial showed that results improved most when sham treatment was combined with',
-          options: ['A) a higher dose', 'B) an attentive consultation', 'C) a branded package', 'D) daily monitoring'],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The statin findings create an ethical dilemma because',
-          options: [
-            'A) the drug is ineffective',
-            'B) disclosing risks causes some of the harm described',
-            'C) patients refuse treatment',
-            'D) trials cannot be blinded',
-          ],
-          answer: 'B',
-        },
-        {
-          type: 'multiple_choice',
-          text: 'The writer concludes that the non-specific effect of receiving care should be regarded as',
-          options: [
-            'A) statistical noise',
-            'B) a reliable component of recovery',
-            'C) a form of deception',
-            'D) evidence that drugs are unnecessary',
-          ],
-          answer: 'B',
-        },
-        { type: 'sentence_completion', text: 'Placebo analgesia involves release of the body\'s own ________ chemicals.', answer: 'opioid' },
-        { type: 'sentence_completion', text: 'The opposite phenomenon, in which warnings increase side effects, is called the ________ effect.', answer: 'nocebo' },
-        { type: 'sentence_completion', text: 'In Parkinson\'s disease, placebo administration triggers measurable ________ release.', answer: 'dopamine' },
-        { type: 'sentence_completion', text: 'The writer says healthcare systems are organised to minimise attention, explanation and ________.', answer: 'time' },
+        { type: 'yes_no_not_given', text: 'The placebo effect is best described as imaginary.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'The context in which a treatment is delivered affects how well it works.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Placebos are as effective for objectively measured disease as for reported symptoms.', answer: 'NO' },
+        { type: 'yes_no_not_given', text: 'Attention, explanation and time are a genuine part of recovery.', answer: 'YES' },
+        { type: 'yes_no_not_given', text: 'Randomised trials ought to be redesigned so that they no longer subtract non-specific effects.', answer: 'NOT GIVEN' },
+        { type: 'summary_completion', text: 'What produces the response — The response appears to be produced by ________, which is generated as much by context as by the pill itself.', options: ['@Complete the summary below.'], answer: 'expectation' },
+        { type: 'summary_completion', text: 'Injections have been found to outperform ________.', answer: 'tablets' },
+        { type: 'summary_completion', text: 'Coloured tablets outperform ________ ones, and two placebos work better than one.', answer: 'white' },
+        { type: 'summary_completion', text: 'In a trial involving irritable bowel syndrome, sham ________ was combined with a long, attentive consultation.', answer: 'acupuncture' },
+        { type: 'matching_features', text: 'It can be blocked by a drug that reverses opioid overdose.', options: ['@Match each statement with the correct phenomenon, A, B or C.', 'A) the placebo effect', 'B) the nocebo effect', 'C) open-label placebo'], answer: 'A' },
+        { type: 'matching_features', text: 'Patients are told plainly that what they are receiving is inert.', answer: 'C' },
+        { type: 'matching_features', text: 'Telling people what may happen to them makes it more likely to happen.', answer: 'B' },
+        { type: 'matching_features', text: 'It creates a genuine ethical difficulty for informed consent.', answer: 'B' },
+        { type: 'matching_features', text: 'It has been tested in chronic back pain and cancer-related fatigue.', answer: 'C' },
       ],
     },
   ],
