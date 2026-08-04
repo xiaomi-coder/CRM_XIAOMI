@@ -22,6 +22,7 @@ import Settings from './Settings';
 import Library from './Library';
 import Results from './Results';
 import { CreatorDashboard, CenterControl, BroadcastSystem, SystemLogs } from './CreatorComponents';
+import DemoTour from './DemoTour';
 import IELTSMain from './ielts/IELTSMain';
 import IELTSAdmin from './ielts/IELTSAdmin';
 import TestsManager from './ielts/TestsManager';
@@ -57,6 +58,8 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
   // Removed local auth states
 
   const centerId = currentUser ? (currentUser.centerId || (currentUser as any).centerid || 'GLOBAL') : 'GLOBAL';
+  // Landing'dan kirgan demo mehmon — unga qisqa yo'l ko'rsatkich chiqadi
+  const isDemo = centerId === 'DEMO_CENTER';
 
   const loadAllData = async () => {
     setIsLoading(true);
@@ -479,6 +482,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
   return (
     <Layout activeTab={activeTab} setActiveTab={setActiveTab} user={currentUser} onLogout={onLogout}>
       {renderContent()}
+      {isDemo && <DemoTour activeTab={activeTab} onGoTo={setActiveTab} />}
     </Layout>
   );
 };

@@ -202,6 +202,10 @@ const Login: React.FC<LoginProps> = ({ t, onLogin, onTestLogin, error: externalE
 
             {/* Footer */}
             <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center gap-4">
+              <p className="text-[11px] text-white/40 font-bold">
+                Yangi markazmisiz?{' '}
+                <a href="/register" className="text-emerald-300 hover:text-emerald-200 font-black">Bepul ro'yxatdan o'ting</a>
+              </p>
               <div className="flex items-center gap-6">
                 <a href="tel:+998906127171" className="flex items-center gap-2 text-emerald-300 hover:scale-105 transition-transform">
                   <Phone size={14} />

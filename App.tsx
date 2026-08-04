@@ -4,6 +4,8 @@ import { db, getAuthToken, isTokenValid } from './services/supabase';
 import { User, UserRole, Lead, TestTemplate } from './types';
 import LandingPage from './components/LandingPage';
 import Login from './components/Login';
+import Register from './components/Register';
+import GuidePage from './components/GuidePage';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import ProtectedRoute from './components/ProtectedRoute';
 import TestQuiz from './components/TestQuiz';
@@ -115,6 +117,22 @@ const App: React.FC = () => {
         }
     };
 
+    // Landing'dagi "Demo'ni sinab ko'rish": bazadan 2 soatlik mehmon-direktor
+    // propuski olinadi, faqat DEMO_CENTER ko'rinadi (har kuni tunda tozalanadi).
+    const handleDemoLogin = async () => {
+        const res = await db.demoLogin();
+        if (!res.ok) {
+            alert(res.error === 'rate_limited'
+                ? "Juda ko'p urinish bo'ldi. Birozdan keyin qayta urinib ko'ring."
+                : t.network_error);
+            return;
+        }
+        localStorage.setItem('edu_user_role', res.user.role);
+        localStorage.setItem('edu_user', JSON.stringify(res.user));
+        setCurrentUser(res.user);
+        navigate('/app');
+    };
+
     const handleLogout = () => {
         setCurrentUser(null);
         db.logout(); // shaxsiy propuskni ham o'chirish
@@ -127,7 +145,18 @@ const App: React.FC = () => {
         <>
         <Toaster />
         <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage onDemo={handleDemoLogin} />} />
+            <Route path="/guide" element={<GuidePage />} />
+            <Route
+                path="/register"
+                element={
+                    !currentUser ? (
+                        <Register onRegistered={setCurrentUser} />
+                    ) : (
+                        <Navigate to="/app" replace />
+                    )
+                }
+            />
             <Route
                 path="/login"
                 element={

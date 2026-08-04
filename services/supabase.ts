@@ -217,6 +217,52 @@ export const db = {
     }
   },
 
+  /**
+   * Markaz o'zi ro'yxatdan o'tadi (landing'dagi "Bepul sinab ko'ring").
+   * Tekshiruvlar bazada: telefon/login takrorlanmasligi, 14 kunlik sinov,
+   * IP bo'yicha tezlik cheklovi. Muvaffaqiyatda darrov propusk qaytadi.
+   */
+  registerCenter: async (form: {
+    centerName: string; phone: string; adminName: string;
+    username: string; password: string;
+  }): Promise<{ ok: boolean; user?: any; trialUntil?: string; error?: string }> => {
+    if (!supabase) return { ok: false, error: 'network' };
+    try {
+      const { data, error } = await supabase.rpc('register_center', {
+        p_center_name: form.centerName,
+        p_phone: form.phone,
+        p_admin_name: form.adminName,
+        p_username: form.username,
+        p_password: form.password,
+      });
+      if (error) throw error;
+      if (!data || data.error) return { ok: false, error: data?.error || 'unknown' };
+      setAuthToken(data.token);
+      return { ok: true, user: data.user, trialUntil: data.trialUntil };
+    } catch (e: any) {
+      console.error('Ro\'yxatdan o\'tish xatosi:', e);
+      return { ok: false, error: 'network' };
+    }
+  },
+
+  /**
+   * Landing'dagi jonli demo: 2 soatlik mehmon-direktor propuski.
+   * RLS tufayli faqat DEMO_CENTER ko'rinadi; har kuni tunda tozalanadi.
+   */
+  demoLogin: async (): Promise<{ ok: boolean; user?: any; error?: string }> => {
+    if (!supabase) return { ok: false, error: 'network' };
+    try {
+      const { data, error } = await supabase.rpc('demo_login');
+      if (error) throw error;
+      if (!data || data.error) return { ok: false, error: data?.error || 'unknown' };
+      setAuthToken(data.token);
+      return { ok: true, user: data.user };
+    } catch (e: any) {
+      console.error('Demo kirish xatosi:', e);
+      return { ok: false, error: 'network' };
+    }
+  },
+
   /** O'z parolini o'zgartirish — eski parolni bilish shart */
   changePassword: async (oldPassword: string, newPassword: string): Promise<{ ok: boolean; error?: string }> => {
     if (!supabase) return { ok: false, error: 'network' };

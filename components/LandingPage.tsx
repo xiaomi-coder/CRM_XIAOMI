@@ -10,7 +10,9 @@ const translations = {
     hero_badge: "🚀 V2.0 — Mock Exam & Natijalar vitrini",
     hero_title: "O'quv markazingizni", hero_title_span: "aqlli boshqaring",
     hero_desc: "O'quvchilar, to'lovlar, davomat, mock examlar, IELTS/CEFR natijalar — barchasini yagona CRM platformasidan boshqaring. Avtomatik to'lov eslatmalari, rol tizimi va natijalar vitrini.",
-    hero_cta_free: "Bepul sinab ko'ring",
+    hero_cta_free: "Bepul boshlash",
+    hero_cta_demo: "Jonli demo",
+    nav_guide: "Qo'llanma",
     stat_centers: "O'quv markazlar", stat_students: "O'quvchilar",
     dash_students: "O'quvchilar", dash_groups: "Guruhlar", dash_income: "Oylik tushum",
     float_reminder: "Avto eslatma", float_sent: "✓ Yuborildi",
@@ -32,9 +34,9 @@ const translations = {
     partners_label: "Hamkorlar", partners_title: "Bizning", partners_title_span: "hamkorlarimiz",
     tag_new: "Yangi", tag_popular: "Mashhur",
     how_label: "Qanday ishlaydi", how_title: "4 oddiy qadamda", how_title_span: "boshlang",
-    s1_title: "Telegram orqali murojaat", s1_desc: "@bakoev_me ga yozing yoki qo'ng'iroq qiling. Biz sizga demo ko'rsatamiz.",
-    s2_title: "Tizimni sozlash", s2_desc: "O'quv markaz, guruhlar, o'quvchilar va rollarni kiritamiz. Biz yordam beramiz.",
-    s3_title: "Xodimlarni o'rgatish", s3_desc: "Admin va o'qituvchilarga tizimdan foydalanishni o'rgatamiz. Video qo'llanmalar ham bor.",
+    s1_title: "Ro'yxatdan o'ting", s1_desc: "1 daqiqada o'zingiz ro'yxatdan o'tasiz — 14 kun bepul, karta shart emas. Yoki avval jonli demoni sinab ko'ring.",
+    s2_title: "Tizimni sozlash", s2_desc: "Guruhlar, o'quvchilar va rollarni kiritasiz. Skrinshotli qo'llanma har qadamda yordam beradi.",
+    s3_title: "Xodimlarni o'rgatish", s3_desc: "Admin va o'qituvchilarga tizimdan foydalanishni o'rgatamiz. Savol bo'lsa Telegram'da yordam beramiz.",
     s4_title: "Ishlashni boshlang!", s4_desc: "Hamma narsa avtomatlashtirilgan. To'lov eslatmalar, davomat, natijalar — barchasi ishlaydi.",
     results_label: "Natijalar vitrini", results_title: "O'quvchilaringiz", results_title_span: "muvaffaqiyatlari",
     results_desc: "Har bir o'quv markaz o'z o'quvchilarining natijalarini rasm bilan tizimga joylash imkoniyatiga ega",
@@ -56,8 +58,9 @@ const translations = {
     review2_text: '"Mock Exam tizimi juda zo\'r! O\'quvchilarimiz IELTS ga tayyorgarlik ko\'rishda katta yordam berdi. Natijalar vitrini ham motivatsiya uchun ajoyib."',
     review3_text: '"Admin va o\'qituvchi uchun alohida rollar borligini juda yoqtirdim. Har bir xodim faqat o\'ziga kerakli ma\'lumotlarni ko\'radi. Xavfsiz va qulay."',
     cta_title: "O'quv markazingizni", cta_title_span: "yangi bosqichga", cta_title_end: "olib chiqing",
-    cta_desc: "14 kun bepul sinov davri. Telegram orqali 5 daqiqada boshlang.",
-    cta_telegram: "Telegram orqali boshlash", cta_call: "📞 +998 90 612 71 71",
+    cta_desc: "14 kun bepul sinov davri. Ro'yxatdan o'tish 1 daqiqa.",
+    cta_register: "Bepul boshlash →",
+    cta_telegram: "Telegram orqali savol", cta_call: "📞 +998 90 612 71 71",
     footer_desc: "O'quv markazlar uchun zamonaviy CRM tizimi. Boshqaruvni soddalashtiring, samaradorlikni oshiring.",
     footer_product: "Mahsulot", footer_company: "Kompaniya", footer_support: "Qo'llab-quvvatlash",
     tg_tooltip: "Savolingiz bormi? Yozing!"
@@ -68,7 +71,9 @@ const translations = {
     hero_badge: "🚀 V2.0 — Mock Exam & Витрина результатов",
     hero_title: "Управляйте учебным", hero_title_span: "центром умнее",
     hero_desc: "Ученики, платежи, посещаемость, mock экзамены, результаты IELTS/CEFR — управляйте всем с единой CRM платформы. Автоматические напоминания, система ролей и витрина результатов.",
-    hero_cta_free: "Попробовать бесплатно →",
+    hero_cta_free: "Начать бесплатно",
+    hero_cta_demo: "Живое демо",
+    nav_guide: "Руководство",
     stat_centers: "Учебных центров", stat_students: "Учеников",
     dash_students: "Ученики", dash_groups: "Группы", dash_income: "Доход/мес",
     float_reminder: "Авто напоминание", float_sent: "✓ Отправлено",
@@ -90,7 +95,7 @@ const translations = {
     partners_label: "Партнёры", partners_title: "Наши", partners_title_span: "партнёры",
     tag_new: "Новое", tag_popular: "Популярное",
     how_label: "Как это работает", how_title: "Начните за", how_title_span: "4 простых шага",
-    s1_title: "Обратитесь в Telegram", s1_desc: "Напишите @bakoev_me или позвоните. Мы покажем вам демо.",
+    s1_title: "Зарегистрируйтесь", s1_desc: "Сами за 1 минуту — 14 дней бесплатно, карта не нужна. Или сначала попробуйте живое демо.",
     s2_title: "Настройка системы", s2_desc: "Настроим центр, группы, учеников и роли. Мы поможем.",
     s3_title: "Обучение сотрудников", s3_desc: "Обучим админов и учителей работе с системой. Есть видео инструкции.",
     s4_title: "Начинайте работать!", s4_desc: "Всё автоматизировано. Напоминания, посещаемость, результаты — всё работает.",
@@ -114,8 +119,9 @@ const translations = {
     review2_text: '"Система Mock Exam — супер! Очень помогла ученикам при подготовке к IELTS. Витрина результатов отлично мотивирует."',
     review3_text: '"Очень нравится, что есть отдельные роли для админа и учителя. Каждый видит только нужную информацию. Безопасно и удобно."',
     cta_title: "Выведите учебный центр на", cta_title_span: "новый уровень", cta_title_end: "",
-    cta_desc: "14 дней бесплатно. Начните через Telegram за 5 минут.",
-    cta_telegram: "Начать через Telegram", cta_call: "📞 +998 90 612 71 71",
+    cta_desc: "14 дней бесплатно. Регистрация занимает 1 минуту.",
+    cta_register: "Начать бесплатно →",
+    cta_telegram: "Вопрос в Telegram", cta_call: "📞 +998 90 612 71 71",
     footer_desc: "Современная CRM система для учебных центров. Упростите управление, повысьте эффективность.",
     footer_product: "Продукт", footer_company: "Компания", footer_support: "Поддержка",
     tg_tooltip: "Есть вопросы? Напишите!"
@@ -126,7 +132,9 @@ const translations = {
     hero_badge: "🚀 V2.0 — Mock Exam & Results Showcase",
     hero_title: "Manage your learning", hero_title_span: "center smarter",
     hero_desc: "Students, payments, attendance, mock exams, IELTS/CEFR results — manage everything from a single CRM platform. Auto payment reminders, role system and results showcase.",
-    hero_cta_free: "Try for free →",
+    hero_cta_free: "Start for free",
+    hero_cta_demo: "Live demo",
+    nav_guide: "Guide",
     stat_centers: "Learning centers", stat_students: "Students",
     dash_students: "Students", dash_groups: "Groups", dash_income: "Revenue/mo",
     float_reminder: "Auto reminder", float_sent: "✓ Sent",
@@ -148,7 +156,7 @@ const translations = {
     partners_label: "Partners", partners_title: "Our", partners_title_span: "partners",
     tag_new: "New", tag_popular: "Popular",
     how_label: "How it works", how_title: "Start in", how_title_span: "4 easy steps",
-    s1_title: "Contact via Telegram", s1_desc: "Write to @bakoev_me or call us. We'll show you a demo.",
+    s1_title: "Sign up yourself", s1_desc: "Takes 1 minute — 14 days free, no card required. Or try the live demo first.",
     s2_title: "System setup", s2_desc: "We'll set up your center, groups, students and roles. We'll help you.",
     s3_title: "Staff training", s3_desc: "We'll train your admins and teachers to use the system. Video guides available.",
     s4_title: "Start working!", s4_desc: "Everything is automated. Payment reminders, attendance, results — it all works.",
@@ -172,18 +180,31 @@ const translations = {
     review2_text: '"The Mock Exam system is amazing! It greatly helped our students prepare for IELTS. The results showcase is great for motivation too."',
     review3_text: '"I really like the separate roles for admin and teacher. Each staff member sees only what they need. Secure and convenient."',
     cta_title: "Take your learning center", cta_title_span: "to the next level", cta_title_end: "",
-    cta_desc: "14-day free trial. Start via Telegram in 5 minutes.",
-    cta_telegram: "Start via Telegram", cta_call: "📞 +998 90 612 71 71",
+    cta_desc: "14-day free trial. Signing up takes 1 minute.",
+    cta_register: "Start for free →",
+    cta_telegram: "Ask via Telegram", cta_call: "📞 +998 90 612 71 71",
     footer_desc: "Modern CRM system for learning centers. Simplify management, boost efficiency.",
     footer_product: "Product", footer_company: "Company", footer_support: "Support",
     tg_tooltip: "Have questions? Write us!"
   }
 };
 
-const LandingPage: React.FC = () => {
+interface LandingPageProps {
+  /** "Jonli demo" tugmasi — App demo propusk olib /app ga o'tkazadi */
+  onDemo?: () => Promise<void>;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ onDemo }) => {
   const [lang, setLang] = useState<'uz' | 'ru' | 'en'>('uz');
+  const [demoLoading, setDemoLoading] = useState(false);
   const navigate = useNavigate();
   const t = translations[lang];
+
+  const startDemo = async () => {
+    if (!onDemo || demoLoading) return;
+    setDemoLoading(true);
+    try { await onDemo(); } finally { setDemoLoading(false); }
+  };
 
   // Izchil chiziqli ikonka to'plami (emoji o'rniga — professional ko'rinish)
   const svgP = {
@@ -304,6 +325,7 @@ const LandingPage: React.FC = () => {
             <li><a href="#pricing">{t.nav_pricing}</a></li>
             <li><a href="#reviews">{t.nav_reviews}</a></li>
             <li><a href="#partners">{t.nav_partners}</a></li>
+            <li><a href="/guide" onClick={(e) => { e.preventDefault(); navigate('/guide'); }}>{t.nav_guide}</a></li>
           </ul>
           <div className="landing-nav-right">
             <div className="landing-lang-switcher">
@@ -312,7 +334,7 @@ const LandingPage: React.FC = () => {
               <button className={`landing-lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>EN</button>
             </div>
             <button className="landing-btn-ghost" onClick={openLogin}>{t.nav_login}</button>
-            <button className="landing-btn-primary-sm" onClick={() => window.location.href = '#pricing'}>{t.nav_start}</button>
+            <button className="landing-btn-primary-sm" onClick={() => navigate('/register')}>{t.nav_start}</button>
             <button className="landing-mobile-toggle" onClick={toggleMobile}>☰</button>
           </div>
         </div>
@@ -331,14 +353,18 @@ const LandingPage: React.FC = () => {
               </h1>
               <p>{t.hero_desc}</p>
               <div className="landing-hero-actions">
-                <button className="landing-btn-large primary" onClick={() => window.location.href = '#pricing'}>
+                <button className="landing-btn-large primary" onClick={() => navigate('/register')}>
                   {t.hero_cta_free}
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </button>
-                <a className="landing-btn-large telegram" href="https://t.me/bakoev_me" target="_blank">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" /></svg>
-                  Telegram
-                </a>
+                <button className="landing-btn-large secondary" onClick={startDemo} disabled={demoLoading}>
+                  {demoLoading ? '...' : (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="6 3 20 12 6 21 6 3" /></svg>
+                      {t.hero_cta_demo}
+                    </>
+                  )}
+                </button>
               </div>
               <div className="landing-hero-stats">
                 <div className="landing-hero-stat">
@@ -640,7 +666,7 @@ const LandingPage: React.FC = () => {
                 <li className="disabled">{t.plan1_f10}</li>
                 <li className="disabled">{t.plan1_f11}</li>
               </ul>
-              <button className="landing-btn-price outline" onClick={() => window.open('https://t.me/bakoev_me', '_blank')}>{t.plan_cta_start}</button>
+              <button className="landing-btn-price outline" onClick={() => navigate('/register')}>{t.plan_cta_start}</button>
             </div>
             {/* Premium */}
             <div className="landing-price-card featured landing-reveal">
@@ -658,7 +684,7 @@ const LandingPage: React.FC = () => {
                 <li>{t.plan2_f7}</li>
                 <li>{t.plan2_f8}</li>
               </ul>
-              <button className="landing-btn-price filled" onClick={() => window.open('https://t.me/bakoev_me', '_blank')}>{t.plan_cta_premium}</button>
+              <button className="landing-btn-price filled" onClick={() => navigate('/register')}>{t.plan_cta_premium}</button>
             </div>
           </div>
         </div>
@@ -737,7 +763,10 @@ const LandingPage: React.FC = () => {
             </h2>
             <p>{t.cta_desc}</p>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', position: 'relative' }}>
-              <a className="landing-btn-large primary" href="https://t.me/bakoev_me" target="_blank">
+              <button className="landing-btn-large primary" onClick={() => navigate('/register')}>
+                {t.cta_register}
+              </button>
+              <a className="landing-btn-large telegram" href="https://t.me/bakoev_me" target="_blank">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" /></svg>
                 {t.cta_telegram}
               </a>
@@ -766,6 +795,7 @@ const LandingPage: React.FC = () => {
                 <li><a href="#features">{t.nav_features}</a></li>
                 <li><a href="#pricing">{t.nav_pricing}</a></li>
                 <li><a href="#results">{t.nav_results}</a></li>
+                <li><a href="/guide" onClick={(e) => { e.preventDefault(); navigate('/guide'); }}>{t.nav_guide}</a></li>
               </ul>
             </div>
             <div className="landing-footer-col">

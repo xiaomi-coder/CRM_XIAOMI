@@ -8,6 +8,10 @@ Tartib bilan qo'llanadi. Har biri qayta ishga tushirilsa ham xavfsiz
 | `01-auth-functions.sql` | `pgcrypto`, JWT imzolash (`auth.sign_jwt`), `public.login` — parol bcrypt bilan bazada tekshiriladi |
 | `02-superadmin-and-pin.sql` | `creator` foydalanuvchisi, `public.redeem_pin` — PIN tekshiruvi bazada |
 | `03-rls-policies.sql` | RLS: har markaz faqat o'z qatorlarini ko'radi |
+| `04-password-management.sql` | Parol o'zgartirish/tiklash, yangi parolni darrov hash qilish |
+| `05-audit-log.sql` | `audit_log` jadvali, `auth.log_event`, `public.get_audit_log` |
+| `06-self-registration.sql` | `public.register_center` — markaz o'zi ro'yxatdan o'tadi (14 kun sinov, telefon/login takrorlanmaydi, IP bo'yicha tezlik cheklovi), `auth.client_ip` |
+| `07-demo-center.sql` | `public.demo_login` (2 soatlik mehmon propuski, DEMO_CENTER) va `public.reset_demo_center` — VPS'da `crm-demo-reset.timer` har kuni 04:00 da chaqiradi |
 
 ## Qo'llash
 

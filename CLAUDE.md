@@ -224,12 +224,41 @@ Uchta kamchilik tuzatildi (to'rtinchisi keyingi sessiyaga qoldirildi):
    urinishlari ham yoziladi. `db/05-audit-log.sql`.
 
 ### Keyingi sessiyaga qolgan
-- **Markaz o'zi ro'yxatdan o'tsin** (anon chaqiriladigan funksiya — suiiste'moldan
-  himoya kerak: telefon takrorlanmasin, sinov muddati avtomatik, tezlik cheklovi),
-  **landing'da demo** (kirmoqchi bo'lgan odam ishlatib ko'rsin, ma'lumot ochiq
-  ketmasin), **skrinshotli professional qo'llanma** (guruhlar, o'quvchilar,
-  Telegram oqimi — rasm ustiga chiziq/belgi bilan).
-  - ⏳ Hal qilinmagan: qo'llanma demo ICHIDAMI yoki alohida sahifadami.
-    Taklif: demoda qisqa 3-4 qadamlik ishora, batafsili alohida sahifada.
 - ⚠️ JWT sirini almashtirish, root parolini almashtirish, zaxirani serverdan
   tashqariga nusxalash.
+
+## Sotuvga tayyorlash — 3-to'plam: o'zi ro'yxat, demo, qo'llanma ✅ (2026-08-05)
+
+Uchchala ish ham bajarildi (qo'llanma joylashuvi bo'yicha qaror: demoda qisqa
+4 qadamlik yo'lboshchi + batafsili alohida `/guide` sahifasida; demo to'liq
+interaktiv, har kuni tunda tozalanadi — foydalanuvchi ikkala tavsiyani tasdiqladi).
+
+1. **Markaz o'zi ro'yxatdan o'tadi** — `db/06-self-registration.sql`:
+   `public.register_center` (anon chaqiradi). Himoya: telefon/login takrorlanmaydi
+   (telefon raqamlargina solishtiriladi), parol kamida 6 belgi va darrov bcrypt,
+   sinov avtomatik 14 kun (`licenseExpiry`), tezlik cheklovi IP bo'yicha
+   (soatiga 5 urinish, sutkasiga 2 muvaffaqiyat; tizim bo'yicha sutkasiga 30) —
+   IP `auth.client_ip()` orqali X-Forwarded-For'dan olinadi, hammasi
+   `audit_log`ga yoziladi. Muvaffaqiyatda darrov 12 soatlik propusk qaytadi.
+   Frontend: `components/Register.tsx` (`/register`), landing va logindagi
+   barcha CTA'lar shu yerga olib boradi (avval Telegram'ga yuborardi).
+2. **Landing'da jonli demo** — `db/07-demo-center.sql`: `public.demo_login`
+   2 soatlik mehmon-direktor propuski beradi (`centerId = DEMO_CENTER`), RLS
+   tufayli faqat demo markaz ko'rinadi. Namunaviy ma'lumot (8 o'quvchi, 3 guruh,
+   to'lovlar, davomat, lidlar — sanalar doim "bugun"ga nisbatan) va
+   `public.reset_demo_center()` — VPS'da **`crm-demo-reset.timer`** har kuni
+   04:00 da tozalaydi. Landing hero'da "Jonli demo" tugmasi; ilova ichida demo
+   mehmonga `components/DemoTour.tsx` — 4 qadamlik yo'lboshchi kartasi.
+3. **Skrinshotli qo'llanma** — `components/GuidePage.tsx` (`/guide`, ochiq
+   sahifa): 6 bo'lim (ro'yxat, guruhlar, o'quvchilar, davomat, to'lovlar,
+   Telegram bot), har birida haqiqiy ekran rasmi (`public/guide/*.png`) va rasm
+   ustida foizli koordinatali raqamli belgilar (rasmga chizilmaydi — CSS overlay).
+   Skrinshotlar `scripts/guide-shots.mjs` bilan olinadi (puppeteer-core + demo
+   propusk; yangilash kerak bo'lsa `node scripts/guide-shots.mjs`).
+   ⚠️ vite dev macOS'da `/app` so'roviga `App.tsx`ni berib yuboradi (harf katta-
+   kichikligi farqlanmaydi) — skript shuning uchun `/register` orqali kiradi.
+
+Tekshirilgan: register_center (takror telefon/login/zaif parol/yaroqsiz login →
+to'g'ri xatolar, yangi user login qila oladi), demo propusk faqat DEMO_CENTER'ni
+ko'radi (8 students / 1 settings), UI orqali to'liq ro'yxat oqimi (forma → /app),
+`npm run build` toza. Test markazlar o'chirildi.
