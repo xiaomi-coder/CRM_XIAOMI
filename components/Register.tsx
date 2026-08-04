@@ -158,7 +158,7 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
             </p>
             <p className="text-[11px] text-white/40 font-bold">
               Savol bormi?{' '}
-              <a href="https://t.me/bakoev_me" target="_blank" rel="noreferrer" className="text-sky-400 hover:text-sky-300 font-black">Telegram orqali yozing</a>
+              <a href="https://t.me/bakoev_71" target="_blank" rel="noreferrer" className="text-sky-400 hover:text-sky-300 font-black">Telegram orqali yozing</a>
             </p>
           </div>
         </div>

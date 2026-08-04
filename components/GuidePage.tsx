@@ -232,8 +232,8 @@ const GuidePage: React.FC = () => {
             Telegram orqali yozing — sozlashda bepul yordam beramiz.
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <a href="https://t.me/bakoev_me" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-colors">
-              <Send size={14} /> @bakoev_me
+            <a href="https://t.me/bakoev_71" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-colors">
+              <Send size={14} /> @bakoev_71
             </a>
             <button onClick={() => navigate('/register')} className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-colors">
               Bepul boshlash <ArrowRight size={14} />
