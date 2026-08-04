@@ -326,3 +326,51 @@ Qoidaviy bashorat (v1, AI'siz — keyin Gemini tavsiyasi qo'shsa bo'ladi):
   demo-s6 (Zarina) to'lovi 9 kun kechikkan — demo dashboardda blok jonli
   ko'rinadi. Brauzerda tekshirildi (YUQORI/O'RTA to'g'ri chiqdi), SQL skoring
   demo ma'lumotda frontend bilan bir xil natija berdi.
+
+## Platforma bot: ro'yxatda Telegram raqam tasdig'i ✅ (2026-08-05, kod tayyor — bot TOKENI kutilmoqda)
+
+Foydalanuvchi bilan qaror: soxta ro'yxatlarni yopish + sinov tugashi/yangi
+ro'yxat haqida foydalanuvchiga xabar berish uchun **bitta umumiy platforma
+bot** kerak (har markazning ota-ona boti bilan ALOHIDA). Telegram'ning
+"📱 Raqamni ulashish" tugmasi ishlatiladi — akkauntga bog'langan haqiqiy raqam,
+qo'lda terib/o'zgartirib bo'lmaydi. Saytdagi raqam bilan farq qilsa ham rad
+etilmaydi — **Telegram raqami haqiqat manbai** bo'ladi (saytdagi formaga
+qaytib yoziladi).
+
+- **Baza:** `db/12-platform-bot.sql` — `platform_config` (bot_token/username/
+  owner_chat_id, bo'sh bo'lsa hammasi eski tartibda), `tg_verifications`
+  (bir martalik token, 1 soat amal qiladi), `settings.platformChatId`.
+  `register_center` yangilandi: bot yoqilgan bo'lsa `p_tg_token` VERIFIED
+  bo'lishi SHART, markaz raqami sifatida Telegram tasdiqlagan raqam olinadi.
+- **Webhook:** `api/platform-bot.ts` — `/start <token>` kelsa `attach_tg_chat`,
+  kontakt kelsa `confirm_tg_verification` (+ egaga — sizga — yangi tasdiq
+  haqida xabar). Bot token webhook URL'ida (`?token=`) va bazaga RPC'larga
+  "sir" sifatida uzatiladi — shu orqali faqat webhook'ning o'zi yoza oladi.
+- **Frontend:** `components/Register.tsx` — `tgPlatformStatus()` bilan
+  yoqilganmi tekshiradi; yoqilmagan bo'lsa forma AYNAN avvalgidek. Yoqilgan
+  bo'lsa: telefon kiritilgach "Telegram orqali tasdiqlash" tugmasi → bot yangi
+  tabda ochiladi → 2.5s poll bilan holatni kuzatadi (5 daqiqa timeout) →
+  tasdiqlangach yashil belgi, "Bepul boshlash" yoqiladi.
+- **Sinov muddati eslatmalari:** `db/12` dagi `trial_expiring_centers()` +
+  `scripts/vps-trial-reminders.py` — 3 va 1 kun qolganda `platformChatId`ga
+  (faqat tg orqali tasdiqlangan markazlarga ishlaydi). Timer
+  `setup-platform-bot.sh` orqali o'rnatiladi (09:30, har kuni).
+- **Yoqish** (token kelganda): VPS'da
+  `./setup-platform-bot.sh <BOT_TOKEN> <BOT_USERNAME> <OWNER_CHAT_ID>`
+  (`/root/setup-platform-bot.sh`, repoda `scripts/setup-platform-bot.sh`) —
+  bazaga yozadi, Telegram webhook'ni ulaydi, timer'ni yoqadi.
+- **To'liq sinovdan o'tkazildi** (soxta token bilan, keyin tozalandi):
+  bot o'chiq holatda forma eski tartibda + `register_center` ishladi;
+  yoqilganda UI to'g'ri bosqichlarni ko'rsatdi (idle→pending→verified),
+  `attach_tg_chat`/`confirm_tg_verification` bot o'rniga qo'lda chaqirilganda
+  frontend poll bilan darrov ilg'ab oldi, ro'yxat yakunlanib `/app`ga kirdi,
+  `settings.platformChatId` to'g'ri saqlandi. Test markaz/config o'chirildi,
+  bot yana `enabled:false` holatda.
+
+### Keyingi sessiyaga qolgan
+- Foydalanuvchi @BotFather'dan bot ochib token bersa: `setup-platform-bot.sh`
+  ishga tushiriladi, haqiqiy Telegram orqali (soxta emas) uchdan-uch sinaladi,
+  keyin `crm-trial-reminders.timer` jonli ekani tasdiqlanadi.
+- Hali qilinmagan: creator panelida "sinov tugayotgan markazlar" ro'yxati
+  (bot yoqilgandan keyin qo'shish mantiqiy — o'sha payt platformChatId
+  to'ldirilgan markazlar ko'payadi).

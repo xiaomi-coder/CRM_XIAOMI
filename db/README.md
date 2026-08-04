@@ -16,6 +16,7 @@ Tartib bilan qo'llanadi. Har biri qayta ishga tushirilsa ham xavfsiz
 | `09-monthly-report.sql` | `monthly_report_data` — oylik davomat hisoboti ham serverda: `/root/crm-monthly-report.py` (`crm-monthly-report.timer`, har oy 1-sanada 10:00). Takror ketmasligi `reminder_log` (kind=MONTHLY). GRANT yo'q |
 | `10-telegram-connect.sql` | `tg_connect(bot_token, chat_id, code)` — webhook uchun: RLS ostida ota-onaning botga ulanishi. Bot token "kalit" vazifasida. GRANT anon |
 | `11-churn-risk.sql` | `churn_risk_data` — "ketib qolish" xavfi (qoidalar `services/churnRisk.ts` bilan bir xil bo'lishi SHART). Haftalik: `/root/crm-risk-report.py` (`crm-risk-report.timer`, dushanba 10:30) direktorning botiga (`reportChatId`). GRANT yo'q |
+| `12-platform-bot.sql` | Platforma bot: `platform_config`, `tg_verifications`, `settings.platformChatId`, `tg_platform_status`/`start_tg_verification`/`attach_tg_chat`/`confirm_tg_verification`/`check_tg_verification`, `register_center` yangilandi (tg tasdig'i), `trial_expiring_centers`. Yoqish: `scripts/setup-platform-bot.sh` (token @BotFather'dan kelganda) |
 
 ## Qo'llash
 

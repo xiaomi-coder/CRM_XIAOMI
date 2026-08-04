@@ -221,10 +221,11 @@ export const db = {
    * Markaz o'zi ro'yxatdan o'tadi (landing'dagi "Bepul sinab ko'ring").
    * Tekshiruvlar bazada: telefon/login takrorlanmasligi, 14 kunlik sinov,
    * IP bo'yicha tezlik cheklovi. Muvaffaqiyatda darrov propusk qaytadi.
+   * tgToken — platforma bot yoqilgan bo'lsa MAJBURIY (Telegram raqam tasdig'i).
    */
   registerCenter: async (form: {
     centerName: string; phone: string; adminName: string;
-    username: string; password: string;
+    username: string; password: string; tgToken?: string;
   }): Promise<{ ok: boolean; user?: any; trialUntil?: string; error?: string }> => {
     if (!supabase) return { ok: false, error: 'network' };
     try {
@@ -234,6 +235,7 @@ export const db = {
         p_admin_name: form.adminName,
         p_username: form.username,
         p_password: form.password,
+        p_tg_token: form.tgToken || null,
       });
       if (error) throw error;
       if (!data || data.error) return { ok: false, error: data?.error || 'unknown' };
@@ -242,6 +244,50 @@ export const db = {
     } catch (e: any) {
       console.error('Ro\'yxatdan o\'tish xatosi:', e);
       return { ok: false, error: 'network' };
+    }
+  },
+
+  /**
+   * Platforma boti (ro'yxatda Telegram raqam tasdig'i) yoqilganmi?
+   * Token kelmaguncha (@BotFather) `enabled: false` qaytadi — Register.tsx
+   * eski oddiy oqimda ishlaydi.
+   */
+  tgPlatformStatus: async (): Promise<{ enabled: boolean; botUsername?: string }> => {
+    if (!supabase) return { enabled: false };
+    try {
+      const { data, error } = await supabase.rpc('tg_platform_status');
+      if (error) throw error;
+      return { enabled: !!data?.enabled, botUsername: data?.botUsername };
+    } catch (e) {
+      console.error('Platforma bot holati xatosi:', e);
+      return { enabled: false };
+    }
+  },
+
+  /** Tasdiqlash boshlanadi — sayt bir martalik token oladi, t.me/<bot>?start=<token> ochiladi */
+  startTgVerification: async (phone: string): Promise<{ ok: boolean; token?: string; botUsername?: string; error?: string }> => {
+    if (!supabase) return { ok: false, error: 'network' };
+    try {
+      const { data, error } = await supabase.rpc('start_tg_verification', { p_phone: phone });
+      if (error) throw error;
+      if (!data || data.error) return { ok: false, error: data?.error || 'unknown' };
+      return { ok: true, token: data.token, botUsername: data.botUsername };
+    } catch (e: any) {
+      console.error('TG tasdiqlash boshlash xatosi:', e);
+      return { ok: false, error: 'network' };
+    }
+  },
+
+  /** Sayt tasdiqlash holatini so'raydi (poll) — VERIFIED bo'lguncha */
+  checkTgVerification: async (token: string): Promise<{ status: string; phone?: string; tgName?: string }> => {
+    if (!supabase) return { status: 'unknown' };
+    try {
+      const { data, error } = await supabase.rpc('check_tg_verification', { p_token: token });
+      if (error) throw error;
+      return data || { status: 'unknown' };
+    } catch (e) {
+      console.error('TG tasdiqlash tekshirish xatosi:', e);
+      return { status: 'unknown' };
     }
   },
 

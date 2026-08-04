@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Building2, User as UserIcon, Phone, Lock, AtSign, BrainCircuit,
-  AlertCircle, ArrowRight, Loader2, CheckCircle2
+  AlertCircle, ArrowRight, Loader2, CheckCircle2, Send, RotateCcw
 } from 'lucide-react';
 import { db } from '../services/supabase';
 import { User } from '../types';
@@ -21,8 +21,18 @@ const ERROR_TEXT: Record<string, string> = {
   weak_password: "Parol kamida 6 belgi bo'lsin.",
   invalid_phone: "Telefon raqami noto'g'ri. Masalan: +998 90 123 45 67",
   rate_limited: "Juda ko'p urinish bo'ldi. Birozdan keyin qayta urinib ko'ring.",
+  tg_required: "Iltimos, avval Telegram orqali raqamingizni tasdiqlang.",
   network: "Tarmoq xatosi. Internetni tekshirib, qayta urinib ko'ring.",
 };
+
+type TgState =
+  | { status: 'idle' }
+  | { status: 'pending'; token: string; botUsername: string }
+  | { status: 'verified'; token: string; phone: string }
+  | { status: 'timeout' };
+
+const POLL_MS = 2500;
+const TIMEOUT_MS = 5 * 60 * 1000;
 
 const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
   const navigate = useNavigate();
@@ -32,8 +42,57 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  // Platforma bot yoqilganmi (token @BotFather'dan olinib sozlanganda yoqiladi).
+  // Yoqilmagan bo'lsa forma avvalgidek — tasdiqlashsiz ishlaydi.
+  const [tgEnabled, setTgEnabled] = useState(false);
+  const [tg, setTg] = useState<TgState>({ status: 'idle' });
+  const pollRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    db.tgPlatformStatus().then(s => setTgEnabled(s.enabled));
+  }, []);
+
+  const stopPolling = () => {
+    if (pollRef.current) { window.clearInterval(pollRef.current); pollRef.current = null; }
+    if (timeoutRef.current) { window.clearTimeout(timeoutRef.current); timeoutRef.current = null; }
+  };
+  useEffect(() => () => stopPolling(), []);
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [k]: k === 'username' ? e.target.value.toLowerCase().trim() : e.target.value });
+    // Raqam o'zgarsa eski tasdiqni bekor qilamiz — boshqa raqamga tasdiq
+    // o'tkazib yuborilmasin
+    if (k === 'phone' && tg.status !== 'idle') {
+      stopPolling();
+      setTg({ status: 'idle' });
+    }
+  };
+
+  const startVerification = async () => {
+    if (!form.phone.trim()) return;
+    setError(null);
+    const res = await db.startTgVerification(form.phone);
+    if (!res.ok || !res.token || !res.botUsername) {
+      setError(ERROR_TEXT[res.error || ''] || "Tasdiqlashni boshlab bo'lmadi. Qayta urinib ko'ring.");
+      return;
+    }
+    setTg({ status: 'pending', token: res.token, botUsername: res.botUsername });
+    window.open(`https://t.me/${res.botUsername}?start=${res.token}`, '_blank');
+
+    const token = res.token;
+    pollRef.current = window.setInterval(async () => {
+      const check = await db.checkTgVerification(token);
+      if (check.status === 'VERIFIED') {
+        stopPolling();
+        setTg({ status: 'verified', token, phone: check.phone || '' });
+      }
+    }, POLL_MS);
+    timeoutRef.current = window.setTimeout(() => {
+      stopPolling();
+      setTg(cur => cur.status === 'pending' ? { status: 'timeout' } : cur);
+    }, TIMEOUT_MS);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +101,15 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
       setError("Parollar bir xil emas.");
       return;
     }
+    if (tgEnabled && tg.status !== 'verified') {
+      setError("Iltimos, avval Telegram orqali raqamingizni tasdiqlang.");
+      return;
+    }
     setIsLoading(true);
-    const res = await db.registerCenter(form);
+    const res = await db.registerCenter({
+      ...form,
+      tgToken: tg.status === 'verified' ? tg.token : undefined,
+    });
     setIsLoading(false);
     if (!res.ok) {
       setError(ERROR_TEXT[res.error || ''] || "Xatolik yuz berdi. Qayta urinib ko'ring.");
@@ -55,9 +121,11 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
     navigate('/app');
   };
 
-  const inputCls = "login-input w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none font-semibold text-white placeholder-white/30 focus:border-emerald-400/50 focus:bg-white/[0.08] transition-all";
+  const inputCls = "login-input w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none font-semibold text-white placeholder-white/30 focus:border-emerald-400/50 focus:bg-white/[0.08] transition-all disabled:opacity-50";
   const labelCls = "block text-[9px] font-black text-white/40 uppercase tracking-widest ml-1";
   const iconCls = "absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-emerald-400 transition-colors";
+
+  const canSubmit = !isLoading && (!tgEnabled || tg.status === 'verified');
 
   return (
     <div className="min-h-screen bg-[#070B09] flex items-center justify-center p-4 relative overflow-hidden font-sans">
@@ -96,7 +164,11 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
                 <label className={labelCls}>Telefon</label>
                 <div className="relative group">
                   <Phone className={iconCls} size={18} />
-                  <input type="tel" className={inputCls} placeholder="+998 90 123 45 67" value={form.phone} onChange={set('phone')} required />
+                  <input
+                    type="tel" className={inputCls} placeholder="+998 90 123 45 67"
+                    value={form.phone} onChange={set('phone')} required
+                    disabled={tg.status === 'pending' || tg.status === 'verified'}
+                  />
                 </div>
               </div>
               <div className="space-y-1.5">
@@ -107,6 +179,43 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
                 </div>
               </div>
             </div>
+
+            {/* Telegram raqam tasdig'i — faqat platforma boti yoqilganda ko'rinadi */}
+            {tgEnabled && (
+              <div className="rounded-2xl border p-4 transition-colors"
+                   style={{ borderColor: tg.status === 'verified' ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.1)' }}>
+                {tg.status === 'idle' && (
+                  <button
+                    type="button"
+                    onClick={startVerification}
+                    disabled={!form.phone.trim()}
+                    className="w-full flex items-center justify-center gap-2 bg-sky-500/15 hover:bg-sky-500/25 disabled:opacity-40 disabled:hover:bg-sky-500/15 text-sky-300 font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-colors border border-sky-400/25"
+                  >
+                    <Send size={15} /> Telegram orqali raqamni tasdiqlash
+                  </button>
+                )}
+                {tg.status === 'pending' && (
+                  <div className="flex items-center gap-3 text-amber-300 text-[12px] font-bold">
+                    <Loader2 size={18} className="animate-spin shrink-0" />
+                    <span>Telegram'da botni oching va raqamingizni ulashing. Tasdiqlangach avtomatik davom etadi.</span>
+                  </div>
+                )}
+                {tg.status === 'verified' && (
+                  <div className="flex items-center gap-3 text-emerald-300 text-[12px] font-bold">
+                    <CheckCircle2 size={18} className="shrink-0" />
+                    <span>Raqam tasdiqlandi: +{tg.phone}</span>
+                  </div>
+                )}
+                {tg.status === 'timeout' && (
+                  <div className="space-y-2">
+                    <p className="text-rose-300 text-[12px] font-bold">Vaqt tugadi — tasdiqlanmadi.</p>
+                    <button type="button" onClick={startVerification} className="flex items-center gap-2 text-sky-300 text-[11px] font-black uppercase tracking-widest hover:text-sky-200">
+                      <RotateCcw size={13} /> Qayta urinish
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <label className={labelCls}>Login (tizimga kirish uchun)</label>
@@ -140,7 +249,7 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={!canSubmit}
               className="group w-full text-white font-black py-4 rounded-2xl relative overflow-hidden bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-xl shadow-emerald-600/25 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-sm uppercase tracking-widest disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {isLoading ? (
