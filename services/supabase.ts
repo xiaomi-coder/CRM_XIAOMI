@@ -192,6 +192,29 @@ export const db = {
     }
   },
 
+  /**
+   * PIN bilan kirish (IELTS yoki eski test). Tekshiruv bazada bo'ladi va
+   * mehmonga 6 soatlik cheklangan propusk beriladi.
+   *
+   * Oldin frontend BARCHA markazning lidlarini va PIN'larini yuklab olib,
+   * ichidan qidirardi — ya'ni bir markazning PIN ro'yxati boshqasiga ko'rinardi.
+   */
+  redeemPin: async (pin: string, studentName = ''): Promise<any> => {
+    if (!supabase) return { error: 'network' };
+    try {
+      const { data, error } = await supabase.rpc('redeem_pin', {
+        p_pin: pin,
+        p_student_name: studentName,
+      });
+      if (error) throw error;
+      if (data?.token) setAuthToken(data.token);
+      return data ?? { error: 'invalid_pin' };
+    } catch (e: any) {
+      console.error('PIN xatosi:', e);
+      return { error: 'network' };
+    }
+  },
+
   logout: () => setAuthToken(null),
 };
 

@@ -16,9 +16,9 @@ const App: React.FC = () => {
         const saved = localStorage.getItem('edu_user');
         if (!saved) return null;
         const user: User = JSON.parse(saved);
-        // Super admin propusksiz ishlaydi; qolganlarga propusk shart va u
-        // 12 soatdan keyin tugaydi — tugagan bo'lsa qayta login qilinadi.
-        if (user.role !== UserRole.SUPER_ADMIN && !isTokenValid(getAuthToken())) {
+        // Endi hamma — super admin ham, PIN bilan kirgan mehmon ham — propusk
+        // bilan ishlaydi. Muddati tugagan bo'lsa qayta login so'raladi.
+        if (!isTokenValid(getAuthToken())) {
             localStorage.removeItem('edu_user');
             localStorage.removeItem('edu_user_role');
             return null;
@@ -49,21 +49,9 @@ const App: React.FC = () => {
     const handleLogin = async (username: string, pass: string) => {
         setLoginError(null);
 
-        // Hardcoded Super Admin access
-        if (username === 'creator' && pass === 'xiaomicoder') {
-            const superAdmin: User = {
-                id: 'SUPER_ADMIN_ID',
-                centerId: 'GLOBAL',
-                name: 'Super Admin',
-                username: 'creator',
-                role: UserRole.SUPER_ADMIN
-            };
-            localStorage.setItem('edu_user_role', superAdmin.role);
-            localStorage.setItem('edu_user', JSON.stringify(superAdmin));
-            setCurrentUser(superAdmin);
-            navigate('/app');
-            return;
-        }
+        // Super admin ham endi oddiy foydalanuvchi kabi bazadan kiradi.
+        // (Avval uning logini va paroli frontend kodiga yozib qo'yilgan edi —
+        //  ya'ni bundle ichidan o'qib olsa bo'lardi. Endi u ham propusk oladi.)
 
         // Parol endi BAZADA tekshiriladi. Avval brauzer `users` jadvalidan
         // parolni o'qib o'zi solishtirardi — ya'ni parollar ochiq kelardi.
@@ -89,48 +77,37 @@ const App: React.FC = () => {
     };
 
     const handleTestLogin = async (pin: string, studentName: string) => {
+        // PIN endi bazada tekshiriladi va mehmonga cheklangan propusk beriladi.
+        // Avval frontend barcha markazning PIN va lidlarini yuklab olardi.
         try {
-            // 1. Check IELTS Test PINs
-            const pins = await db.get('ielts_test_pins');
-            if (Array.isArray(pins)) {
-                const validPin = (pins as any[]).find(p => p.pin_code === pin && p.status === 'active');
-                if (validPin) {
-                    const testId = validPin.test_id;
-                    await db.update('ielts_test_pins', validPin.id, { used_count: (validPin.used_count || 0) + 1 });
+            const res = await db.redeemPin(pin, studentName);
 
-                    const guestUser: User = {
-                        id: 'guest_' + pin + '_' + Date.now(),
-                        centerId: 'GLOBAL',
-                        name: studentName,
-                        username: 'student_' + pin,
-                        role: UserRole.STUDENT
-                    };
+            if (res?.kind === 'ielts') {
+                const guestUser: User = {
+                    id: 'guest_' + pin + '_' + Date.now(),
+                    centerId: res.centerId || 'GLOBAL',
+                    name: studentName,
+                    username: 'student_' + pin,
+                    role: UserRole.STUDENT
+                };
+                setIeltsTestData({ id: res.testId, pin });
+                setCurrentUser(guestUser);
+                navigate('/app');
+                return;
+            }
 
-                    setIeltsTestData({ id: testId, pin: pin });
-                    setCurrentUser(guestUser);
-                    navigate('/app');
+            if (res?.kind === 'quiz') {
+                if (!res.template) {
+                    setLoginError(t.test_not_found);
                     return;
                 }
+                setTestLead(res.lead as Lead);
+                setTestTemplate(res.template as TestTemplate);
+                navigate('/quiz');
+                return;
             }
 
-            // 2. Legacy: Check Leads
-            const leads = await db.get('leads');
-            const lead = leads.find((l: Lead) => l.testPin === pin && l.testStatus === 'PENDING');
-
-            if (lead) {
-                const templates = await db.get('test_templates');
-                const template = templates.find((t: TestTemplate) => t.id === lead.testId);
-
-                if (template) {
-                    setTestLead(lead);
-                    setTestTemplate(template);
-                    navigate('/quiz');
-                } else {
-                    setLoginError(t.test_not_found);
-                }
-            } else {
-                setLoginError('PIN kod noto\'g\'ri yoki eskirgan');
-            }
+            setLoginError(res?.error === 'network' ? t.network_error : 'PIN kod noto\'g\'ri yoki eskirgan');
         } catch (err) {
             console.error("Test login error:", err);
             setLoginError(t.test_error);
