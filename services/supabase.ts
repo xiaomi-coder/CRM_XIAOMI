@@ -167,7 +167,8 @@ export const db = {
   login: async (username: string, password: string): Promise<{
     ok: boolean;
     user?: any;
-    reason?: 'invalid' | 'blocked' | 'no_center' | 'network';
+    reason?: 'invalid' | 'blocked' | 'no_center' | 'expired' | 'network';
+    expiredAt?: string;
   }> => {
     if (!supabase) return { ok: false, reason: 'network' };
     try {
@@ -180,8 +181,9 @@ export const db = {
       if (!data || data.error) {
         const reason = data?.error === 'center_blocked' ? 'blocked'
           : data?.error === 'center_not_found' ? 'no_center'
-            : 'invalid';
-        return { ok: false, reason };
+            : data?.error === 'license_expired' ? 'expired'
+              : 'invalid';
+        return { ok: false, reason, expiredAt: data?.expiredAt };
       }
 
       setAuthToken(data.token);

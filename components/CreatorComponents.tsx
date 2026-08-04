@@ -163,14 +163,39 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
                   <td className="px-10 py-6">
                     <div className="flex flex-col gap-1">
                       <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Login: <span className="text-slate-800">{admin?.username}</span></div>
-                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Parol: <span className="text-slate-800">{admin?.password}</span></div>
+                      {/* Parol endi bcrypt hash — ko'rsatishning ma'nosi yo'q va
+                          ilgari uni ochiq chiqarish o'zi xavf edi. */}
+                      <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Parol: <span className="text-slate-400">••••••••</span></div>
                     </div>
                   </td>
                   <td className="px-10 py-6">
-                    <div className="flex items-center gap-2 text-xs font-black text-slate-600 bg-amber-50 px-4 py-2 rounded-xl border border-amber-100 w-fit">
-                      <Clock size={14} className="text-amber-500" />
-                      {s.licenseExpiry}
-                    </div>
+                    {(() => {
+                      // Muddat endi login'da HAQIQATAN tekshiriladi, shuning uchun
+                      // necha kun qolgani ko'rinib turishi kerak.
+                      if (!s.licenseExpiry) {
+                        return (
+                          <div className="flex items-center gap-2 text-xs font-black text-slate-400 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 w-fit">
+                            <Clock size={14} /> Cheksiz
+                          </div>
+                        );
+                      }
+                      const days = Math.ceil(
+                        (new Date(s.licenseExpiry).getTime() - Date.now()) / 86400000
+                      );
+                      const style = days < 0
+                        ? 'text-red-600 bg-red-50 border-red-100'
+                        : days <= 14
+                          ? 'text-amber-700 bg-amber-50 border-amber-100'
+                          : 'text-emerald-700 bg-emerald-50 border-emerald-100';
+                      return (
+                        <div className={`flex flex-col gap-0.5 px-4 py-2 rounded-xl border w-fit ${style}`}>
+                          <span className="text-xs font-black">{s.licenseExpiry}</span>
+                          <span className="text-[9px] font-black uppercase tracking-widest">
+                            {days < 0 ? `${-days} kun oldin tugagan` : `${days} kun qoldi`}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="px-10 py-6">
                     {s.isBlocked ? (

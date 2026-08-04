@@ -61,6 +61,7 @@ const App: React.FC = () => {
             if (!res.ok) {
                 if (res.reason === 'blocked') setLoginError("Sizning o'quv markazingiz bloklangan. Creator bilan bog'laning.");
                 else if (res.reason === 'no_center') setLoginError("O'quv markazi topilmadi.");
+                else if (res.reason === 'expired') setLoginError(`Litsenziya muddati tugagan (${res.expiredAt}). Davom ettirish uchun bog'laning.`);
                 else if (res.reason === 'network') setLoginError(t.network_error);
                 else setLoginError(t.login_error);
                 return;

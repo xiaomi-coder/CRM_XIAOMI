@@ -74,6 +74,14 @@ BEGIN
     IF COALESCE(s."isBlocked", false) THEN
       RETURN json_build_object('error', 'center_blocked');
     END IF;
+
+    -- Litsenziya muddati. Bo'sh bo'lsa — cheksiz deb qaraladi, ya'ni eski
+    -- markazlar qulflanib qolmaydi. Faqat sana qo'yilgan va o'tib ketgan
+    -- bo'lsa kiritilmaydi.
+    IF NULLIF(TRIM(COALESCE(s."licenseExpiry", '')), '') IS NOT NULL
+       AND s."licenseExpiry" < to_char(now(), 'YYYY-MM-DD') THEN
+      RETURN json_build_object('error', 'license_expired', 'expiredAt', s."licenseExpiry");
+    END IF;
   END IF;
 
   secret  := current_setting('app.jwt_secret', true);
