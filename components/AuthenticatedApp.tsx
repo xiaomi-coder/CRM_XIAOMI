@@ -362,11 +362,17 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       case 'salary': return <SalaryCalculation t={t} users={users} groups={groups} payments={payments} students={students} currentUser={currentUser} />;
       case 'staff': return <StaffManagement t={t} users={users} groups={groups} onAddUser={u => db.insert('users', { ...u, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDeleteUser={id => db.delete('users', id).then(loadAllData)} onUpdateUser={(id, d) => db.update('users', id, d).then(loadAllData)} />;
       case 'leads':
-      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} students={students} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={async (l) => {
+      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} students={students} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => {
+        // Har bosqich o'zgarishi tarixga yoziladi (oxirgi 20 tasi saqlanadi)
+        const lead = leads.find(x => x.id === id);
+        const history = [...(lead?.history || []), { at: new Date().toISOString(), from: lead?.status, to: status }].slice(-20);
+        return db.update('leads', id, { status, history }).then(loadAllData);
+      }} onRegister={async (l) => {
         // Lid o'quvchiga aylanadi: o'quvchi yaratiladi, LID ESA SAQLANADI.
         // (Avval lid o'chirilardi — voronka tarixi va konversiya foizi yo'qolib borardi.)
+        const studentId = crypto.randomUUID();
         await db.insert('students', {
-          id: crypto.randomUUID(),
+          id: studentId,
           "centerId": centerId,
           name: l.name,
           phone: l.phone || '',
@@ -380,7 +386,8 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           status: StudentStatus.ACTIVE,
         });
         // Lid "muvaffaqiyat" bosqichida qoladi — statistikada ko'rinib turadi
-        await db.update('leads', l.id, { status: LeadStatus.REGISTERED });
+        const history = [...(l.history || []), { at: new Date().toISOString(), from: l.status, to: LeadStatus.REGISTERED }].slice(-20);
+        await db.update('leads', l.id, { status: LeadStatus.REGISTERED, studentId, history, followUpDate: '' });
         loadAllData();
         setActiveTab('students');
       }} onUpdateLead={(id, d) => db.update('leads', id, d).then(loadAllData)} />;

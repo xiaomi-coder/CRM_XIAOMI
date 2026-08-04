@@ -3,7 +3,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Lead, LeadStatus, TestTemplate } from '../types';
 import {
   Plus, Trash2, X, Search, ArrowRight, ArrowLeft, Phone, ClipboardCheck,
-  Key, Award, Copy, Check, ChevronDown, ChevronUp, UserPlus, Info, TrendingUp
+  Key, Award, Copy, Check, ChevronDown, ChevronUp, UserPlus, Info, TrendingUp,
+  CalendarClock, History
 } from 'lucide-react';
 import { db } from '../services/supabase';
 
@@ -22,6 +23,18 @@ interface LeadsProps {
 
 /** Telefonni solishtirish uchun: faqat raqamlar, oxirgi 9 ta belgi (+998 bo'lsa ham, bo'lmasa ham) */
 const phoneKey = (phone?: string) => (phone || '').replace(/\D/g, '').slice(-9);
+
+/** Lid manbalari — direktor qaysi kanal ishlayotganini ko'rishi uchun */
+const SOURCES = [
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'telegram', label: 'Telegram' },
+  { key: 'tanish', label: 'Tanish orqali' },
+  { key: 'reklama', label: 'Reklama' },
+  { key: 'boshqa', label: 'Boshqa' },
+];
+const sourceLabel = (key?: string) => SOURCES.find(s => s.key === key)?.label || null;
+
+const todayStr = () => new Date().toISOString().split('T')[0];
 
 /** Voronka bosqichlari — tartib muhim, oldinga/orqaga siljish shu bo'yicha */
 const FLOW = [LeadStatus.NEW, LeadStatus.CONTACTED, LeadStatus.TRIAL, LeadStatus.REGISTERED];
@@ -45,8 +58,13 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
   const [templates, setTemplates] = useState<TestTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
+  /** Qayta qo'ng'iroq sanasini tahrirlash */
+  const [editingDate, setEditingDate] = useState<string | null>(null);
+  /** Tarixni ko'rish */
+  const [showHistory, setShowHistory] = useState<Lead | null>(null);
+
   const [formData, setFormData] = useState({
-    name: '', phone: '', parentName: '', parentPhone: '', subject: '', note: ''
+    name: '', phone: '', parentName: '', parentPhone: '', subject: '', note: '', source: ''
   });
 
   useEffect(() => {
@@ -111,7 +129,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
     e.preventDefault();
     onAdd({ ...formData, status: LeadStatus.NEW, createdAt: new Date().toISOString() } as any);
     setShowModal(false);
-    setFormData({ name: '', phone: '', parentName: '', parentPhone: '', subject: '', note: '' });
+    setFormData({ name: '', phone: '', parentName: '', parentPhone: '', subject: '', note: '', source: '' });
   };
 
   const handleAssignTest = async () => {
@@ -172,6 +190,25 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
     onUpdateStatus(lead.id, status);
   };
 
+  /**
+   * Bugun yoki kechikkan qo'ng'iroqlar — "hozir nima qilishim kerak" degan
+   * savolga javob. Voronkada eng ko'p yo'qotiladigan narsa shu.
+   */
+  const dueLeads = useMemo(() => {
+    const today = todayStr();
+    return leads
+      .filter(l => l.followUpDate && l.status !== LeadStatus.REJECTED && l.status !== LeadStatus.REGISTERED)
+      .filter(l => (l.followUpDate as string) <= today)
+      .sort((a, b) => (a.followUpDate! < b.followUpDate! ? -1 : 1));
+  }, [leads]);
+
+  /** Manba bo'yicha taqsimot — qaysi kanal ishlayapti */
+  const bySource = useMemo(() => {
+    const counts = new Map<string, number>();
+    leads.forEach(l => { if (l.source) counts.set(l.source, (counts.get(l.source) || 0) + 1); });
+    return SOURCES.map(s => ({ ...s, count: counts.get(s.key) || 0 })).filter(s => s.count > 0);
+  }, [leads]);
+
   const saveNote = (lead: Lead) => {
     const value = noteDraft.trim();
     setEditingNote(null);
@@ -197,6 +234,44 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
         <Info size={18} className="text-emerald-600 shrink-0 mt-0.5" />
         <p className="text-xs font-bold text-emerald-900 leading-relaxed">{t.funnel_hint}</p>
       </div>
+
+      {/* BUGUNGI ISH — kechikkan va bugungi qo'ng'iroqlar birinchi o'rinda */}
+      {dueLeads.length > 0 && (
+        <div className="bg-white rounded-3xl border-2 border-amber-200 overflow-hidden">
+          <div className="px-5 py-3 bg-amber-50 flex items-center gap-2.5">
+            <CalendarClock size={16} className="text-amber-600 shrink-0" />
+            <span className="text-[11px] font-black text-amber-900 uppercase tracking-widest">
+              {t.calls_today || "Bugun qo'ng'iroq qilish kerak"}
+            </span>
+            <span className="text-[10px] font-black text-amber-700 bg-white px-2 py-0.5 rounded-lg">{dueLeads.length}</span>
+          </div>
+          <div className="p-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+            {dueLeads.map(lead => {
+              const overdue = (lead.followUpDate as string) < todayStr();
+              return (
+                <div key={lead.id} className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-2xl">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-black text-slate-800 text-sm truncate">{lead.name}</p>
+                    <p className={`text-[10px] font-black uppercase tracking-wide ${overdue ? 'text-red-500' : 'text-amber-600'}`}>
+                      {overdue ? (t.overdue || 'Kechikkan') : (t.today_label || 'Bugun')} · {lead.followUpDate}
+                    </p>
+                  </div>
+                  <a href={`tel:${lead.phone}`} className="p-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shrink-0">
+                    <Phone size={14} />
+                  </a>
+                  <button
+                    onClick={() => onUpdateLead?.(lead.id, { followUpDate: '' })}
+                    title={t.mark_done || 'Bajarildi'}
+                    className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200 transition-colors shrink-0"
+                  >
+                    <Check size={14} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Voronka ko'rsatkichlari */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -229,6 +304,19 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
           </div>
         </div>
       </div>
+
+      {/* Manba bo'yicha taqsimot — qaysi kanal lid keltiryapti */}
+      {bySource.length > 0 && (
+        <div className="bg-white rounded-3xl border border-slate-100 px-5 py-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{t.by_source || 'Manba bo\'yicha'}</span>
+          {bySource.map(s => (
+            <div key={s.key} className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-slate-500">{s.label}</span>
+              <span className="text-sm font-black text-slate-800">{s.count}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Qidiruv + qo'shish */}
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white p-4 rounded-3xl border border-slate-100">
@@ -301,11 +389,18 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                       <div className="flex justify-between items-start gap-2 mb-2">
                         <div className="min-w-0">
                           <h5 className="font-black text-slate-800 text-sm truncate">{lead.name}</h5>
-                          {lead.subject && (
-                            <span className="inline-block mt-1 text-[9px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md uppercase">
-                              {lead.subject}
-                            </span>
-                          )}
+                          <div className="flex flex-wrap items-center gap-1 mt-1">
+                            {lead.subject && (
+                              <span className="text-[9px] font-black text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md uppercase">
+                                {lead.subject}
+                              </span>
+                            )}
+                            {sourceLabel(lead.source) && (
+                              <span className="text-[9px] font-black text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md uppercase">
+                                {sourceLabel(lead.source)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <button
                           onClick={() => setConfirmDelete(lead)}
@@ -354,6 +449,33 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                             }`}
                         >
                           {lead.note || `+ ${t.note}`}
+                        </button>
+                      )}
+
+                      {/* Qayta qo'ng'iroq sanasi */}
+                      {editingDate === lead.id ? (
+                        <input
+                          type="date"
+                          autoFocus
+                          defaultValue={lead.followUpDate || ''}
+                          onBlur={e => { setEditingDate(null); onUpdateLead?.(lead.id, { followUpDate: e.target.value }); }}
+                          onChange={e => { setEditingDate(null); onUpdateLead?.(lead.id, { followUpDate: e.target.value }); }}
+                          className="w-full mb-2 px-3 py-2 bg-sky-50 border border-sky-200 rounded-xl text-[11px] font-bold outline-none focus:ring-2 focus:ring-sky-300"
+                        />
+                      ) : (
+                        <button
+                          onClick={() => setEditingDate(lead.id)}
+                          className={`w-full mb-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wide flex items-center gap-1.5 transition-colors ${!lead.followUpDate
+                            ? 'text-slate-300 hover:text-slate-500 hover:bg-slate-50 border border-dashed border-slate-200'
+                            : lead.followUpDate < todayStr()
+                              ? 'bg-red-50 text-red-600 border border-red-100'
+                              : lead.followUpDate === todayStr()
+                                ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                                : 'bg-sky-50 text-sky-700 border border-sky-100'
+                            }`}
+                        >
+                          <CalendarClock size={12} className="shrink-0" />
+                          {lead.followUpDate || (t.set_followup || "Qo'ng'iroq sanasi")}
                         </button>
                       )}
 
@@ -419,6 +541,15 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                             <ArrowLeft size={12} />
                           </button>
                         )}
+                        {lead.history && lead.history.length > 0 && (
+                          <button
+                            onClick={() => setShowHistory(lead)}
+                            title={t.history || 'Tarix'}
+                            className="px-3 py-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 flex items-center justify-center transition-colors"
+                          >
+                            <History size={12} />
+                          </button>
+                        )}
                         <button
                           onClick={() => onUpdateStatus(lead.id, LeadStatus.REJECTED)}
                           className="flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors"
@@ -471,6 +602,38 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Lid tarixi — qachon qaysi bosqichga o'tgan */}
+      {showHistory && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-200">
+            <div className="flex justify-between items-start mb-6">
+              <div className="min-w-0">
+                <h3 className="text-lg font-black text-slate-800 tracking-tight truncate">{showHistory.name}</h3>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{t.history || 'Tarix'}</p>
+              </div>
+              <button onClick={() => setShowHistory(null)} className="p-2 hover:bg-slate-100 rounded-full transition-colors shrink-0"><X size={20} /></button>
+            </div>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {[...(showHistory.history || [])].reverse().map((h, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-700">
+                      {columns.find(c => c.status === h.from)?.label || h.from || '—'}
+                      {' → '}
+                      {columns.find(c => c.status === h.to)?.label || h.to}
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-400">
+                      {new Date(h.at).toLocaleString('uz-UZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -616,6 +779,15 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                       <Info size={12} className="shrink-0" /> {duplicateWarning}
                     </p>
                   )}
+                  {/* Manba — qaysi kanal ishlayotganini bilish uchun */}
+                  <select
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-emerald-500/30 transition-all text-slate-600"
+                    value={formData.source}
+                    onChange={e => setFormData({ ...formData, source: e.target.value })}
+                  >
+                    <option value="">{t.source || 'Qayerdan keldi?'}</option>
+                    {SOURCES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                  </select>
                 </div>
                 <div className="space-y-3">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.parent}</p>

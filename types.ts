@@ -142,6 +142,14 @@ export interface Lead {
   status: LeadStatus;
   createdAt: string;
   note?: string;
+  /** Qayta qo'ng'iroq qilish sanasi (YYYY-MM-DD) */
+  followUpDate?: string;
+  /** Lid qayerdan keldi: instagram, telegram, tanish, reklama, boshqa */
+  source?: string;
+  /** O'quvchiga aylangach — qaysi o'quvchi ekani */
+  studentId?: string;
+  /** Harakatlar tarixi (oxirgi 20 tasi) */
+  history?: { at: string; from?: string; to?: string }[];
   testId?: string;
   testScore?: number;
   testStatus?: 'PENDING' | 'COMPLETED';
