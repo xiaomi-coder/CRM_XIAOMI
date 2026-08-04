@@ -350,6 +350,11 @@ const IELTSListening: React.FC<IELTSListeningProps> = ({ t, questions, examType,
                                 {block.repeatNote && (
                                     <p className="text-xs font-bold text-slate-500 italic mt-2">NB You may use any letter more than once.</p>
                                 )}
+                                {/* Xarita / plan / diagramma */}
+                                {block.image && (
+                                    <img src={block.image} alt="Map or plan" className="w-full mt-3 rounded-xl border border-purple-100 bg-white"
+                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                )}
                                 {block.options.some((o, i) => optionLabel(o) !== optionLetter(o, i)) && (
                                     <div className="mt-3 bg-white rounded-xl border border-purple-100 p-3 space-y-1">
                                         {block.options.map((opt, i) => (

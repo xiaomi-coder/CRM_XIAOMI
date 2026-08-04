@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" width="760" height="420" role="img">
+<rect width="760" height="420" fill="#ffffff"/>
+<text x="380" y="24" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Hollow Brook Farm</text>
+<rect x="80" y="60" width="600" height="320" fill="#f8fafc" stroke="#0f172a" stroke-width="1.6" rx="4"/>
+<line x1="240" y1="380" x2="240" y2="340" stroke="#cbd5e1" stroke-width="12" stroke-linecap="round"/>
+<line x1="240" y1="340" x2="600" y2="340" stroke="#cbd5e1" stroke-width="12" stroke-linecap="round"/>
+<line x1="460" y1="340" x2="460" y2="110" stroke="#cbd5e1" stroke-width="12" stroke-linecap="round"/>
+<rect x="322" y="285" width="96" height="30" fill="#e2e8f0" stroke="#475569" stroke-width="1.2" rx="3"/>
+<text x="370" y="266" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">Farmhouse</text>
+<rect x="206" y="371" width="68" height="18" fill="#ffffff" stroke="#0f172a" stroke-width="1.4"/>
+<text x="240" y="385" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="700" fill="#0f172a" text-anchor="middle">ENTRANCE</text>
+<circle cx="285" cy="306" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="285" y="311" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">A</text>
+<circle cx="550" cy="306" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="550" y="311" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">B</text>
+<circle cx="630" cy="300" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="630" y="305" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">C</text>
+<circle cx="330" cy="200" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="330" y="205" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">D</text>
+<circle cx="560" cy="200" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="560" y="205" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">E</text>
+<circle cx="620" cy="120" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="620" y="125" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">F</text>
+<circle cx="150" cy="120" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="150" y="125" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">G</text>
+<circle cx="170" cy="306" r="15" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+<text x="170" y="311" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">H</text>
+</svg>

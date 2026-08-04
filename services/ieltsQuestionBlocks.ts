@@ -25,6 +25,7 @@ export const LETTER_CHOICE_TYPES: string[] = [
     IELTSQuestionType.MATCHING_INFORMATION,
     IELTSQuestionType.MATCHING_FEATURES,
     IELTSQuestionType.MATCHING_HEADINGS,
+    IELTSQuestionType.PLAN_MAP_LABELLING,
 ];
 
 /** Javob matn kiritish orqali beriladigan (so'z chegarasi bor) turlar */
@@ -46,6 +47,8 @@ export interface ParsedOptions {
     prompt?: string;
     /** So'z chegarasi (`@words:...`), completion savollar uchun */
     wordLimit?: string;
+    /** Rasm manzili (`@image:...`) — xarita/plan/diagramma uchun */
+    image?: string;
     /** Ko'rsatiladigan variantlar: "A) Barcelona", ... */
     items: string[];
 }
@@ -60,6 +63,7 @@ export const parseOptions = (options?: string[] | null): ParsedOptions => {
             continue;
         }
         if (opt.startsWith('@words:')) result.wordLimit = opt.slice('@words:'.length).trim();
+        else if (opt.startsWith('@image:')) result.image = opt.slice('@image:'.length).trim();
         else result.prompt = opt.slice(1).trim();
     }
     return result;
@@ -97,6 +101,8 @@ export interface QuestionBlock<Q> {
     instructions: string[];
     /** Harf tanlanadigan bloklarda umumiy variantlar ro'yxati */
     options: string[];
+    /** Xarita/plan/diagramma rasmi (`@image:` meta orqali) */
+    image?: string;
     /** Completion bloklarida so'z chegarasi */
     wordLimit?: string;
     /** "NB You may use any letter more than once." kerakmi */
@@ -153,6 +159,11 @@ const instructionsFor = (
         case IELTSQuestionType.MATCHING_HEADINGS:
             return [
                 parsed.prompt || 'Choose the correct heading for each paragraph from the list of headings below.',
+                `Write the correct letter, ${letters}, in boxes ${range} on your answer sheet.`,
+            ];
+        case IELTSQuestionType.PLAN_MAP_LABELLING:
+            return [
+                parsed.prompt || 'Label the map below.',
                 `Write the correct letter, ${letters}, in boxes ${range} on your answer sheet.`,
             ];
         case IELTSQuestionType.SUMMARY_COMPLETION:
@@ -232,6 +243,7 @@ export function buildQuestionBlocks<
             block.options = parsed.items;
             block.repeatNote = block.questions.length > parsed.items.length;
         }
+        block.image = parsed.image;
         if (COMPLETION_TYPES.includes(block.questionType)) {
             block.wordLimit = parsed.wordLimit || DEFAULT_WORD_LIMIT;
         }

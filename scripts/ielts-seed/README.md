@@ -78,6 +78,34 @@ options: ['@words:NO MORE THAN TWO WORDS']   // default: ONE WORD ONLY
 
 Meta faqat blokning **birinchi** savoliga yoziladi — qolganlari uni meros oladi.
 
+## Xarita savoli qo'shish (Listening Part 2)
+
+"Label the map below" savoli uchun **4 narsa bir-biriga mos kelishi shart**.
+Tartibni buzmang:
+
+1. **Transkript** — `transcripts/test-NN.mjs` ga joylashuvni ANIQ aytadigan
+   gaplar qo'shing ("the shop is immediately on your right", "in the far
+   right-hand corner"). Talaba javobni faqat eshitib topadi.
+2. **Audio** — o'zgargan bo'limni qayta yasang:
+   `node scripts/ielts-seed/audio/generate.mjs --force test-NN`
+3. **Xarita** — `figures/maps.mjs` ga qo'shing va yasang:
+   `node scripts/ielts-seed/figures/maps.mjs`
+   Xaritada joy NOMLARI yozilmaydi — faqat harflar va bir-ikkita mo'ljal
+   (kirish, hovuz kabi).
+4. **Savollar** — `tests/test-NN.mjs` da `plan_map_labelling` turi:
+   ```js
+   { type: 'plan_map_labelling', text: 'the shop',
+     options: ['@Label the map of the garden below.',
+               '@image:/images/ielts/listening-map-test-NN.svg',
+               'A','B','C','D','E','F','G','H'], answer: 'B' },
+   { type: 'plan_map_labelling', text: 'the café', answer: 'D' },
+   ```
+
+⚠️ Deploy tartibi: audio va rasm avval push qilinib Vercel'ga chiqishi kerak,
+bazani KEYIN yangilang — aks holda sayt mavjud bo'lmagan faylni so'raydi.
+
+Hozir xarita bor: **Test 1** (botanika bog'i), **Test 7** (ferma).
+
 ## Yangi test qo'shish
 
 1. `tests/test-11.mjs` yarating — mavjud faylni namuna qiling.

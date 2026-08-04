@@ -226,6 +226,41 @@ export function table({ title, columns, rows, note }) {
 }
 
 /**
+ * Xarita / plan — Listening Part 2 dagi "Label the map below" savollari uchun.
+ * Harflangan nuqtalar (A, B, C ...) joylashuvni bildiradi; talaba yozuvni
+ * eshitib qaysi harf qaysi joy ekanini aniqlaydi. Shu sababli ATALGAN joylar
+ * (masalan "café") xaritada YOZILMAYDI — faqat mo'ljal bo'ladigan bir-ikkitasi.
+ */
+export function planMap({ title, height = 420, outline, paths = [], landmarks = [], markers = [], entrance }) {
+  const parts = [
+    ...wrap(title, 92).map((l, i) => text(W / 2, 24 + i * 18, l, { size: 14, weight: 700, anchor: 'middle' })),
+    `<rect x="${outline.x}" y="${outline.y}" width="${outline.w}" height="${outline.h}" fill="#f8fafc" stroke="${INK}" stroke-width="1.6" rx="4"/>`,
+    ...paths.map(([x1, y1, x2, y2]) =>
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${GRID}" stroke-width="12" stroke-linecap="round"/>`),
+  ];
+
+  for (const l of landmarks) {
+    if (l.r) parts.push(`<circle cx="${l.x}" cy="${l.y}" r="${l.r}" fill="#dbeafe" stroke="${COLORS[0]}" stroke-width="1.4"/>`);
+    else parts.push(`<rect x="${l.x - l.w / 2}" y="${l.y - l.h / 2}" width="${l.w}" height="${l.h}" fill="#e2e8f0" stroke="${MUTED}" stroke-width="1.2" rx="3"/>`);
+    const offset = l.r ? l.r + 15 : l.h / 2 + 15;
+    wrap(l.label, 16).forEach((line, i) =>
+      parts.push(text(l.x, l.y + (l.above ? -offset - 4 : offset) + i * 13, line, { size: 11, anchor: 'middle', fill: MUTED })));
+  }
+
+  if (entrance) {
+    parts.push(`<rect x="${entrance.x - 34}" y="${entrance.y - 9}" width="68" height="18" fill="#ffffff" stroke="${INK}" stroke-width="1.4"/>`);
+    parts.push(text(entrance.x, entrance.y + 5, 'ENTRANCE', { size: 9, weight: 700, anchor: 'middle' }));
+  }
+
+  for (const m of markers) {
+    parts.push(`<circle cx="${m.x}" cy="${m.y}" r="15" fill="#ffffff" stroke="${COLORS[1]}" stroke-width="2"/>`);
+    parts.push(text(m.x, m.y + 5, m.letter, { size: 13, weight: 700, anchor: 'middle', fill: COLORS[1] }));
+  }
+
+  return svg(height, parts.join('\n'));
+}
+
+/**
  * Bir nechta figurani bitta SVG ga vertikal joylaydi.
  * Bazada bitta `taskImageUrl` maydoni bor, shuning uchun "chart + table"
  * turidagi topshiriqlar bitta faylga sig'ishi kerak.

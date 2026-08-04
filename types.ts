@@ -176,6 +176,8 @@ export enum IELTSQuestionType {
   MATCHING_FEATURES = 'matching_features',
   /** "Which paragraph/section contains the following information?" */
   MATCHING_INFORMATION = 'matching_information',
+  /** "Label the map/plan below" — rasm ustidagi harflardan tanlanadi */
+  PLAN_MAP_LABELLING = 'plan_map_labelling',
   SENTENCE_COMPLETION = 'sentence_completion',
   SUMMARY_COMPLETION = 'summary_completion',
   SHORT_ANSWER = 'short_answer',

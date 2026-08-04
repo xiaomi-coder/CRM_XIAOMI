@@ -71,7 +71,8 @@ export const DIFFICULTY = {
   ],
 };
 
-export const MATCHING_TYPES = ['matching_features', 'matching_information', 'matching_headings'];
+/** Harf tanlanadigan turlar — xarita belgilash ham shu oilaga kiradi */
+export const MATCHING_TYPES = ['matching_features', 'matching_information', 'matching_headings', 'plan_map_labelling'];
 
 export const COMPLETION_TYPES = [
   'sentence_completion',
