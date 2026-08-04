@@ -207,3 +207,25 @@ Yozish: o'z markaziga 201, boshqa markaz nomidan 403, anon 401.
   `app.jwt_secret` va frontenddagi anon kalit birga yangilanadi (qisqa uzilish).
 - Root parolini almashtirish (suhbatda oshkor bo'lgan).
 - Zaxirani serverdan tashqariga ham nusxalash.
+
+## Sotuvga tayyorlash — 2-to'plam (2026-08-05)
+
+Uchta kamchilik tuzatildi (to'rtinchisi keyingi sessiyaga qoldirildi):
+
+1. **Litsenziya muddati** — `licenseExpiry` yozilardi-yu tekshirilmasdi. Endi
+   `public.login` tekshiradi (`license_expired`), bo'sh bo'lsa cheksiz deb
+   qaraladi. Creator panelida necha kun qolgani rang bilan ko'rinadi.
+2. **Parol** — o'z parolini o'zgartirish (Sozlamalar), direktor xodim parolini
+   tiklashi (faqat o'z markazida), yangi markaz parolini darrov hash qilish.
+   `db/04-password-management.sql`.
+3. **Audit jurnali** — LOGLAR ekrani butunlay soxta edi (o'ylab topilgan
+   markazlar, soxta heartbeat). Endi haqiqiy: `audit_log` jadvali,
+   `auth.log_event()`, `public.get_audit_log()`. Muvaffaqiyatsiz kirish
+   urinishlari ham yoziladi. `db/05-audit-log.sql`.
+
+### Keyingi sessiyaga qolgan
+- **Markaz o'zi ro'yxatdan o'tsin** (anon chaqiriladigan funksiya — suiiste'moldan
+  himoya kerak), **landing'da demo**, **skrinshotli professional qo'llanma**
+  (guruhlar, o'quvchilar, Telegram oqimi).
+- ⚠️ JWT sirini almashtirish, root parolini almashtirish, zaxirani serverdan
+  tashqariga nusxalash.
