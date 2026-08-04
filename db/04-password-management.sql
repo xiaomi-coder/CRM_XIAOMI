@@ -45,6 +45,7 @@ BEGIN
   END IF;
 
   UPDATE users SET password = crypt(p_new, gen_salt('bf', 10)) WHERE id = v_id;
+  PERFORM auth.log_event(u."centerId", u.id, u.username, 'PASSWORD_CHANGED', 'o''zi o''zgartirdi');
   RETURN json_build_object('ok', true);
 END;
 $$;
@@ -85,6 +86,8 @@ BEGIN
   END IF;
 
   UPDATE users SET password = crypt(p_new, gen_salt('bf', 10)) WHERE id = p_user_id;
+  PERFORM auth.log_event(target."centerId", target.id, target.username, 'PASSWORD_RESET',
+                         'tikladi: ' || COALESCE(claims ->> 'username', '?'));
   RETURN json_build_object('ok', true);
 END;
 $$;

@@ -327,8 +327,35 @@ export const BroadcastSystem: React.FC<{ t: any }> = ({ t }) => {
   );
 };
 
-// Tizim Loglari qismi
-export const SystemLogs: React.FC<{ t: any }> = ({ t }) => {
+// Tizim Loglari qismi — HAQIQIY audit jurnali (avval bu yerda o'ylab
+// topilgan yozuvlar turardi: mavjud bo'lmagan markazlar, soxta "heartbeat").
+type AuditRow = { at: string; centerId: string | null; username: string | null; action: string; detail: string | null };
+
+const ACTION_STYLE: Record<string, string> = {
+  LOGIN_OK: 'text-emerald-400',
+  LOGIN_FAIL: 'text-red-400',
+  LOGIN_BLOCKED: 'text-amber-400',
+  LOGIN_EXPIRED: 'text-amber-400',
+  PASSWORD_CHANGED: 'text-indigo-300',
+  PASSWORD_RESET: 'text-indigo-300',
+};
+
+export const SystemLogs: React.FC<{ t: any; settings?: SystemSettings[] }> = ({ t, settings = [] }) => {
+  const [rows, setRows] = useState<AuditRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const data = await db.getAuditLog(200);
+    setRows(data);
+    setLoading(false);
+  };
+
+  React.useEffect(() => { load(); }, []);
+
+  const centerName = (id: string | null) =>
+    id ? (settings.find(s => s.centerId === id)?.centerName || id.slice(0, 8)) : '—';
+
   return (
     <div className="bg-slate-950 rounded-[3rem] p-10 text-indigo-300 font-mono text-[11px] overflow-hidden border border-white/5 shadow-2xl animate-in fade-in duration-700">
       <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
@@ -336,18 +363,26 @@ export const SystemLogs: React.FC<{ t: any }> = ({ t }) => {
           <ShieldAlert size={20} className="text-amber-500" />
           <span className="uppercase font-black tracking-[0.3em] text-white">{t.logs || 'System Audit & Access Log'}</span>
         </div>
-        <div className="bg-white/5 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-400">Live Stream</div>
+        <button onClick={load} disabled={loading}
+          className="bg-white/5 hover:bg-white/10 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-400 transition-colors disabled:opacity-40">
+          {loading ? '...' : (t.refresh || 'Yangilash')}
+        </button>
       </div>
-      <div className="space-y-3 h-[500px] overflow-y-auto custom-scrollbar pr-4">
-        <p className="opacity-60 flex gap-4"><span className="text-slate-500 shrink-0">[20:45:12]</span> <span className="text-indigo-400">CREATOR_LOGGED_IN:</span> Super Admin entry success from 127.0.0.1</p>
-        <p className="text-emerald-400 flex gap-4"><span className="text-slate-500 shrink-0">[20:46:00]</span> <span className="font-bold">DB_SYNC_SUCCESS:</span> Multi-tenant storage optimized</p>
-        <p className="text-amber-400 flex gap-4"><span className="text-slate-500 shrink-0">[20:47:22]</span> <span>LICENSE_CHECK:</span> EDU_XYZ subscription verified (exp: 2025-01-10)</p>
-        <p className="text-indigo-400 flex gap-4"><span className="text-slate-500 shrink-0">[20:48:05]</span> <span>NEW_OBJECT_CREATED:</span> Center EDU_PREM added to global registry</p>
-        <p className="text-red-400 flex gap-4 font-bold italic"><span className="text-slate-500 shrink-0">[20:49:15]</span> SECURITY_ALERT: Multiple failed logins for user 'admin' at Elite Center</p>
-        {[...Array(15)].map((_, i) => (
-          <p key={i} className="opacity-30 flex gap-4 text-[9px]">
-            <span className="text-slate-600 shrink-0">[{20 + Math.floor(i / 5)}:{10 + i}:00]</span>
-            HEARTBEAT_PULSE_OK: Monitoring all microservices...
+
+      <div className="space-y-2 h-[500px] overflow-y-auto custom-scrollbar pr-4">
+        {!loading && rows.length === 0 && (
+          <p className="text-slate-500 italic">Hozircha yozuv yo'q.</p>
+        )}
+        {rows.map((r, i) => (
+          <p key={i} className={`flex gap-4 ${ACTION_STYLE[r.action] || 'text-slate-400'}`}>
+            <span className="text-slate-600 shrink-0">
+              [{new Date(r.at).toLocaleString('uz-UZ', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}]
+            </span>
+            <span className="font-bold shrink-0">{r.action}</span>
+            <span className="text-slate-300 shrink-0">{r.username || '—'}</span>
+            <span className="text-slate-500 truncate">
+              {centerName(r.centerId)}{r.detail ? ` · ${r.detail}` : ''}
+            </span>
           </p>
         ))}
       </div>

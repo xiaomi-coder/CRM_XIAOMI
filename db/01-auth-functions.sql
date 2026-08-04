@@ -49,17 +49,20 @@ BEGIN
   -- Foydalanuvchi topilmasa ham, parol xato bo'lsa ham — bir xil javob.
   -- (Aks holda qaysi login mavjudligini bilib olish mumkin bo'lardi.)
   IF u IS NULL THEN
+    PERFORM auth.log_event(NULL, NULL, p_username, 'LOGIN_FAIL', 'foydalanuvchi topilmadi');
     RETURN json_build_object('error', 'invalid_credentials');
   END IF;
 
   -- Bcrypt hash ($2a$/$2b$ bilan boshlanadi) yoki eski ochiq parol
   IF u.password LIKE '$2%' THEN
     IF u.password <> crypt(p_password, u.password) THEN
+      PERFORM auth.log_event(u."centerId", u.id, u.username, 'LOGIN_FAIL', 'parol xato');
       RETURN json_build_object('error', 'invalid_credentials');
     END IF;
   ELSE
     -- Eski ochiq parol: to'g'ri bo'lsa darhol bcrypt ga o'tkazamiz
     IF u.password <> p_password THEN
+      PERFORM auth.log_event(u."centerId", u.id, u.username, 'LOGIN_FAIL', 'parol xato');
       RETURN json_build_object('error', 'invalid_credentials');
     END IF;
     UPDATE users SET password = crypt(p_password, gen_salt('bf', 10)) WHERE id = u.id;
@@ -72,6 +75,7 @@ BEGIN
       RETURN json_build_object('error', 'center_not_found');
     END IF;
     IF COALESCE(s."isBlocked", false) THEN
+      PERFORM auth.log_event(u."centerId", u.id, u.username, 'LOGIN_BLOCKED', 'markaz bloklangan');
       RETURN json_build_object('error', 'center_blocked');
     END IF;
 
@@ -80,6 +84,7 @@ BEGIN
     -- bo'lsa kiritilmaydi.
     IF NULLIF(TRIM(COALESCE(s."licenseExpiry", '')), '') IS NOT NULL
        AND s."licenseExpiry" < to_char(now(), 'YYYY-MM-DD') THEN
+      PERFORM auth.log_event(u."centerId", u.id, u.username, 'LOGIN_EXPIRED', 'litsenziya ' || s."licenseExpiry");
       RETURN json_build_object('error', 'license_expired', 'expiredAt', s."licenseExpiry");
     END IF;
   END IF;
@@ -100,6 +105,8 @@ BEGIN
     ),
     secret
   );
+
+  PERFORM auth.log_event(u."centerId", u.id, u.username, 'LOGIN_OK', u.role);
 
   RETURN json_build_object(
     'token', token,

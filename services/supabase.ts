@@ -261,6 +261,19 @@ export const db = {
     }
   },
 
+  /** Audit jurnali — super admin hammasini, direktor faqat o'z markazini ko'radi */
+  getAuditLog: async (limit = 200): Promise<any[]> => {
+    if (!supabase) return [];
+    try {
+      const { data, error } = await supabase.rpc('get_audit_log', { p_limit: limit });
+      if (error) throw error;
+      return Array.isArray(data) ? data : [];
+    } catch (e) {
+      console.error('Audit jurnali xatosi:', e);
+      return [];
+    }
+  },
+
   logout: () => setAuthToken(null),
 };
 

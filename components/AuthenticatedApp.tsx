@@ -421,7 +421,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
         }
       }} />;
       case 'broadcast': return <BroadcastSystem t={t} />;
-      case 'system_logs': return <SystemLogs t={t} />;
+      case 'system_logs': return <SystemLogs t={t} settings={allSettings} />;
       default: return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} />;
     }
   };
