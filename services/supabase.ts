@@ -217,6 +217,50 @@ export const db = {
     }
   },
 
+  /** O'z parolini o'zgartirish — eski parolni bilish shart */
+  changePassword: async (oldPassword: string, newPassword: string): Promise<{ ok: boolean; error?: string }> => {
+    if (!supabase) return { ok: false, error: 'network' };
+    try {
+      const { data, error } = await supabase.rpc('change_password', {
+        p_old: oldPassword, p_new: newPassword,
+      });
+      if (error) throw error;
+      return data?.ok ? { ok: true } : { ok: false, error: data?.error || 'unknown' };
+    } catch (e: any) {
+      console.error('Parol o\'zgartirish xatosi:', e);
+      return { ok: false, error: 'network' };
+    }
+  },
+
+  /** Boshqa foydalanuvchi parolini tiklash (direktor — o'z markazida) */
+  resetPassword: async (userId: string, newPassword: string): Promise<{ ok: boolean; error?: string }> => {
+    if (!supabase) return { ok: false, error: 'network' };
+    try {
+      const { data, error } = await supabase.rpc('reset_password', {
+        p_user_id: userId, p_new: newPassword,
+      });
+      if (error) throw error;
+      return data?.ok ? { ok: true } : { ok: false, error: data?.error || 'unknown' };
+    } catch (e: any) {
+      console.error('Parol tiklash xatosi:', e);
+      return { ok: false, error: 'network' };
+    }
+  },
+
+  /** Yangi markaz admini paroli — darrov hash qilib qo'yiladi */
+  setInitialPassword: async (userId: string, password: string): Promise<boolean> => {
+    if (!supabase) return false;
+    try {
+      const { data } = await supabase.rpc('set_initial_password', {
+        p_user_id: userId, p_password: password,
+      });
+      return !!data?.ok;
+    } catch (e) {
+      console.error('Boshlang\'ich parol xatosi:', e);
+      return false;
+    }
+  },
+
   logout: () => setAuthToken(null),
 };
 

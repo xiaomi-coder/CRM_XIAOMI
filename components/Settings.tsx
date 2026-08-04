@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { SystemSettings, Student, TestTemplate, Question, UserRole } from '../types';
-import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink, Sparkles, KeyRound } from 'lucide-react';
 import { db } from '../services/supabase';
 import { setTelegramWebhook, getTelegramBotInfo } from '../services/telegramService';
 
@@ -19,6 +19,28 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, userRole, onDeleteTest }) => {
+  const [pwOld, setPwOld] = useState('');
+  const [pwNew, setPwNew] = useState('');
+  const [pwBusy, setPwBusy] = useState(false);
+  const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const handleChangePassword = async () => {
+    setPwBusy(true);
+    const res = await db.changePassword(pwOld, pwNew);
+    setPwBusy(false);
+    if (res.ok) {
+      setPwMsg({ ok: true, text: "✓ Parol o'zgartirildi" });
+      setPwOld(''); setPwNew('');
+    } else {
+      setPwMsg({
+        ok: false,
+        text: res.error === 'wrong_password' ? "Eski parol noto'g'ri"
+          : res.error === 'too_short' ? "Yangi parol kamida 6 ta belgi bo'lishi kerak"
+            : "Xatolik yuz berdi",
+      });
+    }
+  };
+
   const [formData, setFormData] = useState<SystemSettings>({ ...settings });
   const [templates, setTemplates] = useState<TestTemplate[]>([]);
   const [showAddTestModal, setShowAddTestModal] = useState(false);
@@ -143,6 +165,34 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
 
   return (
     <div className="max-w-6xl mx-auto space-y-12 pb-32">
+      {/* O'z parolini o'zgartirish — har qanday rol uchun.
+          Parol bazada hash bo'lib saqlanadi, shuning uchun eski parolni
+          bilish shart va uni hech kim "ko'ra" olmaydi. */}
+      <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="bg-amber-500 p-3.5 rounded-2xl shadow-lg"><KeyRound className="text-white" size={20} /></div>
+          <h3 className="text-xl font-black text-slate-800 uppercase italic">{t.change_password || "Parolni o'zgartirish"}</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <input type="password" value={pwOld} onChange={e => { setPwOld(e.target.value); setPwMsg(null); }}
+            placeholder={t.old_password || 'Eski parol'}
+            className="px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
+          <input type="password" value={pwNew} onChange={e => { setPwNew(e.target.value); setPwMsg(null); }}
+            placeholder={t.new_password || 'Yangi parol'}
+            className="px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
+          <button onClick={handleChangePassword} disabled={pwBusy || pwOld.length < 1 || pwNew.length < 6}
+            className="px-6 py-3.5 bg-amber-600 text-white rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-amber-700 transition-colors disabled:opacity-40">
+            {pwBusy ? '...' : (t.save || 'Saqlash')}
+          </button>
+        </div>
+        {pwMsg && (
+          <p className={`text-[11px] font-black mt-3 px-1 ${pwMsg.ok ? 'text-emerald-600' : 'text-red-500'}`}>
+            {pwMsg.text}
+          </p>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {userRole === UserRole.DIRECTOR && (
           <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl">

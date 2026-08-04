@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Building, ShieldAlert, Megaphone, Activity, Users, Wallet, Lock, Unlock, Clock, Trash2, Send, Plus, X, User as UserIcon, Phone, Key, Loader2 } from 'lucide-react';
 import { SystemSettings, User, Student, Payment, UserRole } from '../types';
+import { db } from '../services/supabase';
 
 // Global Dashboard
 export const CreatorDashboard: React.FC<{ t: any, settings: SystemSettings[], allStudents: Student[], allPayments: Payment[] }> = ({ t, settings = [], allStudents = [], allPayments = [] }) => {
@@ -116,6 +117,9 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 
     try {
       await onAddCenter(newSettings, newAdmin);
+      // Parolni darrov hash qilib qo'yamiz. Aks holda u birinchi kirishgacha
+      // ochiq matnda turadi (avval shunday edi).
+      await db.setInitialPassword(adminId, formData.password);
       setShowModal(false);
       setFormData({ centerName: '', adminName: '', phone: '', username: '', password: '', expiryDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0] });
       alert(t.save);

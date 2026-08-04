@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { User, UserRole, Group } from '../types';
-import { Shield, Trash2, Check, X, Plus, AlertTriangle, Crown, UserCog, GraduationCap, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Shield, Trash2, Check, X, Plus, AlertTriangle, Crown, UserCog, GraduationCap, ToggleLeft, ToggleRight, KeyRound } from 'lucide-react';
+import { db } from '../services/supabase';
 
 interface StaffManagementProps {
   t: any;
@@ -93,6 +94,28 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  /** Parol tiklash oynasi */
+  const [resetUser, setResetUser] = useState<User | null>(null);
+  const [resetValue, setResetValue] = useState('');
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+  const [resetBusy, setResetBusy] = useState(false);
+
+  const handleResetPassword = async () => {
+    if (!resetUser) return;
+    setResetBusy(true);
+    const res = await db.resetPassword(resetUser.id, resetValue);
+    setResetBusy(false);
+    if (res.ok) {
+      setResetMsg('ok');
+      setTimeout(() => setResetUser(null), 1500);
+    } else {
+      setResetMsg(
+        res.error === 'too_short' ? "Parol kamida 6 ta belgi bo'lishi kerak"
+          : res.error === 'forbidden' ? "Bunga ruxsatingiz yo'q"
+            : "Xatolik yuz berdi"
+      );
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -253,6 +276,13 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
                   <button onClick={() => handleEditUser(u)} className="text-indigo-600 hover:bg-indigo-100 p-2 rounded-lg transition-all">
                     <Shield size={18} />
                   </button>
+                  {/* Parolni tiklash — xodim parolini unutsa. Parol bazada
+                      hash bo'lib saqlanadi, shuning uchun uni "ko'rish" mumkin emas. */}
+                  <button onClick={() => { setResetUser(u); setResetValue(''); setResetMsg(null); }}
+                    title={t.reset_password || 'Parolni tiklash'}
+                    className="text-amber-500 hover:bg-amber-50 p-2 rounded-lg transition-all">
+                    <KeyRound size={18} />
+                  </button>
                   {u.role !== UserRole.DIRECTOR && u.role !== UserRole.SUPER_ADMIN && (
                     <button onClick={() => setDeleteConfirmId(u.id)} className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-all">
                       <Trash2 size={18} />
@@ -266,6 +296,47 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
       </div>
 
       {/* Delete Confirmation Modal */}
+      {/* Parolni tiklash */}
+      {resetUser && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-8 animate-in zoom-in duration-200">
+            <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <KeyRound size={26} />
+            </div>
+            <h3 className="text-lg font-black text-slate-800 text-center">{resetUser.name}</h3>
+            <p className="text-[11px] font-bold text-slate-400 text-center mb-6">
+              {t.reset_password_hint || "Yangi parol o'ylab toping va xodimga ayting"}
+            </p>
+
+            {resetMsg === 'ok' ? (
+              <p className="text-center text-emerald-600 font-black text-sm py-4">✓ {t.saved || 'Saqlandi'}</p>
+            ) : (
+              <>
+                <input
+                  autoFocus
+                  type="text"
+                  value={resetValue}
+                  onChange={e => { setResetValue(e.target.value); setResetMsg(null); }}
+                  placeholder={t.new_password || 'Yangi parol'}
+                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-amber-400/40 mb-2"
+                />
+                {resetMsg && <p className="text-[11px] font-bold text-red-500 mb-2 px-1">{resetMsg}</p>}
+                <div className="flex gap-3 mt-4">
+                  <button onClick={() => setResetUser(null)}
+                    className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-colors">
+                    {t.cancel}
+                  </button>
+                  <button onClick={handleResetPassword} disabled={resetBusy || resetValue.length < 6}
+                    className="flex-1 py-3 bg-amber-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-amber-700 transition-colors disabled:opacity-40">
+                    {resetBusy ? '...' : (t.save || 'Saqlash')}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {deleteConfirmId && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8">
