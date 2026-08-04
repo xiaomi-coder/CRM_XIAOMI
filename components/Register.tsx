@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Building2, User as UserIcon, Phone, Lock, AtSign, BrainCircuit,
-  AlertCircle, ArrowRight, Loader2, CheckCircle2, Send, RotateCcw
+  AlertCircle, ArrowRight, Loader2, CheckCircle2, Send, RotateCcw,
+  MousePointerClick, MessageCircleMore, Undo2
 } from 'lucide-react';
 import { db } from '../services/supabase';
 import { User } from '../types';
@@ -185,14 +186,31 @@ const Register: React.FC<RegisterProps> = ({ onRegistered }) => {
               <div className="rounded-2xl border p-4 transition-colors"
                    style={{ borderColor: tg.status === 'verified' ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.1)' }}>
                 {tg.status === 'idle' && (
-                  <button
-                    type="button"
-                    onClick={startVerification}
-                    disabled={!form.phone.trim()}
-                    className="w-full flex items-center justify-center gap-2 bg-sky-500/15 hover:bg-sky-500/25 disabled:opacity-40 disabled:hover:bg-sky-500/15 text-sky-300 font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-colors border border-sky-400/25"
-                  >
-                    <Send size={15} /> Telegram orqali raqamni tasdiqlash
-                  </button>
+                  <>
+                    <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-3">Qanday ishlaydi?</p>
+                    <ol className="space-y-2 mb-4">
+                      <li className="flex items-start gap-2.5 text-[11px] text-white/60 font-semibold">
+                        <span className="w-5 h-5 rounded-full bg-sky-500/20 text-sky-300 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">1</span>
+                        <span className="flex items-center gap-1.5 flex-wrap">Pastdagi tugmani bosing — Telegram'da bot ochiladi <MousePointerClick size={12} className="text-sky-300/70 shrink-0" /></span>
+                      </li>
+                      <li className="flex items-start gap-2.5 text-[11px] text-white/60 font-semibold">
+                        <span className="w-5 h-5 rounded-full bg-sky-500/20 text-sky-300 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">2</span>
+                        <span className="flex items-center gap-1.5 flex-wrap">Botda chiqqan <b className="text-white/80">"📱 Raqamni ulashish"</b> tugmasini bosing <MessageCircleMore size={12} className="text-sky-300/70 shrink-0" /></span>
+                      </li>
+                      <li className="flex items-start gap-2.5 text-[11px] text-white/60 font-semibold">
+                        <span className="w-5 h-5 rounded-full bg-sky-500/20 text-sky-300 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">3</span>
+                        <span className="flex items-center gap-1.5 flex-wrap">Shu sahifaga qayting — raqam avtomatik tasdiqlanadi <Undo2 size={12} className="text-sky-300/70 shrink-0" /></span>
+                      </li>
+                    </ol>
+                    <button
+                      type="button"
+                      onClick={startVerification}
+                      disabled={!form.phone.trim()}
+                      className="w-full flex items-center justify-center gap-2 bg-sky-500/15 hover:bg-sky-500/25 disabled:opacity-40 disabled:hover:bg-sky-500/15 text-sky-300 font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-colors border border-sky-400/25"
+                    >
+                      <Send size={15} /> Telegram orqali raqamni tasdiqlash
+                    </button>
+                  </>
                 )}
                 {tg.status === 'pending' && (
                   <div className="flex items-center gap-3 text-amber-300 text-[12px] font-bold">
