@@ -383,7 +383,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The chart below shows the percentage of employees working mainly from home in five sectors in 2019 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The chart below shows the percentage of employees working mainly from home in five sectors in 2019 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Grouped bar chart, % working mainly from home 2019 vs 2025. IT 18 to 62; Finance 12 to 48; Education 4 to 15; Manufacturing 2 to 6; Hospitality 1 to 3. Every sector rose. IT highest in both years and largest absolute rise (+44 points). Hospitality lowest throughout, barely changed.',
+      imageUrl: '/images/ielts/task1-test-05.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

@@ -394,7 +394,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The chart below shows the number of objects launched into space by five countries between 1990 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The chart below shows the number of objects launched into space by five countries between 1990 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Line graph, objects launched 1990/2000/2010/2020/2025. United States 60/45/80/180/300 (dipped in 2000 then rose steeply, highest by 2025). China 5/10/25/90/210 (slowest start but sharpest acceleration, second by 2025). Russia 75/40/35/30/45 (highest in 1990, then fell and stayed low). India 5/8/15/35/70 and Japan 8/12/20/40/65 (both small but growing steadily).',
+      imageUrl: '/images/ielts/task1-test-10.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

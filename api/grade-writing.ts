@@ -39,6 +39,12 @@ ${wordCount < minWords ? `WARNING: The response is under the minimum word count.
 
 Task prompt: ${taskPrompt}
 
+NOTE: if the prompt contains a section beginning "[DATA]", that section describes the
+figures shown in the chart, table or diagram the candidate was looking at. It was NOT
+shown to the candidate. Use it to judge whether the response reports the key features
+accurately, whether the comparisons made are correct, and whether any important trend
+has been omitted. Do not penalise the candidate for wording that differs from it.
+
 Student's response:
 ${essayText}
 

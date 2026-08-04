@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 326" width="760" height="326" role="img">
+<rect width="760" height="326" fill="#ffffff"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f172a"/></marker></defs>
+<text x="380" y="26" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">The process by which a vaccine is developed, tested and approved</text>
+<rect x="32" y="66" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="42" y="86" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">1</text>
+<text x="110" y="106" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Laboratory research</text>
+<text x="110" y="121" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">identifies the</text>
+<text x="110" y="136" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">antigen</text>
+<line x1="188" y1="108" x2="212" y2="108" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="212" y="66" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="222" y="86" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">2</text>
+<text x="290" y="106" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Pre-clinical testing</text>
+<text x="290" y="121" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">on cells and animals</text>
+<line x1="368" y1="108" x2="392" y2="108" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="392" y="66" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="402" y="86" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">3</text>
+<text x="470" y="106" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Phase 1 trial: small</text>
+<text x="470" y="121" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">group, safety</text>
+<text x="470" y="136" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">checked</text>
+<line x1="548" y1="108" x2="572" y2="108" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="572" y="66" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="582" y="86" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">4</text>
+<text x="650" y="106" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Phase 2 trial:</text>
+<text x="650" y="121" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">several hundred</text>
+<text x="650" y="136" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">people, dosage set</text>
+<line x1="650" y1="150" x2="650" y2="204" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="572" y="204" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="582" y="224" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">5</text>
+<text x="650" y="244" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Phase 3 trial:</text>
+<text x="650" y="259" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">thousands of people,</text>
+<text x="650" y="274" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">effectiveness</text>
+<text x="650" y="289" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">measured</text>
+<line x1="572" y1="246" x2="548" y2="246" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="392" y="204" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="402" y="224" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">6</text>
+<text x="470" y="244" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Regulatory authority</text>
+<text x="470" y="259" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">reviews all trial</text>
+<text x="470" y="274" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">data</text>
+<line x1="392" y1="246" x2="368" y2="246" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="212" y="204" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="222" y="224" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">7</text>
+<text x="290" y="244" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Approval granted and</text>
+<text x="290" y="259" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">mass production</text>
+<text x="290" y="274" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">begins</text>
+<line x1="212" y1="246" x2="188" y2="246" stroke="#0f172a" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="32" y="204" width="156" height="84" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.2" rx="6"/>
+<text x="42" y="224" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="start">8</text>
+<text x="110" y="244" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">Distribution, with</text>
+<text x="110" y="259" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">safety monitored in</text>
+<text x="110" y="274" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">use</text>
+</svg>

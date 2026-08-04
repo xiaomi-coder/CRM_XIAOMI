@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" width="760" height="430" role="img">
+<rect width="760" height="430" fill="#ffffff"/>
+<text x="380" y="24" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Average hours slept per night and reported difficulty sleeping, by age group, 2024</text>
+<text x="190" y="46" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">Average hours slept per night</text>
+<line x1="52" y1="346" x2="364" y2="346" stroke="#cbd5e1" stroke-width="1"/><text x="44" y="350" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">0</text>
+<line x1="52" y1="276" x2="364" y2="276" stroke="#cbd5e1" stroke-width="1"/><text x="44" y="280" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">2</text>
+<line x1="52" y1="206" x2="364" y2="206" stroke="#cbd5e1" stroke-width="1"/><text x="44" y="210" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">4</text>
+<line x1="52" y1="136" x2="364" y2="136" stroke="#cbd5e1" stroke-width="1"/><text x="44" y="140" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">6</text>
+<line x1="52" y1="66" x2="364" y2="66" stroke="#cbd5e1" stroke-width="1"/><text x="44" y="70" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">8</text>
+<rect x="68.2" y="94" width="27" height="252" fill="#1d4ed8" rx="2"/><text x="81.7" y="88" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">7.2</text>
+<text x="83.2" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">18–24</text>
+<rect x="130.6" y="104.5" width="27" height="241.5" fill="#1d4ed8" rx="2"/><text x="144.1" y="98.5" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">6.9</text>
+<text x="145.6" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">25–39</text>
+<rect x="193" y="115" width="27" height="231" fill="#1d4ed8" rx="2"/><text x="206.5" y="109" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">6.6</text>
+<text x="208" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">40–59</text>
+<rect x="255.39999999999998" y="101" width="27" height="245" fill="#1d4ed8" rx="2"/><text x="268.9" y="95" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">7</text>
+<text x="270.4" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">60–74</text>
+<rect x="317.8" y="87" width="27" height="259" fill="#1d4ed8" rx="2"/><text x="331.3" y="81" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">7.4</text>
+<text x="332.8" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">75+</text>
+<text x="14" y="206" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle" transform="rotate(-90 14 206)">Hours</text>
+<line x1="380" y1="32" x2="380" y2="400" stroke="#cbd5e1" stroke-width="1"/>
+<text x="570" y="46" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">Reporting difficulty sleeping</text>
+<line x1="432" y1="346" x2="744" y2="346" stroke="#cbd5e1" stroke-width="1"/><text x="424" y="350" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">0%</text>
+<line x1="432" y1="252.66666666666669" x2="744" y2="252.66666666666669" stroke="#cbd5e1" stroke-width="1"/><text x="424" y="256.6666666666667" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">20%</text>
+<line x1="432" y1="159.33333333333334" x2="744" y2="159.33333333333334" stroke="#cbd5e1" stroke-width="1"/><text x="424" y="163.33333333333334" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">40%</text>
+<line x1="432" y1="66" x2="744" y2="66" stroke="#cbd5e1" stroke-width="1"/><text x="424" y="70" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="end">60%</text>
+<rect x="448.2" y="243.33333333333331" width="27" height="102.66666666666669" fill="#dc2626" rx="2"/><text x="461.7" y="237.33333333333331" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">22%</text>
+<text x="463.2" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">18–24</text>
+<rect x="510.6" y="215.33333333333334" width="27" height="130.66666666666666" fill="#dc2626" rx="2"/><text x="524.1" y="209.33333333333334" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">28%</text>
+<text x="525.6" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">25–39</text>
+<rect x="573" y="182.66666666666666" width="27" height="163.33333333333334" fill="#dc2626" rx="2"/><text x="586.5" y="176.66666666666666" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">35%</text>
+<text x="588" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">40–59</text>
+<rect x="635.4000000000001" y="154.66666666666666" width="27" height="191.33333333333334" fill="#dc2626" rx="2"/><text x="648.9000000000001" y="148.66666666666666" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">41%</text>
+<text x="650.4000000000001" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">60–74</text>
+<rect x="697.8000000000001" y="126.66666666666666" width="27" height="219.33333333333334" fill="#dc2626" rx="2"/><text x="711.3000000000001" y="120.66666666666666" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#475569" text-anchor="middle">47%</text>
+<text x="712.8000000000001" y="364" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">75+</text>
+<text x="394" y="206" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle" transform="rotate(-90 394 206)">Percentage</text>
+</svg>

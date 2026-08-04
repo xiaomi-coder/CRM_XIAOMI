@@ -14,6 +14,15 @@ interface IELTSWritingProps {
 
 const TOTAL_TIME = 60 * 60; // 60 daqiqa
 
+/**
+ * Task 1 topshirig'ining oxirida `[DATA] ...` bo'limi bo'lishi mumkin — bu
+ * grafikdagi raqamlarning matnli izohi. U FAQAT AI baholovchi uchun: model
+ * rasmni ko'rmaydi, shusiz Task Achievement ni to'g'ri baholay olmaydi.
+ * Talabaga ko'rsatilmaydi, aks holda grafikni o'qish shart bo'lmay qoladi.
+ */
+const visiblePrompt = (prompt?: string): string =>
+    (prompt || '').split('[DATA]')[0].trim();
+
 const IELTSWriting: React.FC<IELTSWritingProps> = ({ t, tasks, examType, onComplete, onBack, apiKey }) => {
     const [task1Text, setTask1Text] = useState('');
     const [task2Text, setTask2Text] = useState('');
@@ -174,8 +183,8 @@ const IELTSWriting: React.FC<IELTSWritingProps> = ({ t, tasks, examType, onCompl
                         </div>
                     )}
 
-                    <div className="text-sm text-slate-700 leading-relaxed font-medium">
-                        {activePrompt?.taskPrompt || (
+                    <div className="text-sm text-slate-700 leading-relaxed font-medium whitespace-pre-line">
+                        {visiblePrompt(activePrompt?.taskPrompt) || (
                             activeTask === 1
                                 ? "The chart below shows information about changes in average house prices in five different cities between 1990 and 2002 compared with the average house prices in 1989. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words."
                                 : "Some people believe that the best way to improve public health is by increasing the number of sports facilities. Others think that this would have little effect and that other measures are needed.\n\nDiscuss both views and give your own opinion.\n\nWrite at least 250 words."

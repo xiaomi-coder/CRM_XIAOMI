@@ -383,7 +383,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The diagram below shows the process by which a vaccine is developed, tested and approved for public use.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The diagram below shows the process by which a vaccine is developed, tested and approved for public use.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Process diagram, 8 linear stages of vaccine development: 1 laboratory research identifies antigen, 2 pre-clinical testing on cells and animals, 3 Phase 1 trial small group for safety, 4 Phase 2 trial several hundred people for dosage, 5 Phase 3 trial thousands for effectiveness, 6 regulatory review of trial data, 7 approval and mass production, 8 distribution with monitoring in use.',
+      imageUrl: '/images/ielts/task1-test-02.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

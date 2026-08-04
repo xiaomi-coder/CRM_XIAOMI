@@ -398,7 +398,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The table below shows the number of visitors to four types of cultural institution in one country in 2005, 2015 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The table below shows the number of visitors to four types of cultural institution in one country in 2005, 2015 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Table, annual visits in millions 2005/2015/2025. Museums 12.4/15.8/18.2 (only steady rise). Public libraries 28.6/21.3/14.7 (largest fall, roughly halved). Theatres 6.2/7.1/6.8 (smallest category, broadly stable). Cinemas 24.5/22.9/19.4 (gradual decline). Libraries began highest but by 2025 cinemas were the most visited.',
+      imageUrl: '/images/ielts/task1-test-03.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

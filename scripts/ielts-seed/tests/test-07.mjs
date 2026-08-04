@@ -376,7 +376,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The diagram below shows the stages involved in producing coffee, from harvesting the cherries to packaging the roasted beans.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The diagram below shows the stages involved in producing coffee, from harvesting the cherries to packaging the roasted beans.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Process diagram, 8 stages of coffee production: 1 ripe cherries picked by hand, 2 pulping machine removes outer skin, 3 beans fermented in water tanks 24-48 hours, 4 washed and dried in the sun, 5 hulling removes dried parchment, 6 graded and sorted by size, 7 roasted at high temperature, 8 packed into sealed bags for export.',
+      imageUrl: '/images/ielts/task1-test-07.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

@@ -372,7 +372,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The charts below show the number of students enrolled in three types of course at one college in 2010 and 2025, and the average age of students in each type.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The charts below show the number of students enrolled in three types of course at one college in 2010 and 2025, and the average age of students in each type.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Left bar chart, enrolments 2010 vs 2025: vocational 1250 to 980 (only fall), academic 860 to 1320, online 140 to 1610 (more than tenfold, largest by 2025). Right bar chart, average age in 2025: vocational 27, academic 20 (youngest), online 34 (oldest).',
+      imageUrl: '/images/ielts/task1-test-06.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

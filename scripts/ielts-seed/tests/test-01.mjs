@@ -413,7 +413,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The chart below shows the percentage of household waste that was recycled in four European countries between 2000 and 2020.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The chart below shows the percentage of household waste that was recycled in four European countries between 2000 and 2020.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Line graph, % household waste recycled 2000/2005/2010/2015/2020. Germany 30/42/55/62/67; Sweden 25/34/46/50/54; Spain 12/20/28/33/36; Poland 5/9/18/28/39. All four rose. Germany highest throughout. Poland lowest in 2000 but grew most (5 to 39) and overtook Spain by 2020.',
+      imageUrl: '/images/ielts/task1-test-01.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

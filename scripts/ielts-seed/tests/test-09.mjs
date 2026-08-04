@@ -389,7 +389,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The graph below shows advertising expenditure by medium (television, print, radio and digital) in one country between 2005 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The graph below shows advertising expenditure by medium (television, print, radio and digital) in one country between 2005 and 2025.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Line graph, advertising spend in £ billions 2005/2010/2015/2020/2025. Digital 1.2/3.8/7.5/12.4/18.6 (rose steeply, overtook print by 2010 and television by about 2012-2015, far the largest by 2025). Print 5.6/3.9/2.4/1.5/0.9 (largest in 2005, fell steadily to smallest but one). Television 4.8/5.2/4.9/4.1/3.4 (peaked 2010 then declined gently). Radio 1.1/1.0/1.0/0.9/0.8 (smallest and almost flat).',
+      imageUrl: '/images/ielts/task1-test-09.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

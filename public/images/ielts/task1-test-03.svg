@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 296" width="760" height="296" role="img">
+<rect width="760" height="296" fill="#ffffff"/>
+<text x="380" y="24" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Visitors to four types of cultural institution, 2005, 2015 and 2025 (millions)</text>
+<rect x="40" y="62" width="680" height="38" fill="#e2e8f0"/>
+<text x="52" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="start">Type of institution</text>
+<text x="295" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">2005</text>
+<text x="465" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">2015</text>
+<text x="635" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">2025</text>
+
+<line x1="40" y1="100" x2="720" y2="100" stroke="#cbd5e1" stroke-width="1"/>
+<text x="52" y="122" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0f172a" text-anchor="start">Museums</text>
+<text x="295" y="122" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">12.4</text>
+<text x="465" y="122" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">15.8</text>
+<text x="635" y="122" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">18.2</text>
+<rect x="40" y="134" width="680" height="34" fill="#f8fafc"/>
+<line x1="40" y1="134" x2="720" y2="134" stroke="#cbd5e1" stroke-width="1"/>
+<text x="52" y="156" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0f172a" text-anchor="start">Public libraries</text>
+<text x="295" y="156" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">28.6</text>
+<text x="465" y="156" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">21.3</text>
+<text x="635" y="156" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">14.7</text>
+
+<line x1="40" y1="168" x2="720" y2="168" stroke="#cbd5e1" stroke-width="1"/>
+<text x="52" y="190" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0f172a" text-anchor="start">Theatres</text>
+<text x="295" y="190" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">6.2</text>
+<text x="465" y="190" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">7.1</text>
+<text x="635" y="190" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">6.8</text>
+<rect x="40" y="202" width="680" height="34" fill="#f8fafc"/>
+<line x1="40" y1="202" x2="720" y2="202" stroke="#cbd5e1" stroke-width="1"/>
+<text x="52" y="224" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0f172a" text-anchor="start">Cinemas</text>
+<text x="295" y="224" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">24.5</text>
+<text x="465" y="224" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">22.9</text>
+<text x="635" y="224" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="middle">19.4</text>
+<rect x="40" y="62" width="680" height="174" fill="none" stroke="#0f172a" stroke-width="1.2"/>
+<line x1="210" y1="62" x2="210" y2="236" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="380" y1="62" x2="380" y2="236" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="550" y1="62" x2="550" y2="236" stroke="#cbd5e1" stroke-width="1"/>
+<text x="380" y="258" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#475569" text-anchor="middle">Figures are annual visits, in millions.</text>
+</svg>

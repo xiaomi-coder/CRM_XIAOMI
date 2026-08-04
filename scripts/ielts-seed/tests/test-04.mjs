@@ -361,7 +361,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The graphs below show the average number of hours slept per night by different age groups, and the percentage of people reporting difficulty sleeping, in one country in 2024.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The graphs below show the average number of hours slept per night by different age groups, and the percentage of people reporting difficulty sleeping, in one country in 2024.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Two bar charts by age group (18-24, 25-39, 40-59, 60-74, 75+). Average hours slept: 7.2/6.9/6.6/7.0/7.4 — dips in middle age, lowest at 40-59, highest at 75+. Difficulty sleeping: 22/28/35/41/47 per cent — rises steadily with age. So the oldest group sleeps longest yet reports most difficulty.',
+      imageUrl: '/images/ielts/task1-test-04.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },

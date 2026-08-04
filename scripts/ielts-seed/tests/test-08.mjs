@@ -371,7 +371,8 @@ export default {
     {
       taskNumber: 1,
       prompt:
-        'The chart below shows the number of international visitors to five cities in 2015 and 2025, and the table shows the average length of stay.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.',
+        'The chart below shows the number of international visitors to five cities in 2015 and 2025, and the table shows the average length of stay.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.\n\n[DATA] Grouped bar chart, international visitors in millions 2015 vs 2025: Barcelona 8.3 to 9.1 (highest in both years), Prague 6.6 to 7.4, Lisbon 4.2 to 6.9 (largest proportional rise), Venice 5.1 to 4.3 (only city to fall), Amsterdam 7.0 to 8.2. Accompanying table of average length of stay in nights: Barcelona 3.4, Prague 2.8, Lisbon 4.1, Venice 1.6, Amsterdam 2.9 — Venice has the shortest stay, Lisbon the longest.',
+      imageUrl: '/images/ielts/task1-test-08.svg',
       wordLimitMin: 150,
       timeMinutes: 20,
     },
