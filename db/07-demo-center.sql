@@ -102,7 +102,7 @@ BEGIN
     ('demo-s3', c, 'Jasur Toshpulatov',  '+998 93 333 33 33', 'Tohir aka',    '+998 93 333 33 34', 0,       5, to_char(now() - interval '60 days', 'YYYY-MM-DD'), to_char(now() - interval '3 days',  'YYYY-MM-DD'), false, '', 'ACTIVE'),
     ('demo-s4', c, 'Nilufar Saidova',    '+998 94 444 44 44', 'Salima opa',   '+998 94 444 44 45', 450000, 15, to_char(now() - interval '48 days', 'YYYY-MM-DD'), to_char(now() + interval '10 days', 'YYYY-MM-DD'), false, '', 'ACTIVE'),
     ('demo-s5', c, 'Bekzod Rahimov',     '+998 95 555 55 55', 'Rahim aka',    '+998 95 555 55 56', 350000,  3, to_char(now() - interval '40 days', 'YYYY-MM-DD'), to_char(now() + interval '15 days', 'YYYY-MM-DD'), false, '', 'ACTIVE'),
-    ('demo-s6', c, 'Zarina Yusupova',    '+998 97 666 66 66', 'Yusuf aka',    '+998 97 666 66 67', 0,       9, to_char(now() - interval '35 days', 'YYYY-MM-DD'), to_char(now() - interval '6 days',  'YYYY-MM-DD'), false, '', 'ACTIVE'),
+    ('demo-s6', c, 'Zarina Yusupova',    '+998 97 666 66 66', 'Yusuf aka',    '+998 97 666 66 67', 0,       9, to_char(now() - interval '35 days', 'YYYY-MM-DD'), to_char(now() - interval '9 days',  'YYYY-MM-DD'), false, '', 'ACTIVE'),
     ('demo-s7', c, 'Timur Abdullayev',   '+998 98 777 77 77', 'Abdulla aka',  '+998 98 777 77 78', 500000,  6, to_char(now() - interval '22 days', 'YYYY-MM-DD'), to_char(now() + interval '20 days', 'YYYY-MM-DD'), false, '', 'ACTIVE'),
     ('demo-s8', c, 'Gulnoza Karimova',   '+998 99 888 88 88', 'Karima opa',   '+998 99 888 88 89', 400000, 11, to_char(now() - interval '15 days', 'YYYY-MM-DD'), to_char(now() + interval '18 days', 'YYYY-MM-DD'), false, '', 'ACTIVE');
 
@@ -117,7 +117,9 @@ BEGIN
     d := to_char(now() - (i * 2 - 1 || ' days')::interval, 'YYYY-MM-DD');
     INSERT INTO attendance (id, "centerId", date, "studentId", "groupId", status) VALUES
       (d || '_demo-s1_demo-g1', c, d, 'demo-s1', 'demo-g1', 'PRESENT'),
-      (d || '_demo-s3_demo-g1', c, d, 'demo-s3', 'demo-g1', CASE WHEN i = 1 THEN 'ABSENT' ELSE 'PRESENT' END),
+      -- s3 ataylab 3 dars ketma-ket kelmagan — "Ketib qolish xavfi" bloki
+      -- demoda bo'sh ko'rinmasligi uchun
+      (d || '_demo-s3_demo-g1', c, d, 'demo-s3', 'demo-g1', 'ABSENT'),
       (d || '_demo-s7_demo-g1', c, d, 'demo-s7', 'demo-g1', CASE WHEN i = 2 THEN 'LATE' ELSE 'PRESENT' END),
       (d || '_demo-s2_demo-g2', c, d, 'demo-s2', 'demo-g2', 'PRESENT'),
       (d || '_demo-s6_demo-g2', c, d, 'demo-s6', 'demo-g2', CASE WHEN i = 3 THEN 'ABSENT' ELSE 'PRESENT' END),

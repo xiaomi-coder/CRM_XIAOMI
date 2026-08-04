@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead } from '../types';
 import { analyzeDataWithAI } from '../services/geminiService';
+import { computeChurnRisk } from '../services/churnRisk';
 import { db } from '../services/supabase';
 
 interface DashboardProps {
@@ -80,6 +81,12 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
       return dateA.localeCompare(dateB);
     });
   }, [students, groups, payments]);
+
+  // Ketib qolish xavfi ostidagi o'quvchilar (qoidaviy bashorat)
+  const riskStudents = useMemo(
+    () => computeChurnRisk(students, attendance),
+    [students, attendance]
+  );
 
   // Qarzdorlar qidiruvi
   const filteredDebtors = useMemo(() => {
@@ -229,6 +236,57 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
           </div>
         ))}
       </div>
+
+      {/* Ketib qolish xavfi — davomat pasayishi / ketma-ket kelmaslik / to'lov
+          kechikishi asosidagi bashorat. O'quvchi hali ketmasdan oldin ushlab
+          qolish uchun. */}
+      {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
+        <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
+          <div className="flex justify-between items-center mb-8 flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-100"><TrendingDown size={20} className="text-amber-600" /></div>
+              <div>
+                <h3 className="font-black text-slate-800 uppercase tracking-tighter text-sm">{t.churn_risk || "Ketib qolish xavfi"}</h3>
+                <p className="text-[10px] text-slate-400 font-bold">{t.churn_risk_desc || "Davomat, kelmaslik va to'lov kechikishi asosida"}</p>
+              </div>
+            </div>
+            {riskStudents.length > 0 && (
+              <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100">
+                {riskStudents.length} {t.students?.toLowerCase() || "o'quvchi"}
+              </span>
+            )}
+          </div>
+
+          {riskStudents.length === 0 ? (
+            <div className="flex items-center gap-3 p-5 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-700 text-sm font-bold">
+              <UserCheck size={18} />
+              {t.no_risk_students || "Hozircha xavf ostidagi o'quvchi yo'q — davom eting!"}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {riskStudents.map(r => (
+                <div key={r.student.id} className={`p-4 rounded-2xl border flex items-start justify-between gap-3 ${r.level === 'HIGH' ? 'bg-rose-50 border-rose-100' : 'bg-amber-50 border-amber-100'}`}>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${r.level === 'HIGH' ? 'bg-rose-500' : 'bg-amber-500'}`}></span>
+                      <p className="font-black text-slate-800 truncate">{r.student.name}</p>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-bold mt-1">{r.factors.join(' · ')}</p>
+                    {(r.student.phone || r.student.parentPhone) && (
+                      <a href={`tel:${r.student.parentPhone || r.student.phone}`} className="inline-flex items-center gap-1.5 text-[11px] font-black text-indigo-600 mt-2 hover:underline">
+                        <Phone size={11} /> {r.student.parentPhone || r.student.phone}
+                      </a>
+                    )}
+                  </div>
+                  <span className={`shrink-0 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg ${r.level === 'HIGH' ? 'bg-rose-600 text-white' : 'bg-amber-500 text-white'}`}>
+                    {r.level === 'HIGH' ? (t.risk_high || 'Yuqori') : (t.risk_medium || "O'rta")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

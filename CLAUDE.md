@@ -306,3 +306,23 @@ buzilgan ekan — ikkalasi ham tuzatildi:
   bilan). Oylik hisobot dry-run: 6 nomzod to'g'ri topildi.
 - VPS'dagi barcha timerlar: backup 03:00, demo-reset 04:00,
   payment-reminders 09:00, monthly-report oyning 1-i 10:00.
+
+## "Ketib qolish" xavfi bashorati ✅ (2026-08-05)
+
+Qoidaviy bashorat (v1, AI'siz — keyin Gemini tavsiyasi qo'shsa bo'ladi):
+- **Qoidalar** (ikki joyda AYNAN bir xil — o'zgartirganda birga o'zgartirish
+  SHART): `services/churnRisk.ts` (frontend) va `db/11-churn-risk.sql` (server).
+  3+ dars ketma-ket ABSENT = 3 ball; so'nggi 14 kunda (3+ dars belgilangan)
+  davomat <50% = 2 ball; to'lov 7+ kun kechikkan = 2 ball. 4+ = YUQORI,
+  2-3 = O'RTA. Faqat ACTIVE o'quvchilar.
+- **Dashboard'da blok** (`components/Dashboard.tsx`): DIRECTOR/ADMIN/SUPER
+  ko'radi — o'quvchi, sabablar, ota-ona telefoni (tel: havola), daraja belgisi;
+  bo'sh bo'lsa yashil "xavf yo'q" holati. Tarjimalar: churn_risk* (uz/ru/en).
+- **Haftalik hisobot**: `crm-risk-report.timer` (dushanba 10:30) →
+  `/root/crm-risk-report.py` (repoda `scripts/vps-risk-report.py`) — har markaz
+  bo'yicha bitta jamlama xabar direktorning botiga (`reportChatId` bo'lsa).
+  Dedupe: reminder_log kind='RISK', studentId='center_<id>', dueDate='IYYY-IW'.
+- Demo seed (db/07) yangilandi: demo-s3 (Jasur) 3 dars ketma-ket kelmagan,
+  demo-s6 (Zarina) to'lovi 9 kun kechikkan — demo dashboardda blok jonli
+  ko'rinadi. Brauzerda tekshirildi (YUQORI/O'RTA to'g'ri chiqdi), SQL skoring
+  demo ma'lumotda frontend bilan bir xil natija berdi.

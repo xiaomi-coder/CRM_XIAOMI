@@ -15,6 +15,7 @@ Tartib bilan qo'llanadi. Har biri qayta ishga tushirilsa ham xavfsiz
 | `08-payment-reminders.sql` | `reminder_log` + `due_payment_reminders`/`mark_reminder_sent` — to'lov eslatmalari endi serverda: VPS'dagi `/root/crm-payment-reminders.py` (`crm-payment-reminders.timer`, 09:00) yuboradi. GRANT yo'q — API'dan chaqirilmaydi |
 | `09-monthly-report.sql` | `monthly_report_data` — oylik davomat hisoboti ham serverda: `/root/crm-monthly-report.py` (`crm-monthly-report.timer`, har oy 1-sanada 10:00). Takror ketmasligi `reminder_log` (kind=MONTHLY). GRANT yo'q |
 | `10-telegram-connect.sql` | `tg_connect(bot_token, chat_id, code)` — webhook uchun: RLS ostida ota-onaning botga ulanishi. Bot token "kalit" vazifasida. GRANT anon |
+| `11-churn-risk.sql` | `churn_risk_data` — "ketib qolish" xavfi (qoidalar `services/churnRisk.ts` bilan bir xil bo'lishi SHART). Haftalik: `/root/crm-risk-report.py` (`crm-risk-report.timer`, dushanba 10:30) direktorning botiga (`reportChatId`). GRANT yo'q |
 
 ## Qo'llash
 
