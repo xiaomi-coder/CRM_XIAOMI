@@ -154,3 +154,56 @@
 
 ### VPS anon token (public — frontendda baribir ko'rinadi):
 `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6ImNybS12cHMiLCJpYXQiOjE3ODIzMzQ3NTcsImV4cCI6MjQxMzA1NDc1N30.f1UCrcbJ-G0_q9-wFn9BIyMLPNBgzk2MYpxzU1IC4xw`
+
+---
+
+# Xavfsizlik: ko'p markazli izolyatsiya (2026-08-05)
+
+Sotuvga chiqishdan oldin uchta jiddiy kamchilik tuzatildi.
+
+## Muammo nima edi
+
+1. **Markazlar bir-birining ma'lumotini ko'rardi.** Anon kalit frontend bundle
+   ichida ochiq turadi va bazaga to'liq huquq berardi; ajratish faqat brauzerdagi
+   `.filter(centerId)` da edi. Bitta so'rov bilan 3 markazning 40 o'quvchisi
+   ismi-telefoni bilan qaytardi.
+2. **Parollar ochiq matnda** saqlanardi va API orqali o'qilardi.
+3. **Zaxira umuman yo'q** edi.
+
+## Endi qanday
+
+- **Zaxira:** `/root/backup-crm.sh` + systemd timer (`crm-backup.timer`), har kuni
+  03:00, 14 kun saqlanadi, `/var/backups/crm/`. Tiklash sinab ko'rilgan.
+  ⚠️ Zaxira o'sha serverda turadi — server butunlay yo'qolsa, u ham yo'qoladi.
+- **Login:** `public.login(username, password)` RPC — parol bcrypt bilan BAZADA
+  tekshiriladi. Eski ochiq parollar birinchi kirishda avtomatik hash'ga o'tadi.
+  Javob: shaxsiy JWT (propusk), ichida `centerId`, `user_role`, muddati 12 soat.
+- **PIN bilan kirish:** `public.redeem_pin(pin, name)` — mehmonga 6 soatlik
+  propusk. Avval frontend barcha markazning PIN va lidlarini yuklab olardi.
+- **RLS:** 18 ta jadvalda yoqilgan. Qoida: `auth.is_global() OR "centerId" =
+  auth.jwt_center()`. IELTS kontenti uchun platforma markazi ham ochiq
+  (`00000000-0000-0000-0000-000000000001`), shuning uchun tayyor testlar
+  hamma markazga ko'rinadi. `ielts_test_pins` da markaz `created_by` da.
+- **Super admin** endi bazadagi haqiqiy foydalanuvchi (`creator`), avval
+  frontend kodiga yozib qo'yilgan edi.
+
+Skriptlar: `db/01-auth-functions.sql`, `db/02-superadmin-and-pin.sql`,
+`db/03-rls-policies.sql` (`db/README.md` da tartib va tuzoqlar).
+
+## Tekshirilgan natija
+
+| jadval | anon | markaz admini | creator |
+|---|---|---|---|
+| students | 0 | 2 | 40 |
+| users | 0 | 1 | 8 |
+| leads | 0 | 1 | 1 |
+
+Yozish: o'z markaziga 201, boshqa markaz nomidan 403, anon 401.
+
+## QOLGAN
+
+- ⚠️ **JWT sirini almashtirish kerak** — ishlash jarayonida xato xabari bilan
+  qisman oshkor bo'ldi. Almashtirilsa PostgREST konfigi, bazadagi
+  `app.jwt_secret` va frontenddagi anon kalit birga yangilanadi (qisqa uzilish).
+- Root parolini almashtirish (suhbatda oshkor bo'lgan).
+- Zaxirani serverdan tashqariga ham nusxalash.
