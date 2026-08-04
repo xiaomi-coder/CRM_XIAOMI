@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { db } from './services/supabase';
+import { db, getAuthToken, isTokenValid } from './services/supabase';
 import { User, UserRole, Lead, TestTemplate } from './types';
 import LandingPage from './components/LandingPage';
 import Login from './components/Login';
@@ -14,7 +14,16 @@ import { Loader2 } from 'lucide-react';
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(() => {
         const saved = localStorage.getItem('edu_user');
-        return saved ? JSON.parse(saved) : null;
+        if (!saved) return null;
+        const user: User = JSON.parse(saved);
+        // Super admin propusksiz ishlaydi; qolganlarga propusk shart va u
+        // 12 soatdan keyin tugaydi — tugagan bo'lsa qayta login qilinadi.
+        if (user.role !== UserRole.SUPER_ADMIN && !isTokenValid(getAuthToken())) {
+            localStorage.removeItem('edu_user');
+            localStorage.removeItem('edu_user_role');
+            return null;
+        }
+        return user;
     });
 
     const [loginError, setLoginError] = useState<string | null>(null);
@@ -56,29 +65,23 @@ const App: React.FC = () => {
             return;
         }
 
+        // Parol endi BAZADA tekshiriladi. Avval brauzer `users` jadvalidan
+        // parolni o'qib o'zi solishtirardi — ya'ni parollar ochiq kelardi.
         try {
-            const user = await db.getOne('users', 'username', username);
+            const res = await db.login(username, pass);
 
-            if (user && user.password === pass) {
-                if (user.centerId && user.centerId !== 'GLOBAL') {
-                    const centerSettings = await db.getOne('settings', 'centerId', user.centerId);
-                    if (!centerSettings) {
-                        setLoginError("O'quv markazi topilmadi.");
-                        return;
-                    }
-                    if (centerSettings.isBlocked) {
-                        setLoginError("Sizning o'quv markazingiz bloklangan. Creator bilan bog'laning.");
-                        return;
-                    }
-                }
-
-                localStorage.setItem('edu_user_role', user.role);
-                localStorage.setItem('edu_user', JSON.stringify(user));
-                setCurrentUser(user);
-                navigate('/app');
-            } else {
-                setLoginError(t.login_error);
+            if (!res.ok) {
+                if (res.reason === 'blocked') setLoginError("Sizning o'quv markazingiz bloklangan. Creator bilan bog'laning.");
+                else if (res.reason === 'no_center') setLoginError("O'quv markazi topilmadi.");
+                else if (res.reason === 'network') setLoginError(t.network_error);
+                else setLoginError(t.login_error);
+                return;
             }
+
+            localStorage.setItem('edu_user_role', res.user.role);
+            localStorage.setItem('edu_user', JSON.stringify(res.user));
+            setCurrentUser(res.user);
+            navigate('/app');
         } catch (err) {
             console.error("Login error:", err);
             setLoginError(t.network_error);
@@ -136,6 +139,7 @@ const App: React.FC = () => {
 
     const handleLogout = () => {
         setCurrentUser(null);
+        db.logout(); // shaxsiy propuskni ham o'chirish
         localStorage.removeItem('edu_user');
         localStorage.removeItem('edu_user_role');
         navigate('/login');
