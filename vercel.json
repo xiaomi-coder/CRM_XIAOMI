@@ -2,12 +2,6 @@
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
     "framework": "vite",
-    "crons": [
-        {
-            "path": "/api/send-monthly-report",
-            "schedule": "0 4 1 * *"
-        }
-    ],
     "rewrites": [
         {
             "source": "/api/(.*)",

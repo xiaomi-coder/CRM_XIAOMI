@@ -279,5 +279,30 @@ ko'radi (8 students / 1 settings), UI orqali to'liq ro'yxat oqimi (forma → /ap
   ishga tushishi toza o'tdi. Sana qo'yilishi bilan avtomatik ishlay boshlaydi.
 - ⚠️ **Topilma:** `api/send-monthly-report.ts` (Vercel cron, oyiga 1) hali ham
   ANON kalit bilan o'qiydi — RLS yoqilgandan beri 0 qator ko'radi, oylik hisobot
-  jimgina ishlamayapti. Keyingi sessiyada: uni ham VPS timer'ga ko'chirish
-  (service token VPS'da) yoki alohida o'qish-funksiya berish kerak.
+  jimgina ishlamayapti. → o'sha kuni tuzatildi, pastga qarang.
+
+## Oylik hisobot + Telegram webhook RLS'dan keyin tuzatildi ✅ (2026-08-05)
+
+RLS yoqilganda anon kalit bilan ishlaydigan IKKITA serverless oqim jimgina
+buzilgan ekan — ikkalasi ham tuzatildi:
+
+1. **Oylik davomat hisoboti** — `api/send-monthly-report.ts` O'CHIRILDI
+   (vercel.json'dagi cron ham). O'rniga: `db/09-monthly-report.sql`
+   (`monthly_report_data()`, GRANT yo'q) + VPS'da `/root/crm-monthly-report.py`
+   (repoda `scripts/vps-monthly-report.py`) — **`crm-monthly-report.timer`
+   har oy 1-sanada 10:00**. Takror ketmasligi `reminder_log` (kind='MONTHLY',
+   dueDate='YYYY-MM'). Xabar matni eskisi bilan aynan bir xil.
+   Iyul hisoboti yuborilmay qolgan ekan (6 ta, IT Park Bukhara) — bir
+   martalik `crm-monthly-catchup.timer` 2026-08-05 10:00 ga qo'yildi
+   (tunda yubormaslik uchun).
+2. **Ota-onaning botga ulanishi** — `api/telegram-webhook.ts` avval
+   settings/students'ni anon bilan o'qirdi (RLS'dan beri har doim "o'quvchi
+   topilmadi" qaytarardi!). Endi `db/10-telegram-connect.sql`:
+   `public.tg_connect(bot_token, chat_id, code)` SECURITY DEFINER, anon'ga
+   ochiq — bot tokenning o'zi kalit vazifasida. Webhook faqat shu RPC'ni
+   chaqiradi, xabar matnlari o'zgarmagan.
+- Sinov (ochiq API orqali): noto'g'ri kod → not_found + markaz nomi,
+  noto'g'ri token → no_center, haqiqiy kod + ulangan chat → already (ism
+  bilan). Oylik hisobot dry-run: 6 nomzod to'g'ri topildi.
+- VPS'dagi barcha timerlar: backup 03:00, demo-reset 04:00,
+  payment-reminders 09:00, monthly-report oyning 1-i 10:00.

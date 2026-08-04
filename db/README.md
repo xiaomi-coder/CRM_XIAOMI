@@ -13,6 +13,8 @@ Tartib bilan qo'llanadi. Har biri qayta ishga tushirilsa ham xavfsiz
 | `06-self-registration.sql` | `public.register_center` — markaz o'zi ro'yxatdan o'tadi (14 kun sinov, telefon/login takrorlanmaydi, IP bo'yicha tezlik cheklovi), `auth.client_ip` |
 | `07-demo-center.sql` | `public.demo_login` (2 soatlik mehmon propuski, DEMO_CENTER) va `public.reset_demo_center` — VPS'da `crm-demo-reset.timer` har kuni 04:00 da chaqiradi |
 | `08-payment-reminders.sql` | `reminder_log` + `due_payment_reminders`/`mark_reminder_sent` — to'lov eslatmalari endi serverda: VPS'dagi `/root/crm-payment-reminders.py` (`crm-payment-reminders.timer`, 09:00) yuboradi. GRANT yo'q — API'dan chaqirilmaydi |
+| `09-monthly-report.sql` | `monthly_report_data` — oylik davomat hisoboti ham serverda: `/root/crm-monthly-report.py` (`crm-monthly-report.timer`, har oy 1-sanada 10:00). Takror ketmasligi `reminder_log` (kind=MONTHLY). GRANT yo'q |
+| `10-telegram-connect.sql` | `tg_connect(bot_token, chat_id, code)` — webhook uchun: RLS ostida ota-onaning botga ulanishi. Bot token "kalit" vazifasida. GRANT anon |
 
 ## Qo'llash
 

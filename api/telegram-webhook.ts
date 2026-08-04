@@ -45,90 +45,54 @@ export default async function handler(req: any, res: any) {
         // Handle student code input
         const studentCode = text.toUpperCase().trim();
 
-        // Connect to Supabase
+        // RLS yoqilgandan beri anon kalit jadvallarni to'g'ridan-to'g'ri o'qiy
+        // olmaydi (avval shu yerda o'qirdi va oqim jimgina buzilgan edi).
+        // Endi hammasi bazadagi tg_connect() ichida: markazni bot token bo'yicha
+        // topadi, o'quvchini kod bo'yicha qidiradi va chatId ni bog'laydi.
         const supabase = createClient(supabaseUrl, supabaseKey);
+        const { data: result, error: rpcError } = await supabase.rpc('tg_connect', {
+            p_bot_token: botToken,
+            p_chat_id: chatId,
+            p_code: studentCode,
+        });
 
-        // First, find which center this bot belongs to (by bot token)
-        const { data: centerSettings, error: settingsError } = await supabase
-            .from('settings')
-            .select('centerId, centerName')
-            .eq('botToken', botToken)
-            .single();
-
-        if (settingsError || !centerSettings) {
-            console.error('Center not found for bot token');
-            await sendTelegramMessage(botToken, chatId,
-                `⚠️ Bot sozlanmagan. Iltimos, o'quv markazi administratoriga murojaat qiling.`
-            );
-            return res.status(200).json({ ok: true });
-        }
-
-        const centerId = centerSettings.centerId;
-        const centerName = centerSettings.centerName || "O'quv markazi";
-
-        // Find students only within this center
-        const { data: centerStudents, error: fetchError } = await supabase
-            .from('students')
-            .select('*')
-            .eq('centerId', centerId);
-
-        if (fetchError) {
-            console.error('Fetch error:', fetchError);
+        if (rpcError || !result) {
+            console.error('tg_connect error:', rpcError);
             await sendTelegramMessage(botToken, chatId,
                 `⚠️ Tizim xatosi. Iltimos, keyinroq urinib ko'ring.`
             );
             return res.status(200).json({ ok: true });
         }
 
-        // Search by ID suffix (last 3-4 characters) or tgConnectionCode within this center only
-        const student = centerStudents?.find(s =>
-            s.id.slice(-3).toUpperCase() === studentCode ||
-            s.id.slice(-4).toUpperCase() === studentCode ||
-            s.tgConnectionCode?.toUpperCase() === studentCode
-        );
+        if (result.status === 'no_center') {
+            await sendTelegramMessage(botToken, chatId,
+                `⚠️ Bot sozlanmagan. Iltimos, o'quv markazi administratoriga murojaat qiling.`
+            );
+            return res.status(200).json({ ok: true });
+        }
 
-        if (!student) {
+        if (result.status === 'not_found') {
             await sendTelegramMessage(botToken, chatId,
                 `❌ O'quvchi topilmadi!\n\n` +
-                `"${studentCode}" kodi bilan ${centerName} da o'quvchi yo'q.\n\n` +
+                `"${studentCode}" kodi bilan ${result.centerName || "o'quv markazi"} da o'quvchi yo'q.\n\n` +
                 `Iltimos, kodni tekshirib qaytadan kiriting.`
             );
             return res.status(200).json({ ok: true });
         }
 
-        // Check if already linked
-        if (student.tgChatId && student.tgChatId === chatId) {
+        if (result.status === 'already') {
             await sendTelegramMessage(botToken, chatId,
-                `✅ Siz allaqachon ${student.name} ga bog'langansiz!\n\n` +
+                `✅ Siz allaqachon ${result.name} ga bog'langansiz!\n\n` +
                 `Davomat va to'lov haqida xabarlar shu yerga keladi.`
             );
             return res.status(200).json({ ok: true });
         }
 
-        // Update student with parent's Telegram chat ID
-        const { error: updateError } = await supabase
-            .from('students')
-            .update({
-                tgChatId: chatId,
-                tgEnabled: true
-            })
-            .eq('id', student.id);
-
-        if (updateError) {
-            console.error('Update error:', updateError);
-            await sendTelegramMessage(botToken, chatId,
-                `⚠️ Xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring.`
-            );
-            return res.status(200).json({ ok: true });
-        }
-
-        // centerName already obtained from earlier settings lookup
-
-        // Send success message
+        // status === 'ok'
         await sendTelegramMessage(botToken, chatId,
             `✅ Muvaffaqiyatli bog'landingiz!\n\n` +
-            `👤 O'quvchi: ${student.name}\n` +
-            `🏫 Markaz: ${centerName}\n\n` +
+            `👤 O'quvchi: ${result.name}\n` +
+            `🏫 Markaz: ${result.centerName || "O'quv markazi"}\n\n` +
             `Endi siz quyidagi xabarlarni olasiz:\n` +
             `📋 Davomat holati\n` +
             `💰 To'lov qabul qilindi\n` +
