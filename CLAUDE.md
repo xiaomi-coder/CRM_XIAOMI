@@ -225,7 +225,11 @@ Uchta kamchilik tuzatildi (to'rtinchisi keyingi sessiyaga qoldirildi):
 
 ### Keyingi sessiyaga qolgan
 - **Markaz o'zi ro'yxatdan o'tsin** (anon chaqiriladigan funksiya — suiiste'moldan
-  himoya kerak), **landing'da demo**, **skrinshotli professional qo'llanma**
-  (guruhlar, o'quvchilar, Telegram oqimi).
+  himoya kerak: telefon takrorlanmasin, sinov muddati avtomatik, tezlik cheklovi),
+  **landing'da demo** (kirmoqchi bo'lgan odam ishlatib ko'rsin, ma'lumot ochiq
+  ketmasin), **skrinshotli professional qo'llanma** (guruhlar, o'quvchilar,
+  Telegram oqimi — rasm ustiga chiziq/belgi bilan).
+  - ⏳ Hal qilinmagan: qo'llanma demo ICHIDAMI yoki alohida sahifadami.
+    Taklif: demoda qisqa 3-4 qadamlik ishora, batafsili alohida sahifada.
 - ⚠️ JWT sirini almashtirish, root parolini almashtirish, zaxirani serverdan
   tashqariga nusxalash.
