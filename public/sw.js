@@ -1,7 +1,12 @@
-const CACHE_NAME = 'educontrol-v1';
+// Versiya oshirilsa, eski kesh butunlay tozalanadi (activate hodisasida).
+const CACHE_NAME = 'educontrol-v2';
+
+// ⚠️ index.html KESHLANMAYDI.
+// Sabab: unda joriy bundle nomi (assets/index-XXXX.js) yozilgan bo'ladi.
+// Eski index.html keshdan berilsa, brauzer allaqachon yo'q bo'lgan yoki
+// eskirgan JS ni yuklaydi va ilova jimgina ishlamay qoladi (2026-08-05 da
+// aynan shu bo'ldi: login va ro'yxatlar ishlamay qolgan edi).
 const urlsToCache = [
-    '/',
-    '/index.html',
     '/index.css'
 ];
 
@@ -49,6 +54,14 @@ self.addEventListener('fetch', (event) => {
         event.request.url.includes('api.eduprocrm.uz') ||
         event.request.url.includes('/rest/v1/') ||
         event.request.url.includes('/api/')) {
+        return;
+    }
+
+    // HTML (sahifa ochilishi) — HAR DOIM tarmoqdan, keshdan emas.
+    // Aks holda foydalanuvchi eski bundle bilan qolib ketadi.
+    if (event.request.mode === 'navigate' ||
+        event.request.destination === 'document' ||
+        event.request.url.endsWith('/index.html')) {
         return;
     }
 
