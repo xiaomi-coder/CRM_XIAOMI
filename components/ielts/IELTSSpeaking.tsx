@@ -11,7 +11,22 @@ interface IELTSSpeakingProps {
     apiKey?: string;
 }
 
-type SpeakingPhase = 'intro' | 'part1' | 'part2-prep' | 'part2-speak' | 'part3' | 'grading' | 'done';
+type SpeakingPhase = 'intro' | 'part1' | 'part2-prep' | 'part2-speak' | 'part2-followup' | 'part3' | 'grading' | 'done';
+
+/**
+ * Rasmiy IELTS Speaking vaqtlari (jami 11–14 daqiqa):
+ *   Part 1  — 4–5 daqiqa tanishuv savollari
+ *   Part 2  — 1 daqiqa tayyorgarlik + 2 daqiqa gapirish + 1–2 qo'shimcha savol
+ *   Part 3  — 4–5 daqiqa muhokama
+ * Imtihonda vaqt tugaganda imtihonchi keyingi qismga o'tadi — bu yerda ham shunday.
+ */
+const PART_SECONDS: Record<string, number> = {
+    part1: 5 * 60,
+    'part2-prep': 60,
+    'part2-speak': 120,
+    'part2-followup': 60,
+    part3: 5 * 60,
+};
 
 const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete, onBack, apiKey }) => {
     const [phase, setPhase] = useState<SpeakingPhase>('intro');
@@ -35,7 +50,7 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
 
     const getCurrentPartQuestions = () => {
         if (phase === 'part1') return part1Questions;
-        if (phase === 'part2-prep' || phase === 'part2-speak') return part2Questions;
+        if (phase === 'part2-prep' || phase === 'part2-speak' || phase === 'part2-followup') return part2Questions;
         if (phase === 'part3') return part3Questions;
         return [];
     };
@@ -50,33 +65,25 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
         }
     }, []);
 
-    // Timer
-    useEffect(() => {
-        if (timeLeft <= 0 && timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-            if (phase === 'part2-prep') {
-                setPhase('part2-speak');
-                setTimeLeft(120);
-            } else if (phase === 'part2-speak') {
-                stopRecording();
-            }
-        }
-    }, [timeLeft, phase]);
+    /** Vaqt tugaganda nima bo'lishi — har renderda yangilanadi, soat esa qayta boshlanmaydi */
+    const onTimeUpRef = useRef<() => void>(() => { });
 
-    const startTimer = (seconds: number) => {
+    // Har qism o'z vaqti bilan boshlanadi; soat vaqt belgisiga asoslangan (kechikmaydi)
+    useEffect(() => {
+        const seconds = PART_SECONDS[phase];
+        if (!seconds) { setTimeLeft(0); return; }
+        const deadline = Date.now() + seconds * 1000;
         setTimeLeft(seconds);
-        if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    if (timerRef.current) clearInterval(timerRef.current);
-                    return 0;
-                }
-                return prev - 1;
-            });
+            const left = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+            setTimeLeft(left);
+            if (left <= 0) {
+                if (timerRef.current) clearInterval(timerRef.current);
+                onTimeUpRef.current();
+            }
         }, 1000);
-    };
+        return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    }, [phase]);
 
     const startRecording = async () => {
         try {
@@ -117,32 +124,46 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
         setCurrentQuestionIdx(0);
     };
 
+    /** Part 2 uzun javobi tugadi — qo'shimcha savollar bo'lsa ularga, bo'lmasa Part 3 ga */
+    const afterLongTurn = useCallback(() => {
+        stopRecording();
+        if (part2Questions.length > 1) {
+            setPhase('part2-followup');
+            setCurrentQuestionIdx(1);
+        } else {
+            setPhase('part3');
+            setCurrentQuestionIdx(0);
+        }
+    }, [part2Questions.length]);
+
+    const handleStartPart2Speaking = () => {
+        setPhase('part2-speak');
+        setCurrentQuestionIdx(0);
+        startRecording();
+    };
+
     const handleNextQuestion = () => {
         if (isRecording) stopRecording();
         const partQuestions = getCurrentPartQuestions();
 
-        if (currentQuestionIdx < partQuestions.length - 1) {
+        // Qism ichida keyingi savol bormi?
+        if (phase !== 'part2-speak' && currentQuestionIdx < partQuestions.length - 1) {
             setCurrentQuestionIdx(prev => prev + 1);
-        } else {
-            // Move to next part
-            if (phase === 'part1') {
-                setPhase('part2-prep');
-                setCurrentQuestionIdx(0);
-                startTimer(60); // 1 min preparation
-            } else if (phase === 'part2-speak') {
-                setPhase('part3');
-                setCurrentQuestionIdx(0);
-            } else if (phase === 'part3') {
-                handleFinalSubmit();
-            }
+            return;
         }
-    };
 
-    const handleStartPart2Speaking = () => {
-        setPhase('part2-speak');
-        setTimeLeft(120); // 2 min speaking
-        startTimer(120);
-        startRecording();
+        // Keyingi qismga o'tish
+        if (phase === 'part1') {
+            setPhase('part2-prep');
+            setCurrentQuestionIdx(0);
+        } else if (phase === 'part2-speak') {
+            afterLongTurn();
+        } else if (phase === 'part2-followup') {
+            setPhase('part3');
+            setCurrentQuestionIdx(0);
+        } else if (phase === 'part3') {
+            handleFinalSubmit();
+        }
     };
 
     const handleFinalSubmit = useCallback(async () => {
@@ -177,6 +198,17 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
         setIsGrading(false);
         setPhase('done');
     }, [audioBlobs, currentQuestion, onComplete, isRecording]);
+
+    // Vaqt tugaganda imtihonchi kabi keyingi qismga o'tiladi
+    useEffect(() => {
+        onTimeUpRef.current = () => {
+            if (phase === 'part1') { setPhase('part2-prep'); setCurrentQuestionIdx(0); }
+            else if (phase === 'part2-prep') handleStartPart2Speaking();
+            else if (phase === 'part2-speak') afterLongTurn();
+            else if (phase === 'part2-followup') { setPhase('part3'); setCurrentQuestionIdx(0); }
+            else if (phase === 'part3') handleFinalSubmit();
+        };
+    });
 
     const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
@@ -218,9 +250,9 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
 
                         <div className="space-y-3 text-left mb-8">
                             {[
-                                { part: 'Part 1', desc: 'Introduction — Tanishuv savollari', time: '4-5 min' },
-                                { part: 'Part 2', desc: 'Cue Card — 1 min tayyorlanish + 2 min gapirish', time: '3-4 min' },
-                                { part: 'Part 3', desc: 'Discussion — Chuqur muhokama', time: '4-5 min' },
+                                { part: 'Part 1', desc: 'Introduction — tanishuv savollari', time: '5 min' },
+                                { part: 'Part 2', desc: 'Cue Card — 1 min tayyorlanish, 2 min gapirish, so\'ng qisqa qo\'shimcha savollar', time: '4 min' },
+                                { part: 'Part 3', desc: 'Discussion — chuqur muhokama', time: '5 min' },
                             ].map(p => (
                                 <div key={p.part} className="flex items-center gap-4 bg-slate-50 rounded-2xl p-4">
                                     <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-amber-700 font-black text-xs">{p.part}</div>
@@ -262,6 +294,11 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
     // Main speaking view (Part 1, 2, 3)
     const partLabel = phase === 'part1' ? 'Part 1' : phase.startsWith('part2') ? 'Part 2' : 'Part 3';
     const partColor = phase === 'part1' ? 'amber' : phase.startsWith('part2') ? 'orange' : 'red';
+    const phaseHint = phase === 'part2-followup'
+        ? (t.rounding_off || 'Qisqa qo\'shimcha savollar')
+        : phase === 'part2-speak'
+            ? (t.long_turn || '2 daqiqa gapiring')
+            : '';
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -271,6 +308,7 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
                     <div className="flex items-center gap-3">
                         <Mic size={18} className="text-amber-600" />
                         <h2 className="text-sm font-black text-slate-800 uppercase tracking-wider">Speaking — {partLabel}</h2>
+                        {phaseHint && <span className="text-[10px] font-black text-slate-400 uppercase">{phaseHint}</span>}
                     </div>
                     {timeLeft > 0 && (
                         <div className={`flex items-center gap-2 px-5 py-2 rounded-2xl font-black text-sm ${timeLeft < 15 ? 'bg-red-50 text-red-600 animate-pulse' : `bg-${partColor}-50 text-${partColor}-600`

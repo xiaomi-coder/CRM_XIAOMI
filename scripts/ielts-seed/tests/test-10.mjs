@@ -452,6 +452,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Have you been inside it?" },
+    { partNumber: 2, text: "Are there many buildings like that where you live?" },
     { partNumber: 3, text: 'Why do you think countries spend money on space programmes?' },
     { partNumber: 3, text: 'Should international rules control activity in space?' },
     { partNumber: 3, text: 'How important is it to maintain old infrastructure?' },

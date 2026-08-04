@@ -441,6 +441,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Do you often learn new things in your free time?" },
+    { partNumber: 2, text: "Was it easy to understand at first?" },
     { partNumber: 3, text: 'Why do you think some people find science difficult?' },
     { partNumber: 3, text: 'Should scientific discoveries always be shared publicly?' },
     { partNumber: 3, text: 'How important is it for ordinary people to understand science?' },

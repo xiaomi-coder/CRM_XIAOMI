@@ -428,6 +428,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Has that celebration changed since you were a child?" },
+    { partNumber: 2, text: "Do you think it will still be celebrated in fifty years?" },
     { partNumber: 3, text: 'How does tourism affect local communities?' },
     { partNumber: 3, text: 'Should popular destinations limit the number of visitors?' },
     { partNumber: 3, text: 'Is it important to preserve minority languages?' },

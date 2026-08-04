@@ -431,6 +431,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Do you still use that skill?" },
+    { partNumber: 2, text: "Would you advise someone else to learn it?" },
     { partNumber: 3, text: 'Do you think exams are a fair way to measure ability?' },
     { partNumber: 3, text: 'Should children have more free time at school?' },
     { partNumber: 3, text: 'How is education in your country different from the past?' },

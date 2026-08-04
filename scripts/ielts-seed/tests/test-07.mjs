@@ -433,6 +433,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Do you eat that meal often?" },
+    { partNumber: 2, text: "Is it a common dish in your country?" },
     { partNumber: 3, text: 'How have eating habits changed in your country?' },
     { partNumber: 3, text: 'Should governments encourage people to eat less meat?' },
     { partNumber: 3, text: 'Who should be responsible for reducing food waste?' },

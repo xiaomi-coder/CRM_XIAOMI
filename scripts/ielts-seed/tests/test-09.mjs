@@ -448,6 +448,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Do you usually plan purchases like that carefully?" },
+    { partNumber: 2, text: "Would you buy it again?" },
     { partNumber: 3, text: 'Why do you think people sometimes buy things they do not need?' },
     { partNumber: 3, text: 'Should advertising to children be restricted?' },
     { partNumber: 3, text: 'How has online shopping changed high streets?' },

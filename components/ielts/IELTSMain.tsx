@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BookOpen, Headphones, PenTool, Mic, Trophy, ChevronRight, Clock, ArrowLeft, Loader2 } from 'lucide-react';
+import { BookOpen, Headphones, PenTool, Mic, Trophy, ChevronRight, Clock, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { IELTSAttempt, IELTSAttemptStatus, IELTSExamType, IELTSReadingQuestion, IELTSListeningQuestion, IELTSWritingTask, IELTSSpeakingQuestion } from '../../types';
 import { getReadingBandScore, getListeningBandScore, calculateWritingOverall, calculateIELTSOverall } from '../../services/ieltsGradingService';
 import { seedIELTSQuestionsForCenter } from '../../services/ieltsSeedService';
@@ -22,14 +22,23 @@ interface IELTSMainProps {
     onBack?: () => void;
 }
 
-type ExamSection = 'menu' | 'reading' | 'listening' | 'writing' | 'speaking' | 'results';
+type ExamSection = 'menu' | 'reading' | 'listening' | 'writing' | 'speaking-intro' | 'speaking' | 'results';
 
+/**
+ * Haqiqiy IELTS tartibi: Listening → Reading → Writing tanaffussiz bitta
+ * o'tirishda (2 soat 45 daqiqa), Speaking esa ALOHIDA olinadi.
+ * Shu sababli ro'yxat shu tartibda va Writing tugagach Speaking oldidan
+ * to'xtash ekrani ko'rsatiladi.
+ */
 const SECTIONS = [
-    { key: 'reading' as const, icon: BookOpen, label: 'Reading', time: '60 min', questions: 40, color: 'from-blue-500 to-indigo-600' },
     { key: 'listening' as const, icon: Headphones, label: 'Listening', time: '30 min', questions: 40, color: 'from-purple-500 to-pink-600' },
+    { key: 'reading' as const, icon: BookOpen, label: 'Reading', time: '60 min', questions: 40, color: 'from-blue-500 to-indigo-600' },
     { key: 'writing' as const, icon: PenTool, label: 'Writing', time: '60 min', questions: 2, color: 'from-emerald-500 to-teal-600' },
     { key: 'speaking' as const, icon: Mic, label: 'Speaking', time: '11-14 min', questions: 3, color: 'from-amber-500 to-orange-600' },
 ];
+
+/** Yozma qismning ketma-ketligi — imtihondagidek */
+const WRITTEN_ORDER: ExamSection[] = ['listening', 'reading', 'writing'];
 
 const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId, testId, pinCode, onComplete, onBack }) => {
     const [currentSection, setCurrentSection] = useState<ExamSection>('menu');
@@ -189,7 +198,7 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
         }
 
         setAttempt(newAttempt);
-        setCurrentSection('reading');
+        setCurrentSection('listening'); // imtihon Listening bilan boshlanadi
     };
 
     const handleSectionComplete = useCallback(async (section: string, score: number, data?: any) => {
@@ -232,11 +241,15 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
             console.error('Update error:', e);
         }
 
-        // Auto navigate to next section
-        const sectionOrder: ExamSection[] = ['reading', 'listening', 'writing', 'speaking'];
-        const currentIdx = sectionOrder.indexOf(section as ExamSection);
-        if (currentIdx < 3) {
-            setCurrentSection(sectionOrder[currentIdx + 1]);
+        // Keyingi bo'limga o'tish — imtihon tartibi bo'yicha
+        const writtenIdx = WRITTEN_ORDER.indexOf(section as ExamSection);
+        if (writtenIdx !== -1 && writtenIdx < WRITTEN_ORDER.length - 1) {
+            // Listening → Reading → Writing: tanaffussiz davom etadi
+            setCurrentSection(WRITTEN_ORDER[writtenIdx + 1]);
+        } else if (section === 'writing') {
+            // Yozma qism tugadi. Haqiqiy imtihonda Speaking alohida olinadi,
+            // shuning uchun bu yerda to'xtash ekrani ko'rsatiladi.
+            setCurrentSection('speaking-intro');
         } else {
             // All sections done — calculate overall and go to results
             const overall = calculateIELTSOverall(
@@ -304,6 +317,41 @@ const IELTSMain: React.FC<IELTSMainProps> = ({ t, centerId, studentName, leadId,
             apiKey={apiKey}
             onComplete={(score, data) => handleSectionComplete('writing', score, data)}
             onBack={() => setCurrentSection('menu')} />;
+    }
+    // Yozma qism tugadi — Speaking oldidan to'xtash (imtihonda ham alohida olinadi)
+    if (currentSection === 'speaking-intro' && attempt) {
+        const written = [
+            { label: 'Listening', score: attempt.listeningScore },
+            { label: 'Reading', score: attempt.readingScore },
+            { label: 'Writing', score: attempt.writingScore },
+        ];
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-[2rem] border border-slate-100 p-8 max-w-lg w-full shadow-xl text-center">
+                    <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <CheckCircle size={32} className="text-emerald-600" />
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800 mb-2">{t.written_test_done || 'Yozma imtihon tugadi'}</h2>
+                    <p className="text-sm text-slate-500 font-medium mb-6">
+                        {t.speaking_separate || "Haqiqiy imtihonda Speaking alohida olinadi — ko'pincha boshqa kuni. Tayyor bo'lganingizda boshlang."}
+                    </p>
+
+                    <div className="grid grid-cols-3 gap-3 mb-8">
+                        {written.map(w => (
+                            <div key={w.label} className="bg-slate-50 rounded-2xl p-4">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{w.label}</p>
+                                <p className="text-2xl font-black text-slate-800 mt-1">{w.score ?? '—'}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button onClick={() => setCurrentSection('speaking')}
+                        className="w-full bg-amber-600 text-white py-4 rounded-2xl font-black uppercase text-sm tracking-widest shadow-lg shadow-amber-200 hover:bg-amber-700 transition-all flex items-center justify-center gap-2">
+                        <Mic size={18} /> {t.start_speaking || "Speaking'ni boshlash"}
+                    </button>
+                </div>
+            </div>
+        );
     }
     if (currentSection === 'speaking' && attempt) {
         return <IELTSSpeaking t={t} questions={speakingQuestions}

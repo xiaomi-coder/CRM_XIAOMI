@@ -420,6 +420,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Is that habit easy to keep up?" },
+    { partNumber: 2, text: "Did anyone encourage you to start it?" },
     { partNumber: 3, text: 'Why do you think many people find it hard to stay healthy?' },
     { partNumber: 3, text: 'Should employers be responsible for the health of their staff?' },
     { partNumber: 3, text: 'How can cities be designed to encourage physical activity?' },

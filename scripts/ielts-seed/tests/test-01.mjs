@@ -444,6 +444,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Would you like to go back to that place?" },
+    { partNumber: 2, text: "Do many people in your country visit places like this?" },
     { partNumber: 3, text: 'Why do you think people enjoy spending time in nature?' },
     { partNumber: 3, text: 'Should governments spend money protecting wild animals? Why or why not?' },
     { partNumber: 3, text: 'What can ordinary people do to reduce their impact on the environment?' },

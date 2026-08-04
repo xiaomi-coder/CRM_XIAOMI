@@ -455,6 +455,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Would you recommend that place to a visitor?" },
+    { partNumber: 2, text: "Do young people in your country visit historical places?" },
     { partNumber: 3, text: 'Why do you think people are interested in the past?' },
     { partNumber: 3, text: 'Should governments pay to restore old buildings?' },
     { partNumber: 3, text: 'How can young people be encouraged to learn about history?' },

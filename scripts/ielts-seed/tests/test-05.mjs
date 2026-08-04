@@ -442,6 +442,9 @@ export default {
       preparationTime: 60,
       speakingTime: 120,
     },
+    // Part 2 — qo'shimcha savollar (uzun javobdan keyin imtihonchi so'raydi)
+    { partNumber: 2, text: "Could you manage without it now?" },
+    { partNumber: 2, text: "Do older people in your family use it too?" },
     { partNumber: 3, text: 'Do you think machines will replace many jobs in the future?' },
     { partNumber: 3, text: 'What skills will be most valuable in twenty years?' },
     { partNumber: 3, text: 'Should companies be responsible for retraining workers?' },
