@@ -50,7 +50,16 @@ matters less than is popularly believed for vocabulary and grammar, which adults
 a great deal for pronunciation, where the ability to acquire native-like accent declines steadily from
 childhood. What predicts success most strongly at any age is not talent but the quantity of meaningful
 interaction in the language, a finding that is consistent across every study but that curricula built
-around grammatical exercises continue to ignore.`;
+around grammatical exercises continue to ignore.
+
+One behaviour that troubled earlier researchers has turned out to mean the opposite of what was
+assumed. Bilingual speakers frequently switch language in mid-conversation, and this was long taken as
+evidence of confusion or of incomplete command of either language. Detailed recording has shown that the
+switches are not random. They occur at particular grammatical boundaries, follow rules that speakers can
+apply consistently but cannot state, and are far more common when the listener is known to share both
+languages. Children as young as two adjust which language they use according to who is in the room. What
+was once described as a deficit is now generally treated as an additional skill, and one that monolingual
+speakers do not have the opportunity to develop.`;
 
 const P2 = `A
 
@@ -115,7 +124,17 @@ largely correlational in humans, since one cannot randomly assign childhoods, an
 play decline also saw the arrival of social media, academic intensification and changes in family
 structure. Disentangling these is genuinely difficult. What can be said is that the burden of proof has
 shifted: the assumption that time spent playing is time wasted, which underpinned a century of curriculum
-design, now looks much harder to defend than the alternative.`;
+design, now looks much harder to defend than the alternative.
+
+H
+
+What children are given to play with matters as much as the time. Research on play environments
+has repeatedly found that the equipment which occupies designers least occupies children longest: loose
+material such as planks, tyres, crates and sand supports far more sustained and varied play than fixed
+apparatus, which tends to be used in the single way it was designed for and then abandoned. Playgrounds
+built on this principle, sometimes staffed by an adult who supervises without directing, report longer
+periods of concentrated activity and more mixing between age groups. They are also cheaper to build, though
+harder to insure, which is one reason they remain uncommon.`;
 
 const P3 = `Examinations are so embedded in education that it takes an effort to notice how strange they
 are. A student's competence, developed over years, is inferred from performance during a few hours, under
@@ -166,7 +185,16 @@ and it complicates the selection decisions that assessment exists to serve, whic
 educational reform usually stalls. The deeper difficulty is that examinations are asked to do two
 incompatible jobs at once: to support learning, which requires frequent low-stakes feedback, and to rank
 candidates, which requires rare high-stakes judgement. Systems that try to do both with the same instrument
-tend to sacrifice the first.`;
+tend to sacrifice the first.
+
+The reliability of marking is a separate question from the design of the assessment, and it has
+been studied for over a century. Early experiments in which the same scripts were sent to different
+examiners produced alarming variation, particularly in subjects requiring extended writing, and much of the
+machinery of modern examining exists to control it: anonymous scripts, detailed mark schemes, sample
+scripts agreed in advance, and statistical checks on each marker. These measures reduce disagreement
+substantially but do not remove it, and agreement remains noticeably lower for essays than for questions
+with a single correct answer. This is not an argument against essays, which measure something the short
+question cannot, but it is a reason for caution about small differences in a final grade.`;
 
 export default {
   title: 'Platform Test 6 — Education & Learning',
@@ -228,7 +256,7 @@ export default {
       title: 'The Disappearance of Free Play',
       text: P2,
       questions: [
-        { type: 'matching_information', text: 'figures showing how little unstructured time children now have', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'A' },
+        { type: 'matching_information', text: 'figures showing how little unstructured time children now have', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], answer: 'A' },
         { type: 'matching_information', text: 'evidence from animals that were deprived of play with their peers', answer: 'C' },
         { type: 'matching_information', text: 'an explanation of why the possibility of exclusion makes children moderate their behaviour', answer: 'D' },
         { type: 'matching_information', text: 'an argument that frightening experiences chosen voluntarily reduce later anxiety', answer: 'E' },

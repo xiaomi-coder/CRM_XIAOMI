@@ -51,7 +51,16 @@ upper layer of sediment across areas measured in hundreds of square kilometres. 
 environment where a coral may take a thousand years to grow and sediment accumulates at a millimetre per
 century, would be effectively permanent on any human timescale. A growing number of states have called for
 a moratorium until the ecosystems are better understood. The difficulty, as one researcher observed, is
-that we are being asked to protect something we have not yet finished discovering.`;
+that we are being asked to protect something we have not yet finished discovering.
+
+A further difficulty is that most of what is brought to the surface arrives dead.
+Animals adapted to four hundred atmospheres of pressure and a constant four degrees do not survive the
+journey upwards, and many dissolve into an unrecognisable mass before they can be photographed. Pressurised
+recovery chambers exist but are rare and expensive. As a result a great deal of what is known about deep-sea
+creatures comes from damaged specimens and from video recordings, which is one reason why the backlog of
+undescribed species is so large. Marine taxonomists estimate that samples already sitting in collections
+contain thousands of animals that have never been formally named, simply because there are not enough
+specialists to describe them.`;
 
 const P2 = `A
 
@@ -110,7 +119,17 @@ concentrates them over cities, where collisions with glass kill hundreds of mill
 North America alone. Electromagnetic noise in urban areas has been shown experimentally to disrupt the
 magnetic compass of robins, an effect that disappears when the birds are shielded. Since populations of
 long-distance migrants have declined faster than those of resident species, understanding how these
-journeys are controlled has become a conservation question as much as a scientific one.`;
+journeys are controlled has become a conservation question as much as a scientific one.
+
+G
+
+The pace of discovery has been set by the size of the equipment. For most of the twentieth
+century a bird could only be studied if it could be recaptured, which limited research to species that
+returned reliably to the same nest. The arrival of geolocators weighing less than a gram changed this, and
+devices are now small enough to be carried by birds of a few dozen grams without measurable effect on
+survival. Data from these tags has repeatedly overturned assumptions: routes thought to be straight have
+proved to be looped, stopovers believed to last days have turned out to last weeks, and several species have
+been found to spend the winter thousands of kilometres from where they were assumed to be.`;
 
 const P3 = `The word vaccine derives from vacca, the Latin for cow, and the story behind it is among the most
 frequently repeated in the history of medicine. In 1796 the English physician Edward Jenner inoculated a
@@ -162,7 +181,15 @@ that the interval between a discovery and its application is rarely a straight l
 The remaining obstacles are not primarily technical. Vaccines that exist are not always delivered:
 distribution in regions without reliable electricity remains difficult, and confidence, once lost, is slow
 to rebuild. Measles, a disease for which an effective vaccine has existed since 1963, has returned to
-countries that had declared it eliminated. The scientific problem, in such cases, was solved long ago.`;
+countries that had declared it eliminated. The scientific problem, in such cases, was solved long ago.
+
+There is also an economic problem that has little to do with science. Developing a vaccine is
+expensive and the market for it is often poor, because the diseases that cause the greatest burden are
+concentrated in countries least able to pay. A treatment taken daily for life earns far more than an
+injection given once. For several decades this arithmetic left diseases such as tuberculosis and malaria
+with almost no commercial development, and the vaccines that do exist for them were produced largely through
+public and charitable funding. The problem is structural rather than technical, and it explains why the
+speed achieved during a global emergency has proved so difficult to repeat afterwards.`;
 
 export default {
   title: 'Platform Test 2 — Science & Discovery',
@@ -219,7 +246,7 @@ export default {
       title: 'How Birds Find Their Way',
       text: P2,
       questions: [
-        { type: 'matching_information', text: 'a statement that one species travels further each year than any other animal', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'A' },
+        { type: 'matching_information', text: 'a statement that one species travels further each year than any other animal', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'A' },
         { type: 'matching_information', text: 'an experiment in which the appearance of the sky was deliberately altered', answer: 'B' },
         { type: 'matching_information', text: 'a description of two competing explanations for a single sense', answer: 'C' },
         { type: 'matching_information', text: 'a comparison of how experienced and inexperienced birds reacted to being moved', answer: 'D' },

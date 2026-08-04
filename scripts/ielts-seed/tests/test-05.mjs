@@ -51,7 +51,16 @@ been affected more severely than the employers themselves. Some cities are conve
 though the economics are unfavourable because the deep floor plans that suit open-plan work produce
 apartments with no windows. Meanwhile the ability to hire without regard to location has begun to shift
 salaries in unexpected directions, raising them in smaller cities and putting downward pressure on the
-premium that expensive ones could once command.`;
+premium that expensive ones could once command.
+
+The environmental accounting has proved less straightforward than expected. Removing a daily
+commute obviously reduces transport emissions, and in cities where a large share of office workers stopped
+travelling the reduction was measurable. Against this must be set the cost of heating, lighting and cooling
+a large number of individual homes rather than one efficient building, which in cold climates can cancel a
+substantial part of the saving. Studies that have attempted a full accounting generally still find a net
+benefit, but a smaller one than the transport figures alone suggest, and the result depends heavily on the
+local climate and on how the electricity is generated. The clearest gains appear where remote work reduces
+long journeys rather than short ones.`;
 
 const P2 = `A
 
@@ -112,7 +121,17 @@ The third and least developed approach is to reduce the number of devices produc
 intervals for smartphones have lengthened, from roughly two years to three, largely because improvements
 between generations have become less noticeable. But total production continues to rise, driven by
 first-time buyers in growing markets and by the multiplication of connected devices in homes, most of which
-contain a chip, a battery and a wireless radio, and almost none of which are designed to be opened at all.`;
+contain a chip, a battery and a wireless radio, and almost none of which are designed to be opened at all.
+
+H
+
+There is a further reason why devices are not returned, and it has nothing to do with
+convenience. Surveys of households consistently find that a substantial proportion of people keep old
+phones because they are unsure what happens to the data on them. The concern is not unreasonable, since
+studies that have purchased second-hand devices in bulk have recovered photographs, messages and account
+details from a significant share of them. Formal recyclers now certify data destruction and some issue a
+written record of it, but the practice is not universal and the public is not generally aware of it. Trust,
+in other words, has become part of the collection problem.`;
 
 const P3 = `In 1954 a computer at Georgetown University translated sixty Russian sentences into English, and
 the researchers announced that the problem of machine translation would be solved within five years. The
@@ -162,7 +181,16 @@ has grown, because cheap machine output makes it feasible to translate material 
 justified the cost of a human translator, and a proportion of that material subsequently needs human
 correction. What has changed is the work itself, which increasingly consists of editing machine output
 rather than producing text from scratch, a task that many practitioners describe as less satisfying and
-which is generally paid at a lower rate.`;
+which is generally paid at a lower rate.
+
+Speech presents difficulties that written text does not. A system translating a conversation must
+decide where one sentence ends before it can begin, and speakers rarely finish sentences cleanly; they
+interrupt themselves, repeat words and leave clauses hanging. Waiting for a complete unit produces an
+awkward delay, while translating too early produces output that must be corrected as the speaker continues.
+The languages themselves make this harder or easier: in languages that place the verb at the end, the
+essential information arrives last, so a simultaneous system must either wait or guess. Human interpreters
+manage this through anticipation built on subject knowledge, which is exactly what a system trained on
+sequences of words does not have.`;
 
 export default {
   title: 'Platform Test 5 — Technology & Work',
@@ -228,7 +256,7 @@ export default {
         { type: 'sentence_completion', text: 'Components are ________ rather than screwed, which makes separation harder.', answer: 'glued' },
         { type: 'sentence_completion', text: 'Chemical ________ recovers metals effectively but generates hazardous effluent.', answer: 'leaching' },
         { type: 'sentence_completion', text: 'Shipments of waste were routinely declared as second-hand goods for ________.', answer: 'reuse' },
-        { type: 'matching_information', text: 'a comparison between the metal content of waste and that of natural ore', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'A' },
+        { type: 'matching_information', text: 'a comparison between the metal content of waste and that of natural ore', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], answer: 'A' },
         { type: 'matching_information', text: 'figures showing how small a share of the waste stream is properly handled', answer: 'B' },
         { type: 'matching_information', text: 'an explanation of why the devices themselves are hard to take apart', answer: 'C' },
         { type: 'matching_information', text: 'an account of health damage recorded in particular settlements', answer: 'D' },

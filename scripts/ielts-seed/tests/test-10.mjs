@@ -49,7 +49,16 @@ argue that modern spacecraft are manoeuvrable, short-lived and de-orbit reliably
 The counter-argument is that the collision risk in a given shell rises with the square of the number of
 objects, that reliability is never total, and that a single operator's failure imposes costs on everyone
 using that altitude. Astronomers have raised a separate objection about reflected sunlight interfering with
-observation, which has already required changes to the way some survey telescopes process their data.`;
+observation, which has already required changes to the way some survey telescopes process their data.
+
+What can be tracked is limited by what can be seen. Ground-based radar reliably detects objects
+down to about ten centimetres in low orbit, and optical telescopes handle larger objects further out, but the
+fragments between one and ten centimetres are largely invisible while remaining perfectly capable of
+destroying a satellite. Operators therefore receive conjunction warnings based on an incomplete catalogue,
+and because the predicted position of an object carries an uncertainty of hundreds of metres, most warnings
+describe a probability rather than a certainty. A manoeuvre costs fuel and shortens a mission, so operators
+must decide how small a risk justifies moving, and different organisations answer that question
+differently.`;
 
 const P2 = `A bridge is the clearest case in engineering of a structure whose form is dictated by the
 problem it solves. Every bridge must carry its own weight, the weight of what crosses it, and the forces
@@ -99,7 +108,15 @@ corrodes, and because rust occupies more volume than the steel it replaces, it c
 within and admits more water. The process is slow, invisible from outside for years, and expensive to
 arrest. Sensors embedded in new structures now report strain and corrosion continuously, which allows
 maintenance to be scheduled by condition rather than by calendar — an unglamorous development that will
-probably save more lives than any advance in span length.`;
+probably save more lives than any advance in span length.
+
+Inspection is the weakest link in the chain. Most structures are examined visually at fixed
+intervals, which detects rust stains and spalled concrete but not the corrosion that has not yet reached the
+surface, and inspectors work from what can be reached, which on a large bridge is a small fraction of the
+structure. Several collapses have followed inspections that recorded no serious defect, and the subsequent
+investigations have generally found that the critical element was one that could not easily be seen or
+tested. This is the argument for permanent instrumentation: a sensor cast into the concrete reports
+continuously from a place that no inspector will ever stand.`;
 
 const P3 = `A
 
@@ -158,7 +175,17 @@ extraction is subject to review after 2048, and interest in fisheries, particula
 substantially. Krill are the foundation of the entire Southern Ocean food web, and the catch is increasingly
 concentrated in exactly the coastal areas where penguins and seals feed. Decisions require consensus among
 the parties, which has repeatedly prevented the creation of proposed marine protected areas. The mechanism
-that has kept the continent peaceful for sixty years is the same one that now makes it difficult to protect.`;
+that has kept the continent peaceful for sixty years is the same one that now makes it difficult to protect.
+
+G
+
+The practical work is governed by the calendar as much as by the science. The season for field
+research runs from roughly November to February, when aircraft can land and ships can reach the coast, and a
+project that misses its window waits a year. Almost everything must be positioned in advance, which means
+that a decision about an experiment is taken twelve to eighteen months before the first measurement. National
+programmes cooperate out of necessity rather than sentiment: stations share fuel, aircraft, medical
+evacuation and, when a crew is stranded, whatever is needed. This is the treaty working as intended, and it
+is more visible on the ice than in the meetings where the agreement is discussed.`;
 
 export default {
   title: 'Platform Test 10 — Space & Engineering',
@@ -245,7 +272,7 @@ export default {
       title: 'Science at the End of the Earth',
       text: P3,
       questions: [
-        { type: 'matching_information', text: 'an explanation of why trapped bubbles allow past air to be measured directly', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'B' },
+        { type: 'matching_information', text: 'an explanation of why trapped bubbles allow past air to be measured directly', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
         { type: 'matching_information', text: 'an account of readings that an automatic system rejected as implausible', answer: 'C' },
         { type: 'matching_information', text: 'a description of how the stations are used to study isolation', answer: 'D' },
         { type: 'matching_information', text: 'an explanation of why a particular bedrock configuration may be unstable', answer: 'E' },

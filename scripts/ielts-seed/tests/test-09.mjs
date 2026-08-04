@@ -49,7 +49,16 @@ consider worth measuring. Once it is accepted that presentation affects choice, 
 contract or a price display becomes an economic variable rather than an administrative detail. That
 insight has been absorbed most enthusiastically not by policymakers but by commercial firms, which use the
 same findings to increase spending rather than saving — a use of the research that its originators
-anticipated and were unable to prevent.`;
+anticipated and were unable to prevent.
+
+The response to the replication problem has changed how the work is done. Researchers now
+commonly register their hypotheses and analysis plans before collecting data, which prevents the practice of
+searching a dataset until something significant appears. Studies are larger, and an increasing proportion
+are conducted in the field with tens of thousands of participants rather than in a laboratory with fifty
+students. Journals have begun accepting papers on the basis of the design alone, before the results are
+known, which removes the incentive to find a positive effect. These reforms are slow and unglamorous, and
+they have already produced smaller and more reliable estimates of several effects that were once reported as
+dramatic.`;
 
 const P2 = `In 1976 an economics professor in Bangladesh lent the equivalent of twenty-seven dollars, from his
 own pocket, to a group of forty-two villagers who made bamboo furniture. They were trapped by the terms on
@@ -99,7 +108,16 @@ the moneylender, and being able to borrow at a reasonable rate is valuable wheth
 incomes. What has ended is the claim that it constitutes a solution to poverty. The episode is now cited as
 a case study in evaluation: a plausible idea, implemented widely and enthusiastically for thirty years
 before anyone tested whether it did what was claimed, and found on testing to do something real but much
-smaller.`;
+smaller.
+
+The other criticism concerns the terms of the lending itself. Interest rates charged by
+microfinance institutions are high by the standards of a commercial bank, commonly between twenty and forty
+per cent a year, which lenders justify by the administrative cost of many small loans and by the absence of
+collateral. Where several institutions competed for the same borrowers, some households took loans from
+more than one and used each to repay the last. A crisis of this kind in the Indian state of Andhra Pradesh in
+2010, which involved aggressive collection practices and a wave of defaults, led the state to restrict the
+industry almost overnight and prompted a wider reconsideration of how quickly such lending should be allowed
+to grow.`;
 
 const P3 = `A
 
@@ -158,7 +176,17 @@ journalism that this revenue had cross-subsidised was not itself unprofitable in
 readers; it was funded by a mechanism that had no necessary connection to it and which technology removed.
 Subscription models have partly replaced it in national outlets with distinctive content, and have largely
 failed at local level, which is where the reduction in reporting has been most complete and where the
-absence is hardest to notice.`;
+absence is hardest to notice.
+
+G
+
+Measurement is beginning to change in response. A growing number of large advertisers now insist
+on holdout testing, in which a randomly selected share of the audience is deliberately excluded from a
+campaign so that the difference between the two groups can be observed directly. This is the same method
+used to test a medicine, and it is the only approach that answers the attribution question cleanly. It is
+also expensive, because the excluded group represents advertising that was deliberately not sold, and it can
+only be arranged by a buyer with enough weight to impose the condition on the seller. Adoption has therefore
+been slow, and confined almost entirely to the largest advertisers.`;
 
 export default {
   title: 'Platform Test 9 — Business & Economics',
@@ -265,7 +293,7 @@ export default {
       title: 'Does Advertising Work?',
       text: P3,
       questions: [
-        { type: 'matching_information', text: 'a remark about wasted expenditure made more than a century ago', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'A' },
+        { type: 'matching_information', text: 'a remark about wasted expenditure made more than a century ago', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'A' },
         { type: 'matching_information', text: 'an explanation of why measured returns are lower than platforms report', answer: 'B' },
         { type: 'matching_information', text: 'an argument that the spending itself is the message', answer: 'C' },
         { type: 'matching_information', text: 'an area of regulation on which there is clear agreement', answer: 'D' },

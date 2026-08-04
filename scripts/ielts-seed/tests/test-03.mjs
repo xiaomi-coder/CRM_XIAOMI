@@ -48,7 +48,15 @@ between civilisations that are usually studied separately. The value of the conc
 visible: that ideas, faiths, illnesses and technologies moved between regions that conventional national
 histories present as self-contained. Its weakness is that a single evocative phrase can flatten the
 enormous diversity of the peoples involved, most of whom were not Chinese, not European, and left few
-written records of their own.`;
+written records of their own.
+
+The people who made the system work are the hardest to see. Long-distance exchange depended on
+intermediaries who could move between languages and legal systems, and for several centuries much of that
+work was done by Sogdian merchants from the region around Samarkand, whose language became a common medium of
+trade far beyond the area in which it was spoken. A bundle of their letters, abandoned in a watchtower west
+of Dunhuang and recovered in the twentieth century, contains complaints about debts, instructions about
+goods and news of a distant political collapse. Documents of this kind are rare, and they are a reminder
+that the network was operated by people whose own accounts have almost entirely disappeared.`;
 
 const P2 = `The public library is such a familiar institution that its strangeness is easily overlooked. It
 is a building, usually paid for from taxation, where anyone may enter without payment, take away objects of
@@ -100,7 +108,15 @@ This creates a difficulty for the way libraries are assessed. Funding decisions 
 number of books borrowed, a measure that captures less and less of what the institution actually does. A
 library that lends fewer novels but helps a hundred people apply for benefits may appear, on the standard
 metric, to be failing. Several national bodies are now attempting to measure social value instead,
-though what to count, and how, remains unresolved.`;
+though what to count, and how, remains unresolved.
+
+The design of the buildings changed as the idea did. Early public libraries kept their books in
+closed stacks, and a reader consulted a catalogue and then asked an assistant to fetch a volume, which meant
+that browsing was impossible and that the staff effectively decided what was easy to obtain. The shift to
+open shelves, resisted at first on the grounds that books would be stolen or disordered, transformed the
+experience of using a library and had a measurable effect on what people borrowed. Losses did rise, but not
+by enough to outweigh the increase in use, and by the middle of the twentieth century open access had become
+the norm almost everywhere.`;
 
 const P3 = `A
 
@@ -162,7 +178,17 @@ Modern communication has begun to blur the boundary that writing established. Te
 posts are written but often behave like speech: they are informal, immediate, unedited and increasingly
 supplemented by images and emoji that function rather like the pictographic signs from which writing began.
 Whether this represents decline or simply another adaptation is a question that could be asked of every
-change writing has undergone in five thousand years, and it has usually been answered too quickly.`;
+change writing has undergone in five thousand years, and it has usually been answered too quickly.
+
+H
+
+Not every system that was invented has been read again. Scripts are deciphered when a language is
+already known, or when a bilingual text supplies a way in, and where neither condition holds the writing
+remains silent. Linear B was read in the 1950s because the language beneath it turned out to be an early
+form of Greek; Linear A, which uses many of the same signs, has resisted every attempt because the language
+it records is unknown. Several other scripts, including that of the Indus valley, remain undeciphered, and in
+some cases scholars cannot agree whether the marks encode a language at all. The invention of writing was
+rare; the survival of the knowledge needed to read it has been rarer still.`;
 
 export default {
   title: 'Platform Test 3 — History & Society',
@@ -249,7 +275,7 @@ export default {
       title: 'How Writing Was Invented',
       text: P3,
       questions: [
-        { type: 'matching_information', text: 'examples of the goods recorded by the earliest written marks', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
+        { type: 'matching_information', text: 'examples of the goods recorded by the earliest written marks', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], answer: 'B' },
         { type: 'matching_information', text: 'an explanation of why letting a symbol stand for a sound was decisive', answer: 'C' },
         { type: 'matching_information', text: 'the observation that objections to a new technology recur in every era', answer: 'D' },
         { type: 'matching_information', text: 'a comparison of how long different systems take to learn', answer: 'E' },

@@ -49,7 +49,15 @@ the energy density of jet fuel over long distances. This creates an awkward asym
 most dependent on tourism revenue are often those most exposed to the consequences of climate change, and
 the visitors who reach them do so by a method that contributes to it. No policy currently in place resolves
 that contradiction, and most proposals amount to reducing the number of people who fly, which returns the
-question of who is permitted to travel and on what basis.`;
+question of who is permitted to travel and on what basis.
+
+Concentration in time matters as much as concentration in place. Annual visitor totals conceal
+the fact that arrivals cluster into a few months, and in some destinations into a few hours of the day, so
+that infrastructure sized for the peak stands idle for much of the year while still requiring maintenance.
+Employment follows the same pattern, which is why so many tourism jobs are seasonal and why the sector
+struggles to retain trained staff. Several destinations have tried to spread demand by pricing, offering
+lower charges outside the peak or by moving events into quieter months. The results have been modest, since
+the timing of most travel is fixed by school holidays and by weather rather than by price.`;
 
 const P2 = `A
 
@@ -112,7 +120,17 @@ The lesson from failed attempts is consistent. Recording a language is not the s
 archives preserve data, not use. Teaching it as a school subject for a few hours a week produces pupils who
 can recite but not converse. What works is domains: a language survives if there are places where it is
 the ordinary medium of life, and creating such places is a political and economic undertaking rather than
-a linguistic one.`;
+a linguistic one.
+
+H
+
+Technology has proved to be neither the threat nor the rescue it was predicted to be. A language
+without a keyboard layout, a spellchecker or a place in the menus of a mobile phone is difficult to use in
+writing, and for a period this pushed young speakers towards larger languages online. That has changed
+considerably: adding a language to the standard character set is now routine, community-built keyboards
+exist for hundreds of languages, and social media has given small communities a written space that they
+never had in print. What technology cannot supply is the reason to use the language, and platforms that
+allow a language to be typed do not by themselves create anyone to type it to.`;
 
 const P3 = `In the British Museum, in a purpose-built gallery, are a series of marble sculptures removed from
 the Parthenon in Athens between 1801 and 1812. Greece has requested their return since 1832, the year it
@@ -155,7 +173,15 @@ history, which is a difficult position to hold while displaying that history to 
 What has changed most is the question being asked. For most of the twentieth century the question was
 whether a museum had legal title. Increasingly the question is what the object is for, and whether keeping
 it serves the purpose the institution claims. That reframing does not settle any individual case, but it
-explains why an argument that appeared frozen for a century has begun to move.`;
+explains why an argument that appeared frozen for a century has begun to move.
+
+Much of the practical work is slower and less visible than the public argument. Establishing where
+an object came from requires tracing sales, excavation records, wartime inventories and dealers' archives,
+and for objects acquired more than a century ago the documentation is frequently incomplete or was never
+made. Museums have built provenance research departments to do this, and the results are mixed: some
+histories turn out to be entirely legitimate, some clearly are not, and a large proportion remain uncertain
+because the evidence no longer exists. Institutions increasingly publish what they know, including the gaps,
+which is itself a change from a period in which the question was rarely asked at all.`;
 
 export default {
   title: 'Platform Test 8 — Culture & Travel',
@@ -227,7 +253,7 @@ export default {
       title: 'Why Languages Disappear',
       text: P2,
       questions: [
-        { type: 'matching_information', text: 'a figure for the number of languages spoken within a single country', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
+        { type: 'matching_information', text: 'a figure for the number of languages spoken within a single country', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], answer: 'B' },
         { type: 'matching_information', text: 'a description of the stages by which transmission to children stops', answer: 'C' },
         { type: 'matching_information', text: 'an assessment of a claim about the relationship between language and thought', answer: 'D' },
         { type: 'matching_information', text: 'examples of programmes that brought a language back into everyday use', answer: 'F' },

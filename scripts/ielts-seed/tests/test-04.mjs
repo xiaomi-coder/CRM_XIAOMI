@@ -49,7 +49,16 @@ modest. Clinicians have begun describing a condition informally called orthosomn
 achieving good scores itself causes insomnia. The most effective treatment for chronic insomnia is not
 medication but cognitive behavioural therapy, which typically involves restricting time in bed until sleep
 becomes efficient again, an approach that patients often find counterintuitive and that works reliably
-nonetheless.`;
+nonetheless.
+
+Work schedules complicate the picture further. Somewhere between fifteen and twenty per cent of
+employees in industrialised countries work outside conventional daytime hours, and their internal clocks
+never fully adjust, because each return to a normal weekend pattern undoes the adaptation. The mismatch
+between the body clock and the working day has acquired a name, social jet lag, and it is measured by
+comparing the midpoint of sleep on working days with the midpoint on free days. Large surveys find a
+difference of an hour or more in most adults and considerably greater in adolescents. The effect is
+associated with poorer health outcomes even when total sleep duration is held constant, which suggests that
+when a person sleeps matters as well as how long.`;
 
 const P2 = `A
 
@@ -106,7 +115,17 @@ to motor traffic lanes. Removing either generates immediate, organised and local
 benefits are diffuse and appear years later. Cities that have succeeded, including Seville and Paris, share
 a common pattern: they built a connected network quickly rather than adding disconnected fragments, on the
 reasoning that a route which is safe for nine-tenths of its length is not usable by the people it is meant
-to attract. Half a bridge, as one planner put it, is not half as useful as a bridge.`;
+to attract. Half a bridge, as one planner put it, is not half as useful as a bridge.
+
+G
+
+Instruction plays a part that is easy to overlook. Dutch children receive cycling lessons at
+primary school and most sit a practical traffic examination at about the age of eleven, taken on public
+roads rather than in a playground. The point is not that children learn to balance, which they do long
+before, but that they learn to read traffic and to be predictable within it. Adults are taught in the same
+spirit: the standard driving test includes checking for cyclists before opening a door, a manoeuvre that
+carries its own name in Dutch. None of this would work without the physical network, but the network alone
+does not produce a population that uses it confidently from childhood.`;
 
 const P3 = `A patient is given a tablet containing no active ingredient and told it is a painkiller. Within
 half an hour the pain is measurably reduced, and imaging shows changes in the regions of the brain that
@@ -155,7 +174,16 @@ non-specific effect of receiving care. Randomised trials are designed to isolate
 second, which is correct for establishing whether a drug works, but has encouraged a habit of regarding
 the second as noise. It is not noise. It is a reliable, mechanistically describable component of recovery
 that happens to be produced by attention, explanation and time, three things that modern healthcare systems
-are organised to minimise.`;
+are organised to minimise.
+
+A curious pattern has emerged in the trial data itself. Across several decades of studies on pain
+medication conducted in the United States, the response to placebo has grown steadily stronger, while the
+response to the active drug has remained roughly constant. The gap between them has therefore narrowed, and
+medications that would have been approved thirty years ago now fail to demonstrate an advantage. The effect
+appears in American trials far more than in European or Asian ones, and the explanations offered include
+larger and longer studies, direct advertising of medicines to the public, and greater expectations among
+participants. Whatever the cause, it means that the size of a placebo response is not a fixed biological
+quantity but something shaped by the culture in which the treatment is given.`;
 
 export default {
   title: 'Platform Test 4 — Health & Lifestyle',
@@ -217,7 +245,7 @@ export default {
       title: 'Why the Dutch Cycle',
       text: P2,
       questions: [
-        { type: 'matching_information', text: 'a figure for the number of people killed on the roads in one year', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'B' },
+        { type: 'matching_information', text: 'a figure for the number of people killed on the roads in one year', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
         { type: 'matching_information', text: 'the test that planners use to decide whether a network is good enough', answer: 'C' },
         { type: 'matching_information', text: 'an explanation of why greater numbers of cyclists make cycling safer', answer: 'D' },
         { type: 'matching_information', text: 'a weighing of health gains against the risks of collision and pollution', answer: 'E' },

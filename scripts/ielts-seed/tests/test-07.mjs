@@ -48,7 +48,15 @@ The threat now overshadowing all of this is climatic. Arabica's temperature tole
 modelling suggests that the land area suitable for it could halve by 2050, with the losses concentrated in
 lower-altitude regions where most smallholders farm. Adaptation is possible — moving uphill where hills
 exist, shade-growing under trees, and breeding or grafting more tolerant varieties — but each requires
-capital and a time horizon of years, which is precisely what a farmer selling below cost does not have.`;
+capital and a time horizon of years, which is precisely what a farmer selling below cost does not have.
+
+Some growers have tried to escape the chain rather than improve their position within it.
+Cooperatives allow smallholders to pool harvests, invest in a shared mill and negotiate as a single seller,
+which shifts a stage of processing, and therefore a share of the value, back to the country of origin. Direct
+relationships between a roaster and a named farm work on a similar principle and can pay several times the
+commodity price. Both approaches have clear limits. They require a quality of bean that not every farm can
+produce, they depend on buyers who are willing to commit for more than a single season, and they reach a
+small minority of the world's producers. For the great majority, the price is still set elsewhere.`;
 
 const P2 = `A
 
@@ -106,7 +114,17 @@ Vertical farming is a specialised tool that performs well when energy is cheap o
 valuable and light-hungry crops are avoided, and when proximity to the consumer is worth paying for. Its
 strongest claim is not that it will feed the world but that it can remove a category of production —
 salad crops flown thousands of kilometres or grown in heated glasshouses — that was never efficient in the
-first place.`;
+first place.
+
+G
+
+Labour is the cost that receives least attention. A vertical farm is often described as automated,
+and the movement of trays and the mixing of nutrient solution generally are, but sowing, transplanting,
+inspecting and above all harvesting remain difficult to mechanise for soft leafy crops that bruise easily.
+Several operators have found that staff costs form the second largest item after energy, and that the skills
+required are unusual: the work combines horticulture with the discipline of a food-processing plant, and
+suitable staff are not always available near the urban sites that the model favours. Automation of harvesting
+is improving, but each generation of equipment is expensive and suits only the crops it was designed for.`;
 
 const P3 = `Before refrigeration, the central problem of food was not producing it but keeping it. A harvest
 arrives in weeks; a year must be lived. Every settled society developed answers, and those answers, invented
@@ -155,7 +173,15 @@ The oldest methods, meanwhile, have returned to prominence for reasons their inv
 Fermented foods are now marketed for their effect on the gut microbiome, and traditional preservation is
 promoted as a response to food waste. Roughly a third of food produced is still lost or wasted, a
 proportion that would have been incomprehensible in any society that had to make a harvest last until the
-next one.`;
+next one.
+
+Preservation also changed what people ate, and not always for the better. Canning made a
+predictable diet possible in cities and at sea, and it removed the seasonal hunger that had shaped rural
+life for centuries. Early canned goods, however, were heated for long periods at high temperatures, which
+destroys a proportion of several vitamins, and navies that adopted them without understanding this
+encountered deficiency diseases they thought they had solved. Armies were the first large customers, and
+military demand drove the industry for a century: the ration tin, the field kitchen and eventually the
+freeze-dried meal all emerged from the problem of feeding people who could not carry a farm with them.`;
 
 export default {
   title: 'Platform Test 7 — Food & Agriculture',
@@ -212,7 +238,7 @@ export default {
       title: 'The Promise and Limits of Vertical Farming',
       text: P2,
       questions: [
-        { type: 'matching_information', text: 'a figure for the reduction in the amount of water used', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F'], answer: 'B' },
+        { type: 'matching_information', text: 'a figure for the reduction in the amount of water used', options: ['@Which paragraph contains the following information?', 'A', 'B', 'C', 'D', 'E', 'F', 'G'], answer: 'B' },
         { type: 'matching_information', text: 'a list of the crops for which the economics of the method work', answer: 'C' },
         { type: 'matching_information', text: 'an account of well-funded companies that failed when costs did not fall with scale', answer: 'D' },
         { type: 'matching_information', text: 'examples of places where cheap clean power removes the main objection', answer: 'E' },
