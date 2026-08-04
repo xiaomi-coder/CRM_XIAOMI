@@ -134,11 +134,6 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
         }
 
         setCurrentSettings(mySettings || null);
-
-        // To'lov eslatmalarini tekshirish va yuborish
-        if (mySettings?.botToken && mySettings.notifyPayment) {
-          checkAndSendPaymentReminders(filterByCenter(s), mySettings);
-        }
       }
     } catch (err) {
       console.error("Ma'lumotlarni yuklashda xatolik:", err);
@@ -147,45 +142,9 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
     }
   };
 
-  // To'lov eslatmalarini tekshirish va yuborish funksiyasi
-  const checkAndSendPaymentReminders = async (studentsList: Student[], settings: SystemSettings) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayKey = today.toISOString().split('T')[0];
-    const sentKey = `payment_reminders_${todayKey}`;
-    const sentReminders = JSON.parse(localStorage.getItem(sentKey) || '{}');
-
-    for (const student of studentsList) {
-      if (!student.nextPaymentDate || !student.tgChatId) continue;
-
-      const dueDate = new Date(student.nextPaymentDate);
-      dueDate.setHours(0, 0, 0, 0);
-      const diffTime = dueDate.getTime() - today.getTime();
-      const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      // Faqat 5, 3, 1 kunlik eslatmalar
-      if (![5, 3, 1].includes(daysLeft)) continue;
-
-      const reminderKey = `${student.id}_${daysLeft}`;
-      if (sentReminders[reminderKey]) continue; // Allaqachon yuborilgan
-
-      const emoji = daysLeft === 1 ? '⚠️' : '⏰';
-      const urgency = daysLeft === 1 ? ' Iltimos, o\'z vaqtida to\'lang!' : '';
-      const message = `${emoji} <b>To'lov eslatmasi</b>\n\nHurmatli ota-ona!\nFarzandingiz <b>${student.name}</b> oylik to'loviga <b>${daysLeft} kun</b> qoldi.${urgency}\n\n📅 To'lov sanasi: <b>${student.nextPaymentDate}</b>\n\n<i>${settings.centerName}</i>`;
-
-      try {
-        const sent = await sendTelegramMessage(settings.botToken, student.tgChatId, message);
-        if (sent) {
-          sentReminders[reminderKey] = true;
-          console.log(`Eslatma yuborildi: ${student.name} - ${daysLeft} kun qoldi`);
-        }
-      } catch (err) {
-        console.error(`Eslatma yuborishda xatolik (${student.name}):`, err);
-      }
-    }
-
-    localStorage.setItem(sentKey, JSON.stringify(sentReminders));
-  };
+  // To'lov eslatmalari endi SERVERDA yuboriladi (VPS: crm-payment-reminders.timer,
+  // har kuni 09:00). Avval shu yerda — brauzerda — yuborilardi: ilova ochilmagan
+  // kuni eslatma ketmasdi va localStorage belgisi qurilmaga bog'liq edi.
 
   useEffect(() => {
     if (currentUser && currentUser.role !== UserRole.STUDENT) {

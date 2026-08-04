@@ -262,3 +262,22 @@ Tekshirilgan: register_center (takror telefon/login/zaif parol/yaroqsiz login �
 to'g'ri xatolar, yangi user login qila oladi), demo propusk faqat DEMO_CENTER'ni
 ko'radi (8 students / 1 settings), UI orqali to'liq ro'yxat oqimi (forma → /app),
 `npm run build` toza. Test markazlar o'chirildi.
+
+## To'lov eslatmalari serverga ko'chirildi ✅ (2026-08-05)
+
+- **Muammo:** eslatmalar (5/3/1 kun) brauzerda yuborilardi — direktor ilovani
+  ochmagan kuni eslatma KETMASDI; "yuborildi" belgisi localStorage'da (qurilmaga
+  bog'liq, boshqa kompyuterdan takror ketishi mumkin edi).
+- **Yechim:** `db/08-payment-reminders.sql` (`reminder_log` + `due_payment_reminders()`
+  + `mark_reminder_sent()`, GRANT yo'q — API ko'rmaydi) + VPS'da
+  `/root/crm-payment-reminders.py` (repoda: `scripts/vps-payment-reminders.py`) —
+  **`crm-payment-reminders.timer` har kuni 09:00** (Persistent=true). Qo'shimcha:
+  to'lov kunining o'zida ham (D0) eslatma ketadi; faqat ACTIVE o'quvchilar.
+  Brauzerdagi eski `checkAndSendPaymentReminders` OLIB TASHLANDI.
+- Sinov: dry-run 0 nomzod (hozircha hech kimda `nextPaymentDate`+`tgChatId`
+  birga to'lmagan — IT Park'da tgChatId bor, lekin sana bo'sh), timer birinchi
+  ishga tushishi toza o'tdi. Sana qo'yilishi bilan avtomatik ishlay boshlaydi.
+- ⚠️ **Topilma:** `api/send-monthly-report.ts` (Vercel cron, oyiga 1) hali ham
+  ANON kalit bilan o'qiydi — RLS yoqilgandan beri 0 qator ko'radi, oylik hisobot
+  jimgina ishlamayapti. Keyingi sessiyada: uni ham VPS timer'ga ko'chirish
+  (service token VPS'da) yoki alohida o'qish-funksiya berish kerak.
