@@ -20,7 +20,7 @@
 import { readdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateReadingBlueprint } from './blueprint.mjs';
+import { validateReadingBlueprint, validateListeningBlueprint, validateAgainstTranscript } from './blueprint.mjs';
 
 const API = process.env.CRM_API_URL || 'https://api.eduprocrm.uz';
 const KEY =
@@ -155,6 +155,17 @@ function validate(def) {
   return errs;
 }
 
+/** Test faylining transkriptini yuklaydi (javoblar aytilganini tekshirish uchun) */
+async function loadTranscript(file) {
+  try {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), 'transcripts');
+    const mod = await import(join(dir, file));
+    return mod.default;
+  } catch {
+    return null;
+  }
+}
+
 async function loadDefs() {
   const dir = join(dirname(fileURLToPath(import.meta.url)), 'tests');
   const files = (await readdir(dir)).filter((f) => f.endsWith('.mjs')).sort();
@@ -213,7 +224,11 @@ async function main() {
   for (const def of defs) {
     const errs = validate(def);
     // IELTS rasmiy tuzilmasi (blueprint.mjs) — savol turlari bloklari va qiyinlik gradienti
-    const blueprintErrs = validateReadingBlueprint(def.reading);
+    const blueprintErrs = [
+      ...validateReadingBlueprint(def.reading),
+      ...validateListeningBlueprint(def.listening),
+      ...validateAgainstTranscript(def.listening, await loadTranscript(def.file)),
+    ];
     if (blueprintErrs.length) {
       console.log(`${strict ? '❌' : '⚠️ '} ${def.file} — IELTS tuzilma (blueprint):`);
       for (const e of blueprintErrs) console.log(`     ${e}`);

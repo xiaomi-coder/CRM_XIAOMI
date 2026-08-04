@@ -233,3 +233,148 @@ export function validateReadingBlueprint(reading) {
 
   return errs;
 }
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * LISTENING — RASMIY TUZILMA
+ * ─────────────────────────────────────────────────────────────────────────────
+ * 4 bo'lim × 10 savol = 40. Har bo'limning o'z vazifasi bor:
+ *
+ *   Part 1 — kundalik suhbat (2 kishi): ro'yxatga olish, buyurtma, so'rov.
+ *            Savollar deyarli doim TO'LDIRISH turida (form/note/table).
+ *   Part 2 — kundalik monolog (1 kishi): joy yoki tadbir haqida ma'lumot.
+ *            Odatda matching yoki map/plan + MCQ/to'ldirish.
+ *   Part 3 — ta'lim suhbati (2–4 kishi): talabalar loyihasi, seminar.
+ *            Odatda MCQ va matching ustunlik qiladi.
+ *   Part 4 — akademik ma'ruza (1 kishi): odatda bitta 10 lik to'ldirish bloki.
+ *
+ * ⚠️ Part 1 da form×10 va Part 4 da note×10 — bu XATO EMAS, haqiqiy IELTS naqshi.
+ * Asl muammo: 10 ta testda tuzilma aynan bir xil bo'lishi va matching umuman
+ * bo'lmasligi edi.
+ *
+ * ⚠️ AUDIO O'ZGARMAYDI: savollar mavjud transkriptlarda AYTILGAN faktlardan
+ * tuzilishi shart — aks holda 40 ta audio faylni qayta yozish kerak bo'ladi.
+ *
+ * ❗ Hali yo'q: map/plan/diagram labelling — rasm kerak, bazada esa rasm maydoni yo'q.
+ */
+
+/** Part 1 va Part 4 uchun ruxsat etilgan turlar (to'ldirish oilasi) */
+const LISTENING_COMPLETION = [
+  'form_completion',
+  'note_completion',
+  'table_completion',
+  'sentence_completion',
+  'summary_completion',
+  'flow_chart_completion',
+  'short_answer',
+];
+
+/** Listening qismini tekshiradi */
+export function validateListeningBlueprint(listening) {
+  const errs = [];
+
+  if (listening.length !== 4) errs.push(`Listening: ${listening.length} bo'lim (4 bo'lishi kerak)`);
+
+  listening.forEach((s, idx) => {
+    const label = `Part ${s.sectionNumber ?? idx + 1}`;
+    if (s.questions.length !== 10) {
+      errs.push(`${label}: ${s.questions.length} savol (10 bo'lishi kerak)`);
+    }
+
+    const blocks = blocksOf(s.questions);
+    if (blocks.length > 4) errs.push(`${label}: ${blocks.length} blok — 4 tadan oshmasligi kerak`);
+    for (const b of blocks) {
+      if (b.questions.length < 2) {
+        errs.push(`${label}: "${b.type}" bloki 1 ta savoldan iborat (kamida 2 ta)`);
+      }
+    }
+
+    const types = blocks.map((b) => b.type);
+
+    // Part 1 va Part 4 — to'ldirish turlari
+    if (idx === 0 || idx === 3) {
+      const wrong = types.filter((t) => !LISTENING_COMPLETION.includes(t));
+      if (wrong.length) {
+        errs.push(`${label} (to'ldirish bo'limi): mos kelmaydigan tur — ${wrong.join(', ')}`);
+      }
+    }
+
+    // Part 2 va Part 3 — kamida bitta MCQ yoki matching bo'lishi kerak
+    if (idx === 1 || idx === 2) {
+      if (!types.some((t) => t === 'multiple_choice' || MATCHING_TYPES.includes(t))) {
+        errs.push(`${label}: MCQ ham, matching ham yo'q — bu bo'lim ular uchun`);
+      }
+    }
+
+    // Savol darajasidagi tekshiruv (Reading bilan bir xil qoidalar)
+    for (const b of blocks) {
+      const meta = metaOf(b.questions.find((q) => q.options)?.options);
+
+      if (MATCHING_TYPES.includes(b.type)) {
+        if (meta.items.length < 3) {
+          errs.push(`${label}: "${b.type}" blokida variantlar ro'yxati yo'q (kamida 3 ta)`);
+        }
+        const letters = meta.items.map((o, i) => (o.match(/^\s*([A-Z])\s*[).:-]/) || [])[1] || String.fromCharCode(65 + i));
+        for (const q of b.questions) {
+          if (!letters.includes(String(q.answer).trim())) {
+            errs.push(`${label}: "${q.text.slice(0, 40)}..." javobi "${q.answer}" variantlar ichida yo'q`);
+          }
+        }
+      }
+
+      if (b.type === 'multiple_choice') {
+        for (const q of b.questions) {
+          if (!q.options || q.options.length < 3) errs.push(`${label}: MC savolda 3+ variant kerak`);
+        }
+      }
+
+      if (LISTENING_COMPLETION.includes(b.type)) {
+        const limit = maxWords(meta.wordLimit);
+        const numbersFree = /NUMBER/i.test(meta.wordLimit);
+        for (const q of b.questions) {
+          for (const alt of String(q.answer).split('|')) {
+            const words = alt.trim().split(/\s+/).filter(Boolean)
+              .filter((w) => !(numbersFree && /^[\d£$%.,:-]+$/.test(w)));
+            if (words.length > limit) {
+              errs.push(`${label}: "${alt.trim()}" javobi ${words.length} so'z — chegarasi "${meta.wordLimit}"`);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const allTypes = listening.flatMap((s) => s.questions.map((q) => q.type));
+  if (!allTypes.some((t) => MATCHING_TYPES.includes(t))) {
+    errs.push('Listening testida birorta matching savoli yo\'q');
+  }
+
+  return errs;
+}
+
+/**
+ * Javoblar transkriptda haqiqatan aytilganmi — audio qayta yozilmasligi uchun
+ * eng muhim tekshiruv. To'ldirish javoblari transkript matnida bo'lishi shart.
+ */
+export function validateAgainstTranscript(listening, transcript) {
+  const errs = [];
+  if (!transcript) return ['transkript topilmadi'];
+
+  for (const s of listening) {
+    const section = transcript.sections.find((x) => x.sectionNumber === s.sectionNumber);
+    if (!section) { errs.push(`Part ${s.sectionNumber}: transkript yo'q`); continue; }
+    const spoken = section.lines.map((l) => l[1]).join(' ').toLowerCase().replace(/\s+/g, ' ');
+
+    for (const q of s.questions) {
+      if (!LISTENING_COMPLETION.includes(q.type)) continue;
+      const alts = String(q.answer).split('|').map((a) => a.trim().toLowerCase()).filter(Boolean);
+      // Sonlar transkriptda so'z bilan aytiladi ("twenty-four"), javobda esa raqam ("24") —
+      // ularni bu yerda solishtirib bo'lmaydi, baholashda `numbersToDigits` hal qiladi.
+      if (alts.every((a) => /\d/.test(a))) continue;
+      if (!alts.some((a) => spoken.includes(a))) {
+        errs.push(`Part ${s.sectionNumber}: "${alts[0]}" javobi transkriptda aytilmagan`);
+      }
+    }
+  }
+  return errs;
+}

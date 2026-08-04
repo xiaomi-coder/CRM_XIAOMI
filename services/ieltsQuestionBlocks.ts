@@ -241,16 +241,94 @@ export function buildQuestionBlocks<
     return blocks;
 }
 
+const UNITS: Record<string, number> = {
+    zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9,
+    ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16,
+    seventeen: 17, eighteen: 18, nineteen: 19,
+};
+const TENS: Record<string, number> = {
+    twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90,
+};
+const SCALES: Record<string, number> = { hundred: 100, thousand: 1000, million: 1000000 };
+/** Tartib sonlar: "fourteenth" → "fourteen" + "th" belgisi */
+const ORDINALS: Record<string, string> = {
+    first: 'one', second: 'two', third: 'three', fifth: 'five', eighth: 'eight', ninth: 'nine',
+    twelfth: 'twelve', twentieth: 'twenty', thirtieth: 'thirty', fortieth: 'forty', fiftieth: 'fifty',
+};
+
+const wordToNumber = (words: string[]): number | null => {
+    let total = 0;
+    let current = 0;
+    let seen = false;
+    for (const w of words) {
+        if (w === 'and') continue;
+        if (UNITS[w] !== undefined) { current += UNITS[w]; seen = true; }
+        else if (TENS[w] !== undefined) { current += TENS[w]; seen = true; }
+        else if (SCALES[w] !== undefined) {
+            if (SCALES[w] === 100) current = (current || 1) * 100;
+            else { total += (current || 1) * SCALES[w]; current = 0; }
+            seen = true;
+        } else return null;
+    }
+    return seen ? total + current : null;
+};
+
+/**
+ * Son bildiruvchi so'zlarni raqamga aylantiradi: "twenty-four" → "24",
+ * "nine thousand" → "9000", "fourteenth" → "14th".
+ * IELTS'da talaba eshitgan sonni raqam bilan ham, so'z bilan ham yozishi mumkin —
+ * ikkalasi ham to'g'ri hisoblanadi.
+ */
+export const numbersToDigits = (text: string): string => {
+    // "a hundred and twenty" = "one hundred and twenty"
+    const tokens = text.replace(/\ba (hundred|thousand|million)\b/g, 'one $1').split(/\s+/).filter(Boolean);
+    const out: string[] = [];
+    let buffer: string[] = [];
+    let ordinal = false;
+
+    const flush = () => {
+        if (!buffer.length) return;
+        const value = wordToNumber(buffer);
+        if (value === null) out.push(...buffer);
+        else out.push(ordinal ? `${value}${['th', 'st', 'nd', 'rd'][value % 10 > 3 || (value % 100 >= 11 && value % 100 <= 13) ? 0 : value % 10]}` : String(value));
+        buffer = [];
+        ordinal = false;
+    };
+
+    for (const raw of tokens) {
+        // "twenty-four" kabi defisli sonlar ham bo'linadi
+        const parts = raw.split('-');
+        let consumed = true;
+        for (const part of parts) {
+            let w = part;
+            if (ORDINALS[w]) { w = ORDINALS[w]; ordinal = true; }
+            else if (/^(.*?)(ieth|th)$/.test(w)) {
+                const stem = w.replace(/ieth$/, 'y').replace(/th$/, '');
+                if (UNITS[stem] !== undefined || TENS[stem] !== undefined) { w = stem; ordinal = true; }
+            }
+            if (UNITS[w] !== undefined || TENS[w] !== undefined || SCALES[w] !== undefined || (w === 'and' && buffer.length)) {
+                buffer.push(w);
+            } else { consumed = false; break; }
+        }
+        if (!consumed) { flush(); out.push(raw); }
+    }
+    flush();
+    return out.join(' ');
+};
+
 /**
  * Javobni solishtirish uchun normallashtirish.
- * IELTS'da katta/kichik harf va ortiqcha bo'sh joy hisobga olinmaydi.
+ * IELTS'da katta/kichik harf, ortiqcha bo'sh joy va sonning yozilish shakli
+ * (raqam yoki so'z) hisobga olinmaydi.
  */
 export const normalizeAnswer = (value: string): string =>
-    String(value ?? '')
-        .trim()
-        .toLowerCase()
-        .replace(/[.,;:!?]+$/g, '')
-        .replace(/\s+/g, ' ');
+    numbersToDigits(
+        String(value ?? '')
+            .trim()
+            .toLowerCase()
+            .replace(/[.,;:!?]+$/g, '')
+            .replace(/\s+/g, ' ')
+    );
 
 /**
  * Javob to'g'rimi? `correctAnswer` da `|` bilan bir nechta qabul qilinadigan
