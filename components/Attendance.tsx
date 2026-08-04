@@ -21,6 +21,10 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
   const [testNotification, setTestNotification] = useState<{ show: boolean, msg: string }>({ show: false, msg: '' });
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState<{ current: number; total: number } | null>(null);
+  // "Hammasini KETDI" bilan alohida — ikkalasi bir vaqtda ishlamasa ham,
+  // bitta progress holatini bo'lishsa noto'g'ri tugmada foiz ko'rinib qoladi
+  const [sendAllLoading, setSendAllLoading] = useState(false);
+  const [sendAllProgress, setSendAllProgress] = useState<{ current: number; total: number } | null>(null);
 
   const getStudentGroup = (studentId: string) => {
     return groups.find(g => g.studentIds.includes(studentId));
@@ -81,15 +85,21 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
     }
   };
 
+  // Bitta o'quvchi uchun davomat xabari matni — yagona va ommaviy yuborish
+  // ikkalasi ham shundan foydalanadi (matn ikki joyda farqli bo'lib qolmasin)
+  const buildStatusMessage = (student: Student, status: AttendanceStatus) => {
+    const statusText = status === AttendanceStatus.PRESENT ? `✅ ${t.status_present}` : status === AttendanceStatus.ABSENT ? `❌ ${t.status_absent}` : status === AttendanceStatus.LATE ? `⏳ ${t.status_late}` : `🏠 ${t.status_dismissed || "Dars tugadi"}`;
+    const displayDate = currentDate.split('-').reverse().join('.');
+    return `🔔 <b>${t.notification_title}</b>\n\n👤 ${t.student}: <b>${student.name}</b>\n📅 ${t.date}: ${displayDate}\n📊 ${t.status}: ${statusText}\n🏢 ${t.settings}: ${settings.centerName || 'EduControl CRM'}`;
+  };
+
   const handleSendSms = async (student: Student) => {
     const studentGroup = getStudentGroup(student.id);
     const status = getStudentStatus(student.id, studentGroup?.id);
 
     if (!status) return alert(t.mark_attendance_alert || "Please mark attendance first!");
 
-    const statusText = status === AttendanceStatus.PRESENT ? `✅ ${t.status_present}` : status === AttendanceStatus.ABSENT ? `❌ ${t.status_absent}` : status === AttendanceStatus.LATE ? `⏳ ${t.status_late}` : `🏠 ${t.status_dismissed || "Dars tugadi"}`;
-    const displayDate = currentDate.split('-').reverse().join('.');
-    const msg = `🔔 <b>${t.notification_title}</b>\n\n👤 ${t.student}: <b>${student.name}</b>\n📅 ${t.date}: ${displayDate}\n📊 ${t.status}: ${statusText}\n🏢 ${t.settings}: ${settings.centerName || 'EduControl CRM'}`;
+    const msg = buildStatusMessage(student, status);
 
     if (settings.botToken && student.tgChatId) {
       setSendingSms(student.id);
@@ -100,6 +110,46 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
       setTestNotification({ show: true, msg });
       setTimeout(() => setTestNotification({ show: false, msg: '' }), 5000);
     }
+  };
+
+  // Har bir o'quvchining O'Z hozirgi holati (keldi/kelmadi/kechikdi/ketdi)
+  // bo'yicha alohida xabar — "Hammasini KETDI" dan farqli, holatlarni
+  // o'zgartirmaydi, faqat allaqachon belgilanganlarga xabar yuboradi.
+  const handleSendAllSms = async () => {
+    const eligible = filteredStudents
+      .map(student => {
+        const studentGroup = getStudentGroup(student.id);
+        const status = getStudentStatus(student.id, studentGroup?.id);
+        return status ? { student, status } : null;
+      })
+      .filter((x): x is { student: Student; status: AttendanceStatus } => x !== null);
+
+    if (eligible.length === 0) {
+      alert(t.no_marked_students || "Avval hech bo'lmaganda bitta o'quvchi uchun davomatni belgilang!");
+      return;
+    }
+
+    setSendAllLoading(true);
+    setSendAllProgress({ current: 0, total: eligible.length });
+
+    let sentCount = 0;
+    let skippedCount = 0;
+    for (const { student, status } of eligible) {
+      if (settings.botToken && student.tgChatId) {
+        const success = await sendTelegramMessage(settings.botToken, student.tgChatId, buildStatusMessage(student, status));
+        if (success) sentCount++;
+      } else {
+        skippedCount++;
+      }
+      setSendAllProgress(prev => prev ? { current: prev.current + 1, total: prev.total } : null);
+    }
+
+    setSendAllLoading(false);
+    setSendAllProgress(null);
+    alert(
+      `✅ ${sentCount} ${t.notifications_sent || "xabar yuborildi"}` +
+      (skippedCount > 0 ? `\n⚠️ ${skippedCount} ${t.no_telegram_skipped || "o'quvchida Telegram ulanmagani uchun o'tkazib yuborildi"}` : '')
+    );
   };
 
   const handleMarkAll = async (status: AttendanceStatus) => {
@@ -219,7 +269,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
           </div>
           <button
             onClick={() => handleMarkAll(AttendanceStatus.PRESENT)}
-            disabled={bulkLoading || filteredStudents.length === 0}
+            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
             className="flex items-center gap-2 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-40 border border-emerald-100 hover:border-emerald-500"
           >
             <Check size={16} />
@@ -227,7 +277,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
           </button>
           <button
             onClick={() => handleMarkAll(AttendanceStatus.ABSENT)}
-            disabled={bulkLoading || filteredStudents.length === 0}
+            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
             className="flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-500 hover:text-white transition-all disabled:opacity-40 border border-red-100 hover:border-red-500"
           >
             <X size={16} />
@@ -235,7 +285,7 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
           </button>
           <button
             onClick={() => handleMarkAll(AttendanceStatus.LATE)}
-            disabled={bulkLoading || filteredStudents.length === 0}
+            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
             className="flex items-center gap-2 px-5 py-2.5 bg-amber-50 text-amber-600 rounded-2xl font-bold text-sm hover:bg-amber-500 hover:text-white transition-all disabled:opacity-40 border border-amber-100 hover:border-amber-500"
           >
             <Clock size={16} />
@@ -244,13 +294,24 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
           <div className="w-px h-8 bg-slate-200 mx-1 hidden md:block"></div>
           <button
             onClick={handleMarkAllDismissed}
-            disabled={bulkLoading || filteredStudents.length === 0}
+            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
             className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 text-blue-600 rounded-2xl font-bold text-sm hover:bg-blue-600 hover:text-white transition-all disabled:opacity-40 border border-blue-100 hover:border-blue-500"
           >
             {bulkLoading ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
             {bulkProgress
               ? `${bulkProgress.current}/${bulkProgress.total}...`
               : (t.mark_all_dismissed || "Hammasini KETDI (xabar yuborish)")}
+          </button>
+          <div className="w-px h-8 bg-slate-200 mx-1 hidden md:block"></div>
+          <button
+            onClick={handleSendAllSms}
+            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
+            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-all disabled:opacity-40 border border-indigo-100 hover:border-indigo-500"
+          >
+            {sendAllLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+            {sendAllProgress
+              ? `${sendAllProgress.current}/${sendAllProgress.total}...`
+              : (t.send_all_messages || "Barchasiga xabar yuborish")}
           </button>
         </div>
         {bulkLoading && bulkProgress && (
@@ -263,6 +324,19 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
             </div>
             <p className="text-[10px] text-slate-400 font-bold mt-1.5">
               {t.sending_notifications || "Xabarlar yuborilmoqda..."} ({bulkProgress.current}/{bulkProgress.total})
+            </p>
+          </div>
+        )}
+        {sendAllLoading && sendAllProgress && (
+          <div className="mt-3">
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(sendAllProgress.current / sendAllProgress.total) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-[10px] text-slate-400 font-bold mt-1.5">
+              {t.sending_notifications || "Xabarlar yuborilmoqda..."} ({sendAllProgress.current}/{sendAllProgress.total})
             </p>
           </div>
         )}
