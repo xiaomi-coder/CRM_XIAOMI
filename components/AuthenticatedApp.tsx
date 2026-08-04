@@ -362,9 +362,9 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       case 'salary': return <SalaryCalculation t={t} users={users} groups={groups} payments={payments} students={students} currentUser={currentUser} />;
       case 'staff': return <StaffManagement t={t} users={users} groups={groups} onAddUser={u => db.insert('users', { ...u, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDeleteUser={id => db.delete('users', id).then(loadAllData)} onUpdateUser={(id, d) => db.update('users', id, d).then(loadAllData)} />;
       case 'leads':
-      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={async (l) => {
-        // Lid o'quvchiga aylanadi: avval o'quvchi yaratiladi, keyin lid o'chiriladi.
-        // (Avval faqat lid o'chirilardi — ma'lumot butunlay yo'qolib ketardi.)
+      case 'tests': return <Leads t={t} leads={leads} centerId={centerId} students={students} onAdd={l => db.insert('leads', { ...l, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('leads', id).then(loadAllData)} onUpdateStatus={(id, status) => db.update('leads', id, { status }).then(loadAllData)} onRegister={async (l) => {
+        // Lid o'quvchiga aylanadi: o'quvchi yaratiladi, LID ESA SAQLANADI.
+        // (Avval lid o'chirilardi — voronka tarixi va konversiya foizi yo'qolib borardi.)
         await db.insert('students', {
           id: crypto.randomUUID(),
           "centerId": centerId,
@@ -379,7 +379,8 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           tgConnectionCode: '',
           status: StudentStatus.ACTIVE,
         });
-        await db.delete('leads', l.id);
+        // Lid "muvaffaqiyat" bosqichida qoladi — statistikada ko'rinib turadi
+        await db.update('leads', l.id, { status: LeadStatus.REGISTERED });
         loadAllData();
         setActiveTab('students');
       }} onUpdateLead={(id, d) => db.update('leads', id, d).then(loadAllData)} />;
