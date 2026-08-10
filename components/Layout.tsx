@@ -110,102 +110,117 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
 
   const sections = isSuper ? creatorSections : standardSections;
 
+  // Yuqoridagi yo'lchi (breadcrumb) uchun: qaysi bo'limdamiz
+  const activeItem = sections.flatMap(s => s.items).find(i => i.id === activeTab);
+  const activeSection = sections.find(s => s.items.some(i => i.id === activeTab));
+  const currentLabel = activeTab === 'settings' ? t.system_settings : (activeItem?.label || t.dashboard);
+  const currentSection = activeTab === 'settings' ? t.system : (activeSection?.title || t.main);
+
   return (
-    <div className="flex min-h-screen bg-[#f8f9fc]">
-      <aside className="w-72 bg-[#0a0d14] text-white flex flex-col fixed h-full z-20 shadow-2xl">
-        <div className="p-8 flex items-center space-x-4 border-b border-white/5">
-          <div className="bg-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-indigo-500/20">
-            <BrainCircuit size={28} className="text-white" />
+    <div className="flex min-h-screen bg-canvas">
+      {/* ============ Yon menyu ============ */}
+      <aside className="w-60 bg-sidebar text-white flex flex-col fixed h-full z-20">
+        <div className="px-4 py-4 flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-[7px] bg-primary flex items-center justify-center shrink-0">
+            <BrainCircuit size={16} className="text-white" />
           </div>
-          <div>
-            <h1 className="text-xl font-black tracking-tighter italic uppercase leading-none">EDUCONTROL</h1>
-            <p className="text-[7px] font-black text-slate-500 uppercase tracking-[0.4em] mt-1.5">Professional CRM</p>
-          </div>
+          <span className="font-bold text-[14px] tracking-[-0.01em]">EduControl</span>
         </div>
 
-        <nav className="flex-1 px-4 mt-8 space-y-8 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 overflow-y-auto px-2.5 py-1.5 custom-scrollbar">
           {sections.map((section, idx) => (
-            <div key={idx} className="space-y-2">
-              <h3 className="px-4 text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] mb-4">{section.title}</h3>
-              {section.items.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center space-x-3 px-5 py-4 rounded-2xl transition-all duration-300 group ${activeTab === item.id ? 'bg-[#ffc107] text-black shadow-xl scale-[1.02]' : 'text-slate-400 hover:text-white hover:bg-white/5'
-                    }`}
-                >
-                  <item.icon size={18} className={activeTab === item.id ? 'stroke-[2.5px]' : 'opacity-40'} />
-                  <span className={`text-[12px] ${activeTab === item.id ? 'font-black' : 'font-bold uppercase tracking-tight'}`}>{item.label}</span>
-                </button>
-              ))}
+            <div key={idx} className="mb-4">
+              <div className="px-2 pt-2 pb-1.5 text-[10.5px] font-bold uppercase tracking-[0.07em] text-sidebar-label">
+                {section.title}
+              </div>
+              {section.items.map(item => {
+                const on = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-[7px] mb-px transition-colors text-left
+                      ${on ? 'bg-primary text-white' : 'text-[#98A2B3] hover:bg-white/[0.06] hover:text-white'}`}
+                  >
+                    <item.icon size={16} className="shrink-0" />
+                    <span className="text-[13px] font-medium truncate">{item.label}</span>
+                  </button>
+                );
+              })}
             </div>
           ))}
         </nav>
 
-        <div className="p-6 mt-auto border-t border-white/5 bg-white/[0.02]">
+        <div className="px-2.5 pb-3 pt-2 border-t border-white/[0.08]">
           {hasPermission('settings') && (
             <button
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl mb-4 transition-all ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+              className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-[7px] mb-2 transition-colors
+                ${activeTab === 'settings' ? 'bg-primary text-white' : 'text-[#98A2B3] hover:bg-white/[0.06] hover:text-white'}`}
             >
-              <SettingsIcon size={18} className={activeTab === 'settings' ? 'text-white' : 'text-indigo-400'} />
-              <span className="text-[10px] font-black uppercase tracking-widest">{t.system_settings}</span>
+              <SettingsIcon size={16} className="shrink-0" />
+              <span className="text-[13px] font-medium truncate">{t.system_settings}</span>
             </button>
           )}
 
-          <div className="flex items-center gap-4 px-2 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600/20 flex items-center justify-center font-black text-indigo-400 border border-indigo-500/20">
-              {user.name.charAt(0)}
+          <div className="flex items-center gap-2.5 px-2 py-2">
+            <span className="w-8 h-8 rounded-full bg-primary-subtle text-primary flex items-center justify-center text-[12px] font-semibold shrink-0">
+              {user.name.charAt(0).toUpperCase()}
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13px] font-semibold truncate">{user.name}</div>
+              <div className="text-[11px] text-sidebar-label truncate">{roleLabel}</div>
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[11px] font-black text-white truncate">{user.name}</span>
-              <span className="text-[7px] font-black text-indigo-400 uppercase tracking-widest truncate">{roleLabel}</span>
-            </div>
+            <button
+              onClick={onLogout}
+              title={t.logout}
+              className="p-1.5 rounded-md text-[#98A2B3] hover:text-danger hover:bg-white/[0.06] transition-colors shrink-0"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
-
-          <button onClick={onLogout} className="w-full flex items-center justify-center gap-2 py-3 text-[9px] font-black uppercase text-red-500/60 hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all">
-            <LogOut size={14} /> <span>{t.logout}</span>
-          </button>
         </div>
       </aside>
 
-      <main className="flex-1 ml-72 p-10">
-        <header className="mb-10 flex items-center justify-between bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100">
-          <div className="flex flex-col">
-            <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-1.5 ml-1">{t.online_system}</p>
-            <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-              {activeTab === 'settings' ? t.system_settings : (sections.flatMap(s => s.items).find(i => i.id === activeTab)?.label || t.dashboard)}
-            </h2>
+      {/* ============ Asosiy qism ============ */}
+      <div className="flex-1 ml-60 min-w-0">
+        {/* Yuqori panel */}
+        <header className="sticky top-0 z-10 bg-surface border-b border-line px-6 h-14 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-[13.5px] min-w-0">
+            <span className="text-muted truncate">{currentSection}</span>
+            <span className="text-muted">/</span>
+            <span className="font-semibold text-ink truncate">{currentLabel}</span>
           </div>
-          <div className="bg-[#0a0d14] px-10 py-5 rounded-[2rem] shadow-2xl flex items-center gap-10 border border-white/5">
-            <div className="flex items-center gap-8 border-r border-white/10 pr-10">
-              <div className="flex items-center gap-4">
-                <Clock className="text-indigo-500" size={24} />
-                <span className="text-3xl font-black text-white font-mono tracking-widest">{formatClock(currentTime)}</span>
-              </div>
-              <div className="flex bg-white/5 p-1 rounded-xl">
-                {(['uz', 'ru', 'en'] as Language[]).map(l => (
-                  <button
-                    key={l}
-                    onClick={() => handleLanguageChange(l)}
-                    className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all ${lang === l ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="hidden md:flex items-center gap-1 bg-canvas border border-line rounded-md p-0.5">
+              {(['uz', 'ru', 'en'] as Language[]).map(l => (
+                <button
+                  key={l}
+                  onClick={() => handleLanguageChange(l)}
+                  className={`px-2 py-1 rounded text-[11px] font-semibold uppercase transition-colors
+                    ${lang === l ? 'bg-primary text-white' : 'text-ink-2 hover:text-ink'}`}
+                >
+                  {l}
+                </button>
+              ))}
             </div>
-            <div className="flex items-center gap-4">
-              <Calendar className="text-amber-400" size={20} />
-              <div className="flex flex-col text-white">
-                <span className="text-[13px] font-black leading-none">{dateStr}</span>
-                <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mt-1.5 italic transition-all">{weekday}</span>
-              </div>
+
+            <div className="hidden lg:flex items-center gap-1.5 text-[13px] text-ink-2 tabular-nums">
+              <Clock size={15} className="text-muted" />
+              <span>{formatClock(currentTime)}</span>
+              <span className="text-muted mx-1">·</span>
+              <span>{dateStr}</span>
             </div>
+
+            <span className="w-8 h-8 rounded-full bg-primary-subtle text-primary flex items-center justify-center text-[12px] font-semibold">
+              {user.name.charAt(0).toUpperCase()}
+            </span>
           </div>
         </header>
-        <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">{children}</div>
-      </main>
+
+        <main className="p-6">{children}</main>
+      </div>
     </div>
   );
 };
