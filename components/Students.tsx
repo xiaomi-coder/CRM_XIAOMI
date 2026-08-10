@@ -1,7 +1,8 @@
 
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Send, MessageSquare, BarChart3, TrendingUp, Calendar } from 'lucide-react';
-import { Student, Group, User, StudentStatus, Attendance, AttendanceStatus } from '../types';
+import { Student, Group, User, StudentStatus, Attendance, AttendanceStatus, Payment, Result } from '../types';
+import StudentProfile from './StudentProfile';
 import { translations, Language } from '../services/languageContext';
 import { sendTelegramMessage } from '../services/telegramService';
 import { toast } from '../services/toast';
@@ -13,6 +14,8 @@ interface StudentsProps {
   groups: Group[];
   user: User;
   attendance: Attendance[];
+  payments?: Payment[];
+  results?: Result[];
   settings: { botToken: string; centerName: string };
   onAdd: (student: Omit<Student, 'id' | 'centerId' | 'tgEnabled' | 'tgConnectionCode' | 'status'>, groupId?: string) => void;
   onDelete: (id: string) => void;
@@ -20,8 +23,10 @@ interface StudentsProps {
   onUpdateStudent: (id: string, data: Partial<Student>) => void;
 }
 
-const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendance, settings, onAdd, onDelete, onUpdateStatus, onUpdateStudent }) => {
+const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendance, payments = [], results = [], settings, onAdd, onDelete, onUpdateStatus, onUpdateStudent }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  // Ro'yxatdagi o'quvchi ustiga bosilganda to'liq profil ochiladi
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [statusMenuId, setStatusMenuId] = useState<string | null>(null);
   const [progressStudent, setProgressStudent] = useState<Student | null>(null);
@@ -176,6 +181,23 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
     setFormData({ name: '', phone: '', parentName: '', parentPhone: '', selectedGroupId: '' });
   };
 
+  // Profil ochilgan bo'lsa — ro'yxat o'rniga shuni ko'rsatamiz
+  const profileStudent = profileId ? students.find(s => s.id === profileId) : null;
+  if (profileStudent) {
+    return (
+      <StudentProfile
+        t={t}
+        student={profileStudent}
+        groups={groups}
+        payments={payments}
+        attendance={attendance}
+        results={results}
+        onBack={() => setProfileId(null)}
+        onSendMessage={() => setSendMessageStudent(profileStudent)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Sahifa sarlavhasi */}
@@ -243,10 +265,17 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
                 <tr key={student.id} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <Avatar name={student.name} size={36} />
+                      <button onClick={() => setProfileId(student.id)} className="shrink-0" title={student.name}>
+                        <Avatar name={student.name} size={36} />
+                      </button>
                       <div>
                         <div className="font-semibold text-ink text-sm flex items-center gap-1.5">
-                          {student.name}
+                          <button
+                            onClick={() => setProfileId(student.id)}
+                            className="hover:text-primary hover:underline text-left transition-colors"
+                          >
+                            {student.name}
+                          </button>
                           <div className="relative inline-block">
                             <button onClick={() => setStatusMenuId(statusMenuId === student.id ? null : student.id)} className="p-1 hover:bg-slate-200 rounded-md text-slate-400 transition-all opacity-0 group-hover:opacity-100">
                               <Settings2 size={14} />

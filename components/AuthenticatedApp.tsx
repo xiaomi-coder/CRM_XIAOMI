@@ -260,6 +260,8 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           groups={groups}
           user={currentUser}
           attendance={attendance}
+          payments={payments}
+          results={results}
           settings={{ botToken: currentSettings?.botToken || '', centerName: currentSettings?.centerName || "O'quv markazi" }}
           onAdd={async (s, gid) => {
             const id = crypto.randomUUID();
