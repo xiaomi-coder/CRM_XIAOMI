@@ -5,6 +5,7 @@ import { Student, Group, User, StudentStatus, Attendance, AttendanceStatus } fro
 import { translations, Language } from '../services/languageContext';
 import { sendTelegramMessage } from '../services/telegramService';
 import { toast } from '../services/toast';
+import { Avatar } from './ui';
 
 interface StudentsProps {
   t: any;
@@ -234,7 +235,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
                 <th className="px-6 py-3.5">{t.parent}</th>
                 <th className="px-6 py-3.5">{t.message || 'Xabar'}</th>
                 <th className="px-6 py-3.5">{t.balance}</th>
-                <th className="px-6 py-3.5 text-right">{t.main}</th>
+                <th className="px-6 py-3.5 text-right">{t.actions || 'Amallar'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -242,9 +243,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
                 <tr key={student.id} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="bg-primary text-white w-9 h-9 rounded-lg flex items-center justify-center font-semibold text-xs shrink-0">
-                        {student.id.slice(-3).toUpperCase()}
-                      </div>
+                      <Avatar name={student.name} size={36} />
                       <div>
                         <div className="font-semibold text-ink text-sm flex items-center gap-1.5">
                           {student.name}
