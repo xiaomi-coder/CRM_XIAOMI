@@ -374,3 +374,31 @@ qaytib yoziladi).
 - Hali qilinmagan: creator panelida "sinov tugayotgan markazlar" ro'yxati
   (bot yoqilgandan keyin qo'shish mantiqiy — o'sha payt platformChatId
   to'ldirilgan markazlar ko'payadi).
+
+## Davomat: ommaviy xabar yuborish ✅ (2026-08-05)
+
+- Har o'quvchi qatorida alohida "xabar yuborish" tugmasi bor edi, lekin
+  ommaviysi yo'q edi (faqat "Hammasini KETDI" — u holatni ham o'zgartiradi).
+- Qo'shildi: **"Barchasiga xabar yuborish"** — holatlarga TEGMAYDI, faqat
+  allaqachon belgilanganlarga (keldi/kelmadi/kechikdi/ketdi) har birining
+  O'Z holati haqida xabar yuboradi. Telegram ulanmaganlar o'tkazib yuboriladi,
+  yakunda "N yuborildi / M o'tkazib yuborildi" ko'rsatiladi.
+- Xabar matni `buildStatusMessage()` da — yakka va ommaviy yuborish bitta
+  manbadan foydalanadi (matn ikki joyda farq qilib qolmasin).
+- `bulkLoading/bulkProgress` dan ALOHIDA `sendAllLoading/sendAllProgress` —
+  aks holda progress noto'g'ri tugmada ko'rinardi.
+- Demoda sinaldi: 6 ta belgilangan o'quvchi to'g'ri topildi.
+
+## ⚠️ Vercel deploy tuzog'i (2026-08-10)
+
+Ikki marta ketma-ket muammo bo'ldi, sababi bizning kodda EMAS:
+1. `67afff8` push qilinganda GitHub→Vercel **webhook umuman ishlamadi** —
+   Vercel build ham boshlamadi (GitHub'da kod bor, Vercel'da deploy yo'q).
+2. Bo'sh commit bilan qayta urinilganda build 11 soniyada tugadi-yu,
+   **"Deploying outputs..." bosqichida 13+ daqiqa osilib** qoldi → CANCELED.
+3. Uchinchi urinish **21 soniyada** muvaffaqiyatli tugadi.
+
+**Xulosa:** deploy uzoq cho'zilsa — Vercel status sahifasini tekshirish shart
+emas (u "operational" ko'rsatib turaveradi). Eng tez yechim: bo'sh commit
+bilan qayta push (`git commit --allow-empty`). Osilgan deploy CANCELED
+bo'lguncha kutish kerak, aks holda navbatda ikkitasi turib qoladi.
