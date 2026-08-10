@@ -468,6 +468,28 @@ ularni topa olmaydi (ALIGN xaritasi orqali qilingan).
   so'rov yo'q (payments va results AuthenticatedApp'dan uzatiladi).
   Telegram tabida ulanmagan o'quvchining KODI ko'rsatiladi.
 
+## Menyu: "IELTS Mock" olib tashlandi (2026-08-10)
+
+Foydalanuvchi to'g'ri payqadi: menyudagi ikkita IELTS bandidan **faqat bittasi
+foydali** edi.
+
+- **`ielts` → IELTSMain** = imtihon TOPSHIRISH ekrani. Direktor bosganda o'z
+  ismi bilan "Academic / General Training" boshlash sahifasi ochilardi —
+  ma'nosiz. → **Menyudan olib tashlandi** (Layout va MobileSidebar).
+- **`tests_manager` → TestsManager** = haqiqiy boshqaruv: test yaratish,
+  platforma testlari, **PIN berish**. Bazadagi 10 test va 7 PIN shundan. →
+  Qoldi, nomi **"IELTS testlari"** ga o'zgartirildi (avval "Testlar" edi,
+  chalg'ituvchi).
+
+⚠️ `case 'ielts'` marshruti AuthenticatedApp'da SAQLANDI — o'quvchi kirish
+sahifasidagi PIN orqali kirganda `initialTab='ielts'` bilan shu yerga tushadi.
+Uni o'chirmang.
+
+📊 Foydalanish statistikasi (qaror uchun tekshirilgan): 10 urinish, shundan
+7 tasi GLOBAL (creator sinovi), oxirgisi 31-iyul. `test_templates` = 0 —
+lekin u BUTUNLAY BOSHQA, eski so'rovnoma tizimi (lidga test yuborish),
+menyudagi "Testlar" ga aloqasi yo'q.
+
 ### ⚠️ Butun ilova bo'ylab takrorlangan xato
 "Amallar" ustuni **uch joyda** `t.main` ("Asosiy") deb nomlangan edi —
 Xarajatlar, To'lovlar, O'quvchilar. Uchchalasi ham tuzatildi. Yangi jadval

@@ -81,8 +81,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
   if (hasPermission('dashboard')) mainItems.push({ id: 'dashboard', label: t.dashboard, icon: LayoutDashboard });
   if (hasPermission('leads')) mainItems.push({ id: 'leads', label: t.leads, icon: UserPlus });
   if (isDirector || isAdmin) {
-    mainItems.push({ id: 'ielts', label: 'IELTS Mock', icon: GraduationCap });
-    mainItems.push({ id: 'tests_manager', label: 'Testlar', icon: ClipboardList });
+    // "IELTS Mock" (imtihon topshirish ekrani) menyuda YO'Q — u o'quvchi uchun,
+    // direktor bosganda o'z ismi bilan imtihon boshlash sahifasi ochilardi.
+    // O'quvchi baribir kirish sahifasidagi PIN orqali kiradi (initialTab='ielts').
+    mainItems.push({ id: 'tests_manager', label: t.ielts_tests || 'IELTS testlari', icon: ClipboardList });
   }
   if (mainItems.length > 0) standardSections.push({ title: t.main, items: mainItems });
 

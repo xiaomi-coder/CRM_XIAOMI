@@ -59,8 +59,9 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
         if (hasPermission('dashboard')) items.push({ id: 'dashboard', label: t.dashboard, icon: LayoutDashboard });
         if (hasPermission('leads')) items.push({ id: 'leads', label: t.leads, icon: UserPlus });
         if (isDirector || isAdmin) {
-            items.push({ id: 'ielts', label: 'IELTS Mock', icon: GraduationCap });
-            items.push({ id: 'tests_manager', label: 'Testlar', icon: ClipboardList });
+            // "IELTS Mock" olib tashlandi — u o'quvchining imtihon ekrani,
+            // direktorga kerak emas (o'quvchi PIN orqali kiradi)
+            items.push({ id: 'tests_manager', label: t.ielts_tests || 'IELTS testlari', icon: ClipboardList });
         }
 
         if (hasPermission('students')) items.push({ id: 'students', label: t.students, icon: Users });
