@@ -389,6 +389,24 @@ qaytib yoziladi).
   aks holda progress noto'g'ri tugmada ko'rinardi.
 - Demoda sinaldi: 6 ta belgilangan o'quvchi to'g'ri topildi.
 
+## Platforma boti YOQILDI ✅ (2026-08-10)
+
+- Bot: **@Eduprocrmbot** ("EduProCrm"). Egasi (xabar keladigan) chat: foydalanuvchi.
+- ⚠️ **Token repoda YO'Q va bo'lmasligi kerak** — faqat VPS'da `platform_config`
+  jadvalida. Kerak bo'lsa: `sudo -u postgres psql -d crm -c "SELECT * FROM platform_config"`.
+- `setup-platform-bot.sh` ishga tushirildi: baza to'ldirildi, Telegram webhook
+  `https://eduprocrm.uz/api/platform-bot?token=...` ga ulandi,
+  `crm-trial-reminders.timer` (har kuni 09:30) yoqildi.
+- **Haqiqiy Telegram orqali uchdan-uch sinaldi:**
+  1. `?start=<token>` → bot "📱 Raqamni ulashish" tugmasini so'radi ✓
+  2. Raqam ulashildi → `confirm_tg_verification` ishladi, MOS KELMASLIK
+     tarmog'i to'g'ri javob berdi (saytda 998907776655, Telegram 998906127171
+     → Telegram raqami olindi) ✓
+  3. Egaga "🆕 Yangi ro'yxat tasdiqlandi" bildirishnomasi keldi ✓
+- Sinov yozuvi keyin `tg_verifications` dan o'chirildi.
+- 📌 Endi `/register` da tasdiqlash MAJBURIY (`tg_platform_status` →
+  `enabled:true`). Ya'ni Telegram'siz markaz ro'yxatdan o'ta olmaydi.
+
 ## Creator paneli: muddati tugayotgan markazlar ✅ (2026-08-10)
 
 - `CreatorComponents.tsx` ichida `ExpiringCenters` bloki — creator "Boshqaruv"
