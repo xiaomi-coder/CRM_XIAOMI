@@ -20,9 +20,11 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
   const [showModal, setShowModal] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  // Sana filtri uchun holatlar
+  // Filtr holatlari
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<'ALL' | Expense['category']>('ALL');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -39,24 +41,66 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
     OTHER: { label: t.cat_other, color: 'bg-slate-100 text-slate-600', icon: Info }
   };
 
-  // Filtrlangan xarajatlar
+  // Sanalar "YYYY-MM-DD" ko'rinishida, shuning uchun to'g'ridan-to'g'ri
+  // solishtirish mumkin — Date orqali o'girish vaqt mintaqasi tufayli bir kun
+  // surilib ketishi mumkin edi.
   const filteredExpenses = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
     return expenses.filter(exp => {
-      const expDate = new Date(exp.date);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
-
-      if (start && expDate < start) return false;
-      if (end && expDate > end) return false;
+      if (startDate && exp.date < startDate) return false;
+      if (endDate && exp.date > endDate) return false;
+      if (categoryFilter !== 'ALL' && exp.category !== categoryFilter) return false;
+      if (term && !exp.title.toLowerCase().includes(term)) return false;
       return true;
     }).sort((a, b) => b.date.localeCompare(a.date));
-  }, [expenses, startDate, endDate]);
+  }, [expenses, startDate, endDate, categoryFilter, searchTerm]);
 
   const totalFiltered = useMemo(() => filteredExpenses.reduce((sum, e) => sum + e.amount, 0), [filteredExpenses]);
+
+  // Turkumlar bo'yicha taqsimot — direktor pul qayerga ketayotganini ko'radi
+  const byCategory = useMemo(() => {
+    const acc: Record<string, number> = {};
+    filteredExpenses.forEach(e => { acc[e.category] = (acc[e.category] || 0) + e.amount; });
+    return Object.entries(acc).sort((a, b) => b[1] - a[1]);
+  }, [filteredExpenses]);
+
+  const hasFilter = !!(startDate || endDate || searchTerm || categoryFilter !== 'ALL');
 
   const clearFilter = () => {
     setStartDate('');
     setEndDate('');
+    setSearchTerm('');
+    setCategoryFilter('ALL');
+  };
+
+  // Vaqt mintaqasidan qat'i nazar to'g'ri ishlaydi (toISOString bir kun suradi)
+  const fmtDate = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+  const applyPreset = (preset: 'this_month' | 'last_month' | 'this_year') => {
+    const n = new Date();
+    if (preset === 'this_month') {
+      setStartDate(fmtDate(new Date(n.getFullYear(), n.getMonth(), 1)));
+      setEndDate(fmtDate(new Date(n.getFullYear(), n.getMonth() + 1, 0)));
+    } else if (preset === 'last_month') {
+      setStartDate(fmtDate(new Date(n.getFullYear(), n.getMonth() - 1, 1)));
+      setEndDate(fmtDate(new Date(n.getFullYear(), n.getMonth(), 0)));
+    } else {
+      setStartDate(fmtDate(new Date(n.getFullYear(), 0, 1)));
+      setEndDate(fmtDate(new Date(n.getFullYear(), 11, 31)));
+    }
+  };
+
+  const presetActive = (preset: 'this_month' | 'last_month' | 'this_year') => {
+    const n = new Date();
+    if (preset === 'this_month')
+      return startDate === fmtDate(new Date(n.getFullYear(), n.getMonth(), 1)) &&
+        endDate === fmtDate(new Date(n.getFullYear(), n.getMonth() + 1, 0));
+    if (preset === 'last_month')
+      return startDate === fmtDate(new Date(n.getFullYear(), n.getMonth() - 1, 1)) &&
+        endDate === fmtDate(new Date(n.getFullYear(), n.getMonth(), 0));
+    return startDate === fmtDate(new Date(n.getFullYear(), 0, 1)) &&
+      endDate === fmtDate(new Date(n.getFullYear(), 11, 31));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -95,17 +139,35 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
             <p className="text-[10px] font-bold text-red-100 bg-white/10 w-fit px-4 py-1 rounded-full backdrop-blur-sm">
               {t.count}: {filteredExpenses.length}
             </p>
-            {(startDate || endDate) && (
-              <button onClick={clearFilter} className="flex items-center gap-1 text-[10px] font-black uppercase text-white hover:text-amber-400 transition-colors">
+            {hasFilter && (
+              <button onClick={clearFilter} className="flex items-center gap-1 text-[10px] font-black uppercase text-white hover:text-amber-300 transition-colors">
                 <RefreshCcw size={12} /> {t.clear_filter}
               </button>
             )}
           </div>
+
+          {/* Turkumlar bo'yicha taqsimot — pul qayerga ketgani darrov ko'rinadi */}
+          {byCategory.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-5">
+              {byCategory.map(([key, sum]) => {
+                const cat = categories[key] || categories.OTHER;
+                const percent = totalFiltered > 0 ? Math.round((sum / totalFiltered) * 100) : 0;
+                return (
+                  <div key={key} className="bg-white/10 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10">
+                    <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest opacity-80">
+                      <cat.icon size={11} /> {cat.label} · {percent}%
+                    </div>
+                    <div className="text-sm font-black mt-0.5">{sum.toLocaleString()}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="relative z-10 bg-white text-red-600 px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all group"
+          className="relative z-10 bg-white text-red-600 px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all group shrink-0"
         >
           <Plus size={20} className="stroke-[3px] group-hover:rotate-90 transition-transform duration-300" />
           {t.add_expense}
@@ -113,44 +175,96 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
       </div>
 
       {/* Filtrlash Paneli */}
-      <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-6">
+      <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
         <div className="flex items-center gap-3">
           <div className="bg-red-50 p-2 rounded-xl text-red-600">
             <Filter size={18} />
           </div>
-          <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs">{t.from_date}:</h4>
+          <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs">{t.filter || 'Filtr'}</h4>
         </div>
 
-        <div className="flex flex-1 items-center gap-4 w-full">
-          <div className="flex-1 relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t.from_date}</span>
+        {/* Qidiruv + sana oraligi — yorliqlar maydon USTIDA (avval ichida edi
+            va maydonning o'z matni bilan ustma-ust tushib qolardi) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="lg:col-span-2 space-y-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.search_label || 'Qidirish'}</label>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+              <input
+                type="text"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:bg-white transition-all"
+                placeholder={t.search}
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.from_date}</label>
             <input
               type="date"
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:bg-white transition-all"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
-          <div className="flex-1 relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t.to_date}</span>
+          <div className="space-y-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.to_date}</label>
             <input
               type="date"
-              className="w-full pl-14 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:bg-white transition-all"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
         </div>
+
+        {/* Tez tanlash + turkum */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          {([['this_month', t.this_month || 'Bu oy'], ['last_month', t.last_month || "O'tgan oy"], ['this_year', t.this_year || 'Bu yil']] as const).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => applyPreset(key as any)}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${presetActive(key as any)
+                ? 'bg-red-600 text-white border-red-600 shadow-lg shadow-red-100'
+                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-red-200'}`}
+            >
+              {label}
+            </button>
+          ))}
+
+          <div className="w-px h-7 bg-slate-200 mx-1 hidden sm:block"></div>
+
+          <button
+            onClick={() => setCategoryFilter('ALL')}
+            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${categoryFilter === 'ALL'
+              ? 'bg-slate-900 text-white border-slate-900'
+              : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-slate-300'}`}
+          >
+            {t.all_categories || 'Barchasi'}
+          </button>
+          {Object.entries(categories).map(([key, val]) => (
+            <button
+              key={key}
+              onClick={() => setCategoryFilter(key as any)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${categoryFilter === key
+                ? 'bg-slate-900 text-white border-slate-900'
+                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-slate-300'}`}
+            >
+              <val.icon size={12} /> {val.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Ro'yxat */}
       <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+        <div className="p-8 border-b border-gray-50 flex items-center justify-between gap-4">
           <h4 className="font-black text-slate-800 uppercase tracking-tighter text-lg flex items-center gap-2">
             <Receipt className="text-red-600" size={20} /> {t.history}
           </h4>
           <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            {startDate || endDate ? t.search : t.all_students}
+            {filteredExpenses.length} / {expenses.length}
           </div>
         </div>
         <table className="w-full text-left">
@@ -160,7 +274,7 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
               <th className="px-8 py-5">{t.category}</th>
               <th className="px-8 py-5">{t.attendance_date}</th>
               <th className="px-8 py-5 text-right">{t.amount}</th>
-              <th className="px-8 py-5 text-right">{t.main}</th>
+              <th className="px-8 py-5 text-right">{t.actions || 'Amallar'}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">

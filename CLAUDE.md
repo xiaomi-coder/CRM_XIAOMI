@@ -389,6 +389,30 @@ qaytib yoziladi).
   aks holda progress noto'g'ri tugmada ko'rinardi.
 - Demoda sinaldi: 6 ta belgilangan o'quvchi to'g'ri topildi.
 
+## Xarajatlar bo'limi qayta ishlandi ✅ (2026-08-10)
+
+Foydalanuvchi UI/UX yomonligini va sana filtrida "ikkita yozuv ustma-ust"
+tushganini ko'rsatdi. Topilgan va tuzatilgan xatolar:
+
+1. **Ustma-ust yozuv** — sana yorlig'i maydon ICHIGA `absolute` qilib
+   qo'yilgan edi, `<input type=date>` ning o'z "dd/mm/yyyy" matni bilan
+   to'qnashardi. Ustiga-ustak o'sha yorliq panel sarlavhasida ham
+   takrorlangan. → Yorliqlar maydon USTIGA chiqarildi.
+2. **"Barcha o'quvchilar"** — xarajatlar ro'yxati sarlavhasida o'quvchilar
+   haqidagi matn turardi (nusxa-ko'chirish xatosi) → `N / jami` bilan almashdi.
+3. **`t.amount` tarjimasi UMUMAN YO'Q edi** — butun ilovada bo'sh chiqardi.
+   Eng yomoni: ota-onaga boradigan to'lov tasdig'i xabarida "💰 : 500,000"
+   deb ketardi va Excel eksport sarlavhasi bo'sh edi. → uz/ru/en qo'shildi
+   (Payments bo'limi ham shu bilan tuzaldi).
+4. **Sana solishtirish** — `new Date(...)` orqali edi, vaqt mintaqasi tufayli
+   chegaradagi kun surilib ketishi mumkin edi → "YYYY-MM-DD" satrlarini
+   to'g'ridan-to'g'ri solishtirishga o'tkazildi (`fmtDate` ham local).
+
+Qo'shilgan imkoniyatlar: nom bo'yicha qidiruv, turkum bo'yicha filtr
+(chiplar), tez tanlash (Bu oy / O'tgan oy / Bu yil), va sarlavha blokida
+**turkumlar bo'yicha taqsimot** (foiz + summa) — direktor pul qayerga
+ketayotganini darrov ko'radi.
+
 ## Platforma boti YOQILDI ✅ (2026-08-10)
 
 - Bot: **@Eduprocrmbot** ("EduProCrm"). Egasi (xabar keladigan) chat: foydalanuvchi.
