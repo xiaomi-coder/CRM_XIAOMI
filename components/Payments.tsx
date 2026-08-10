@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Payment, Student, SystemSettings, Group } from '../types';
 import { CreditCard, DollarSign, Plus, Search, Calendar, Download, Trash2, Pencil, X, User, Filter, RefreshCcw } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
+import { PageHeader, Card, CardHeader, Button, KpiCard, Field, Input, Table, Th, Td, StatusBadge, Avatar, EmptyState } from './ui';
 
 interface PaymentsProps {
   t: any;
@@ -198,206 +199,167 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
   };
 
   return (
-    <div className="space-y-6">
-      {/* Jami tushum — filtrga bo'ysunadi */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600 to-teal-700 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl shadow-emerald-100 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-white/10">
-        <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12"><DollarSign size={160} /></div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md"><DollarSign size={20} /></div>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80">
-              {hasFilter ? (t.filtered_total || "Tanlangan davr bo'yicha") : (t.total || 'Jami')}
-            </p>
-          </div>
-          <h3 className="text-4xl sm:text-5xl font-black tracking-tighter italic">
-            {grandTotal.toLocaleString()} <span className="text-lg font-bold not-italic opacity-70">UZS</span>
-          </h3>
-          <div className="flex items-center gap-4 mt-4 flex-wrap">
-            <p className="text-[10px] font-bold text-emerald-50 bg-white/10 px-4 py-1 rounded-full backdrop-blur-sm">
-              {t.count}: {filteredPayments.length}
-            </p>
-            {hasFilter && (
-              <button onClick={clearFilter} className="flex items-center gap-1 text-[10px] font-black uppercase text-white hover:text-amber-300 transition-colors">
-                <RefreshCcw size={12} /> {t.clear_filter}
-              </button>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2 mt-5">
-            <div className="bg-white/10 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10">
-              <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest opacity-80">
-                <DollarSign size={11} /> {t.cash}
-              </div>
-              <div className="text-sm font-black mt-0.5">{cashTotal.toLocaleString()}</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10">
-              <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest opacity-80">
-                <CreditCard size={11} /> {t.card}
-              </div>
-              <div className="text-sm font-black mt-0.5">{cardTotal.toLocaleString()}</div>
-            </div>
-          </div>
-        </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.payments}
+        subtitle={t.payments_hint || "To'lovlarni qabul qiling va tushumni kuzating."}
+        actions={
+          <>
+            <Button variant="secondary" onClick={exportPaymentsToExcel}>
+              <Download size={15} /> Excel
+            </Button>
+            <Button onClick={() => { setShowModal(true); setStudentSearch(''); }}>
+              <Plus size={16} /> {t.accept_payment}
+            </Button>
+          </>
+        }
+      />
 
-        <button
-          onClick={() => { setShowModal(true); setStudentSearch(''); }}
-          className="relative z-10 bg-white text-emerald-700 px-8 sm:px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all group shrink-0"
-        >
-          <Plus size={20} className="stroke-[3px] group-hover:rotate-90 transition-transform duration-300" />
-          {t.accept_payment}
-        </button>
+      {/* Ko'rsatkichlar — filtrga bo'ysunadi */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <KpiCard
+          label={hasFilter ? (t.filtered_total || "Tanlangan davr bo'yicha") : (t.total || 'Jami')}
+          value={grandTotal.toLocaleString()}
+          hint="UZS"
+        />
+        <KpiCard label={t.count} value={filteredPayments.length} />
+        <KpiCard label={t.cash} value={cashTotal.toLocaleString()} hint="UZS" />
+        <KpiCard label={t.card} value={cardTotal.toLocaleString()} hint="UZS" />
       </div>
 
-      {/* Filtr paneli */}
-      <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-emerald-50 p-2 rounded-xl text-emerald-600"><Filter size={18} /></div>
-          <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs">{t.filter || 'Filtr'}</h4>
+      {/* Filtr */}
+      <Card className="mb-5">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-2 text-ink-2">
+            <Filter size={16} />
+            <span className="text-[13px] font-semibold">{t.filter || 'Filtr'}</span>
+          </div>
+          {hasFilter && (
+            <Button variant="ghost" size="sm" onClick={clearFilter}>
+              <RefreshCcw size={13} /> {t.clear_filter}
+            </Button>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="lg:col-span-2 space-y-2">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.search_label || 'Qidirish'}</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <Field label={t.search_label || 'Qidirish'} className="lg:col-span-2">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-              <input
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white transition-all"
-                placeholder={t.search}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} />
+              <Input className="pl-9" placeholder={t.search} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
             </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.from_date}</label>
-            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white transition-all" />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.to_date}</label>
-            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white transition-all" />
-          </div>
+          </Field>
+          <Field label={t.from_date}>
+            <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+          </Field>
+          <Field label={t.to_date}>
+            <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+          </Field>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        <div className="flex flex-wrap items-center gap-2">
           {([['this_month', t.this_month || 'Bu oy'], ['last_month', t.last_month || "O'tgan oy"], ['this_year', t.this_year || 'Bu yil']] as const).map(([key, label]) => (
-            <button
+            <Button
               key={key}
+              size="sm"
+              variant={presetActive(key as any) ? 'primary' : 'secondary'}
               onClick={() => applyPreset(key as any)}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${presetActive(key as any)
-                ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-100'
-                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-emerald-200'}`}
             >
               {label}
-            </button>
+            </Button>
           ))}
         </div>
-      </div>
+      </Card>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center gap-4">
-          <h3 className="font-bold text-gray-800">{t.last_payments}</h3>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              {filteredPayments.length} / {payments.length}
-            </span>
-            <button
-              onClick={exportPaymentsToExcel}
-              className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[11px] font-black uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
-            >
-              <Download size={16} /> Excel
-            </button>
-          </div>
+      {/* Ro'yxat */}
+      <Card padded={false}>
+        <div className="px-5 pt-5">
+          <CardHeader title={t.last_payments} subtitle={`${filteredPayments.length} / ${payments.length}`} />
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-gray-50 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                <th className="px-6 py-4">{t.students}</th>
-                <th className="px-6 py-4">{t.groups}</th>
-                <th className="px-6 py-4">{t.attendance_date}</th>
-                <th className="px-6 py-4">{t.month}</th>
-                <th className="px-6 py-4">{t.amount}</th>
-                <th className="px-6 py-4">{t.payment_type || "To'lov turi"}</th>
-                <th className="px-6 py-4">{t.actions}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filteredPayments.map(payment => (
-                <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-gray-800">{getStudentName(payment.studentId)}</span>
-                    <p className="text-[10px] text-gray-400 font-bold">{getStudent(payment.studentId)?.phone}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    {payment.groupId ? (
-                      <span className="text-xs font-bold px-2 py-1 rounded-full bg-purple-50 text-purple-600">
-                        {getGroupName(payment.groupId)}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-400">—</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-gray-500 text-sm">
-                    {payment.date}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-2 text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded-lg w-fit text-xs">
-                      <Calendar size={12} />
-                      <span>{payment.forMonth}</span>
+        <Table>
+          <thead>
+            <tr>
+              <Th>{t.students}</Th>
+              <Th>{t.groups}</Th>
+              <Th>{t.attendance_date}</Th>
+              <Th>{t.month}</Th>
+              <Th align="right">{t.amount}</Th>
+              <Th>{t.payment_type || "To'lov turi"}</Th>
+              <Th align="right">{t.actions}</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredPayments.map(payment => {
+              const st = getStudent(payment.studentId);
+              return (
+                <tr key={payment.id} className="hover:bg-[#FAFAFB] transition-colors">
+                  <Td>
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name={st?.name || '?'} size={32} />
+                      <div className="min-w-0">
+                        <div className="font-semibold text-ink truncate">{getStudentName(payment.studentId)}</div>
+                        <div className="text-[12px] text-muted truncate">{st?.phone}</div>
+                      </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-bold text-green-600">+{payment.amount.toLocaleString()} UZS</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${payment.type === 'CASH' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
-                      {payment.type === 'CASH' ? t.cash : t.card}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1">
+                  </Td>
+                  <Td>
+                    {payment.groupId
+                      ? <span className="text-[12px] font-medium text-primary bg-primary-subtle px-1.5 py-0.5 rounded">{getGroupName(payment.groupId)}</span>
+                      : <span className="text-muted">—</span>}
+                  </Td>
+                  <Td className="tabular-nums text-ink-2">{payment.date}</Td>
+                  <Td>{payment.forMonth}</Td>
+                  <Td align="right" className="font-semibold text-success tabular-nums">
+                    +{payment.amount.toLocaleString()}
+                  </Td>
+                  <Td>
+                    <StatusBadge
+                      label={payment.type === 'CASH' ? t.cash : t.card}
+                      tone={payment.type === 'CASH' ? 'warning' : 'info'}
+                      dot={false}
+                    />
+                  </Td>
+                  <Td align="right">
+                    <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => {
                           setEditPayment(payment);
                           setEditData({ amount: payment.amount, forMonth: payment.forMonth, type: payment.type, date: payment.date });
                         }}
-                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
-                        title={t.edit || "Tahrirlash"}
+                        title={t.edit_staff || 'Tahrirlash'}
+                        className="p-1.5 text-muted hover:text-primary hover:bg-primary-subtle rounded-md transition-colors"
                       >
-                        <Pencil size={16} />
+                        <Pencil size={15} />
                       </button>
                       <button
-                        onClick={() => {
-                          if (window.confirm(t.delete_confirm)) {
-                            onDelete(payment.id);
-                          }
-                        }}
-                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                        onClick={() => { if (window.confirm(t.delete_confirm)) onDelete(payment.id); }}
                         title={t.delete_action || "O'chirish"}
+                        className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
-                  </td>
+                  </Td>
                 </tr>
-              ))}
-              {filteredPayments.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-6 py-20 text-center">
-                    <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center text-slate-200 mx-auto mb-4 border border-dashed border-slate-200">
-                      <Search size={40} />
-                    </div>
-                    <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">
-                      {t.search_empty}
-                    </p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              );
+            })}
+            {filteredPayments.length === 0 && (
+              <tr>
+                <td colSpan={7}>
+                  <EmptyState
+                    icon={<Search size={22} />}
+                    title={t.search_empty}
+                    action={hasFilter ? (
+                      <Button variant="secondary" size="sm" onClick={clearFilter}>
+                        <RefreshCcw size={13} /> {t.clear_filter}
+                      </Button>
+                    ) : undefined}
+                  />
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </Card>
 
       {/* ========== To'lov qabul qilish Modal (Student Search bilan) ========== */}
       {showModal && (
