@@ -230,9 +230,9 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
     <div className="space-y-5 animate-in fade-in duration-500">
 
       {/* Bo'lim nima uchun ekanini tushuntirish */}
-      <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl px-5 py-4 flex items-start gap-3">
-        <Info size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-        <p className="text-xs font-bold text-emerald-900 leading-relaxed">{t.funnel_hint}</p>
+      <div className="bg-primary-subtle border border-line rounded-lg px-4 py-3 flex items-start gap-2.5 mb-4">
+        <Info size={16} className="text-primary shrink-0 mt-0.5" />
+        <p className="text-[13px] text-ink-2 leading-5">{t.funnel_hint}</p>
       </div>
 
       {/* BUGUNGI ISH — kechikkan va bugungi qo'ng'iroqlar birinchi o'rinda */}
@@ -256,7 +256,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                       {overdue ? (t.overdue || 'Kechikkan') : (t.today_label || 'Bugun')} · {lead.followUpDate}
                     </p>
                   </div>
-                  <a href={`tel:${lead.phone}`} className="p-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shrink-0">
+                  <a href={`tel:${lead.phone}`} className="p-2 rounded-md bg-primary text-white hover:bg-primary-hover transition-colors shrink-0">
                     <Phone size={14} />
                   </a>
                   <button
@@ -329,7 +329,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-emerald-600 text-white px-7 py-3 rounded-2xl font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 hover:-translate-y-0.5 transition-all"
+          className="bg-primary text-white px-3.5 py-2 rounded-field font-semibold text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-primary-hover transition-colors"
         >
           <Plus size={18} /> {t.add_lead}
         </button>
@@ -497,7 +497,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                       {lead.testStatus === 'COMPLETED' && (
                         <button
                           onClick={() => setViewResult(lead)}
-                          className="w-full mb-2 bg-emerald-50 text-emerald-600 py-2 rounded-xl text-[9px] font-black uppercase flex items-center justify-center gap-2 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100"
+                          className="w-full mb-2 bg-success-bg text-success py-2 rounded-md text-[12px] font-semibold flex items-center justify-center gap-1.5 hover:brightness-95 transition-all"
                         >
                           <Award size={13} /> {t.result}: {lead.testScore}%
                         </button>
@@ -523,7 +523,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
                       ) : (
                         <button
                           onClick={() => moveForward(lead)}
-                          className="w-full bg-slate-900 text-white py-2.5 rounded-xl text-[9px] font-black uppercase flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all"
+                          className="w-full bg-primary text-white py-2 rounded-md text-[12px] font-semibold flex items-center justify-center gap-1.5 hover:bg-primary-hover transition-colors"
                         >
                           <span className="truncate">{nextLabel(lead.status)}</span>
                           <ArrowRight size={11} className="shrink-0" />
@@ -688,7 +688,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
             </button>
             <button
               onClick={() => setCreatedPin(null)}
-              className="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-colors"
+              className="w-full py-2.5 bg-primary text-white rounded-field font-semibold text-[13.5px] hover:bg-primary-hover transition-colors"
             >
               {t.cancel}
             </button>
@@ -711,7 +711,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
             </div>
             <button
               onClick={() => setViewResult(null)}
-              className="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-emerald-600 transition-colors"
+              className="w-full py-2.5 bg-primary text-white rounded-field font-semibold text-[13.5px] hover:bg-primary-hover transition-colors"
             >
               {t.cancel}
             </button>
