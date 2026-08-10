@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Payment, Student, SystemSettings, Group } from '../types';
-import { CreditCard, DollarSign, Plus, Search, Calendar, Download, Trash2, Pencil, X, User } from 'lucide-react';
+import { CreditCard, DollarSign, Plus, Search, Calendar, Download, Trash2, Pencil, X, User, Filter, RefreshCcw } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
 
 interface PaymentsProps {
@@ -24,6 +24,10 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  // Sana oralig'i — avval umuman yo'q edi, ya'ni "bu oy qancha tushdi?"
+  // degan savolga javob berib bo'lmasdi
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [editPayment, setEditPayment] = useState<Payment | null>(null);
   const [editData, setEditData] = useState<{ amount: number; forMonth: string; type: Payment['type']; date: string }>({ amount: 0, forMonth: '', type: 'CASH', date: '' });
   const currentMonthName = MONTHS[new Date().getMonth()];
@@ -70,12 +74,62 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
     );
   }, [students, studentSearch]);
 
-  const filteredPayments = payments.filter(p =>
-    getStudentName(p.studentId).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Sanalar "YYYY-MM-DD" — to'g'ridan-to'g'ri solishtiriladi (Date orqali
+  // o'girish vaqt mintaqasi tufayli chegaradagi kunni surib yuborardi)
+  const filteredPayments = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return payments.filter(p => {
+      if (startDate && p.date < startDate) return false;
+      if (endDate && p.date > endDate) return false;
+      if (!term) return true;
+      // Qidiruv endi telefon bo'yicha ham ishlaydi (avval faqat ism edi)
+      const st = getStudent(p.studentId);
+      return (st?.name || '').toLowerCase().includes(term)
+        || (st?.phone || '').toLowerCase().includes(term)
+        || (st?.parentPhone || '').toLowerCase().includes(term);
+    }).sort((a, b) => b.date.localeCompare(a.date));
+  }, [payments, students, searchTerm, startDate, endDate]);
+
+  // Jamilar endi FILTRGA bo'ysunadi — avval har doim butun tarix ko'rsatilardi
+  // va ekrandagi ro'yxat bilan mos kelmasdi
+  const cashTotal = useMemo(() => filteredPayments.filter(p => p.type === 'CASH').reduce((s, p) => s + p.amount, 0), [filteredPayments]);
+  const cardTotal = useMemo(() => filteredPayments.filter(p => p.type !== 'CASH').reduce((s, p) => s + p.amount, 0), [filteredPayments]);
+  const grandTotal = cashTotal + cardTotal;
+
+  const hasFilter = !!(searchTerm || startDate || endDate);
+  const clearFilter = () => { setSearchTerm(''); setStartDate(''); setEndDate(''); };
+
+  const fmtDate = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+  const applyPreset = (preset: 'this_month' | 'last_month' | 'this_year') => {
+    const n = new Date();
+    if (preset === 'this_month') {
+      setStartDate(fmtDate(new Date(n.getFullYear(), n.getMonth(), 1)));
+      setEndDate(fmtDate(new Date(n.getFullYear(), n.getMonth() + 1, 0)));
+    } else if (preset === 'last_month') {
+      setStartDate(fmtDate(new Date(n.getFullYear(), n.getMonth() - 1, 1)));
+      setEndDate(fmtDate(new Date(n.getFullYear(), n.getMonth(), 0)));
+    } else {
+      setStartDate(fmtDate(new Date(n.getFullYear(), 0, 1)));
+      setEndDate(fmtDate(new Date(n.getFullYear(), 11, 31)));
+    }
+  };
+
+  const presetActive = (preset: 'this_month' | 'last_month' | 'this_year') => {
+    const n = new Date();
+    if (preset === 'this_month')
+      return startDate === fmtDate(new Date(n.getFullYear(), n.getMonth(), 1)) &&
+        endDate === fmtDate(new Date(n.getFullYear(), n.getMonth() + 1, 0));
+    if (preset === 'last_month')
+      return startDate === fmtDate(new Date(n.getFullYear(), n.getMonth() - 1, 1)) &&
+        endDate === fmtDate(new Date(n.getFullYear(), n.getMonth(), 0));
+    return startDate === fmtDate(new Date(n.getFullYear(), 0, 1)) &&
+      endDate === fmtDate(new Date(n.getFullYear(), 11, 31));
+  };
 
   const exportPaymentsToExcel = () => {
-    const headers = [t.students, t.phone, t.attendance_date, t.month, t.amount, t.main];
+    const headers = [t.students, t.phone, t.attendance_date, t.month, t.amount, t.payment_type || "To'lov turi"];
     const rows = filteredPayments.map(p => {
       const student = getStudent(p.studentId);
       return [
@@ -145,55 +199,114 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
-            <div className="bg-green-50 text-green-600 p-2 rounded-lg">
-              <DollarSign size={18} />
+      {/* Jami tushum — filtrga bo'ysunadi */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600 to-teal-700 p-8 sm:p-10 rounded-[2.5rem] shadow-2xl shadow-emerald-100 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-white/10">
+        <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12"><DollarSign size={160} /></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md"><DollarSign size={20} /></div>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80">
+              {hasFilter ? (t.filtered_total || "Tanlangan davr bo'yicha") : (t.total || 'Jami')}
+            </p>
+          </div>
+          <h3 className="text-4xl sm:text-5xl font-black tracking-tighter italic">
+            {grandTotal.toLocaleString()} <span className="text-lg font-bold not-italic opacity-70">UZS</span>
+          </h3>
+          <div className="flex items-center gap-4 mt-4 flex-wrap">
+            <p className="text-[10px] font-bold text-emerald-50 bg-white/10 px-4 py-1 rounded-full backdrop-blur-sm">
+              {t.count}: {filteredPayments.length}
+            </p>
+            {hasFilter && (
+              <button onClick={clearFilter} className="flex items-center gap-1 text-[10px] font-black uppercase text-white hover:text-amber-300 transition-colors">
+                <RefreshCcw size={12} /> {t.clear_filter}
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2 mt-5">
+            <div className="bg-white/10 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest opacity-80">
+                <DollarSign size={11} /> {t.cash}
+              </div>
+              <div className="text-sm font-black mt-0.5">{cashTotal.toLocaleString()}</div>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-bold">{t.cash}</p>
-              <p className="font-bold">{(payments.filter(p => p.type === 'CASH').reduce((sum, p) => sum + p.amount, 0)).toLocaleString()} UZS</p>
+            <div className="bg-white/10 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest opacity-80">
+                <CreditCard size={11} /> {t.card}
+              </div>
+              <div className="text-sm font-black mt-0.5">{cardTotal.toLocaleString()}</div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center space-x-3">
-            <div className="bg-blue-50 text-blue-600 p-2 rounded-lg">
-              <CreditCard size={18} />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-bold">{t.card}</p>
-              <p className="font-bold">{(payments.filter(p => p.type !== 'CASH').reduce((sum, p) => sum + p.amount, 0)).toLocaleString()} UZS</p>
+        </div>
+
+        <button
+          onClick={() => { setShowModal(true); setStudentSearch(''); }}
+          className="relative z-10 bg-white text-emerald-700 px-8 sm:px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all group shrink-0"
+        >
+          <Plus size={20} className="stroke-[3px] group-hover:rotate-90 transition-transform duration-300" />
+          {t.accept_payment}
+        </button>
+      </div>
+
+      {/* Filtr paneli */}
+      <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="bg-emerald-50 p-2 rounded-xl text-emerald-600"><Filter size={18} /></div>
+          <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs">{t.filter || 'Filtr'}</h4>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="lg:col-span-2 space-y-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.search_label || 'Qidirish'}</label>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+              <input
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white transition-all"
+                placeholder={t.search}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
           </div>
-          <button
-            onClick={() => { setShowModal(true); setStudentSearch(''); }}
-            className="bg-indigo-600 text-white p-4 rounded-xl shadow-md font-bold flex items-center justify-center space-x-2 hover:bg-indigo-700 transition-all"
-          >
-            <Plus size={20} />
-            <span>{t.accept_payment}</span>
-          </button>
+          <div className="space-y-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.from_date}</label>
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white transition-all" />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.to_date}</label>
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-emerald-500/5 focus:bg-white transition-all" />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          {([['this_month', t.this_month || 'Bu oy'], ['last_month', t.last_month || "O'tgan oy"], ['this_year', t.this_year || 'Bu yil']] as const).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => applyPreset(key as any)}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${presetActive(key as any)
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-100'
+                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-emerald-200'}`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center gap-4">
           <h3 className="font-bold text-gray-800">{t.last_payments}</h3>
           <div className="flex items-center gap-3">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              {filteredPayments.length} / {payments.length}
+            </span>
             <button
               onClick={exportPaymentsToExcel}
               className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[11px] font-black uppercase border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all"
             >
               <Download size={16} /> Excel
             </button>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <input
-                className="bg-gray-50 border-none rounded-lg pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-indigo-500"
-                placeholder={t.search}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -205,12 +318,12 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                 <th className="px-6 py-4">{t.attendance_date}</th>
                 <th className="px-6 py-4">{t.month}</th>
                 <th className="px-6 py-4">{t.amount}</th>
-                <th className="px-6 py-4">{t.main}</th>
+                <th className="px-6 py-4">{t.payment_type || "To'lov turi"}</th>
                 <th className="px-6 py-4">{t.actions}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredPayments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(payment => (
+              {filteredPayments.map(payment => (
                 <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <span className="font-medium text-gray-800">{getStudentName(payment.studentId)}</span>
@@ -261,7 +374,7 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                           }
                         }}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                        title={t.delete_staff}
+                        title={t.delete_action || "O'chirish"}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -269,6 +382,18 @@ const Payments: React.FC<PaymentsProps> = ({ t, payments, students, groups, onAd
                   </td>
                 </tr>
               ))}
+              {filteredPayments.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-20 text-center">
+                    <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center text-slate-200 mx-auto mb-4 border border-dashed border-slate-200">
+                      <Search size={40} />
+                    </div>
+                    <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">
+                      {t.search_empty}
+                    </p>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

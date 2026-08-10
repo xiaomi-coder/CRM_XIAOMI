@@ -413,6 +413,33 @@ Qo'shilgan imkoniyatlar: nom bo'yicha qidiruv, turkum bo'yicha filtr
 **turkumlar bo'yicha taqsimot** (foiz + summa) — direktor pul qayerga
 ketayotganini darrov ko'radi.
 
+## To'lovlar bo'limi (a–g) ✅ (2026-08-10)
+
+Xarajatlardan keyin To'lovlar ham ko'rib chiqildi. Tuzatilgan xatolar:
+
+- **"ASOSIY" ustuni** — to'lov turi ustuni `t.main` bilan nomlangan edi
+  (Excel eksportda ham). → `payment_type` qo'shildi.
+- **O'chirish tugmasi** tooltip'i `t.delete_staff` ("Xodimni o'chirish")
+  edi → `delete_action`.
+- **Naqd/Plastik jamilari filtrga bo'ysunmasdi** — har doim butun tarixni
+  ko'rsatardi, ekrandagi ro'yxat bilan mos kelmasdi. Endi `filteredPayments`
+  dan hisoblanadi.
+- **Bo'sh holat yo'q edi** → "Ma'lumot topilmadi" qo'shildi.
+- **Sana filtri UMUMAN yo'q edi** → sana oralig'i + tez tanlash
+  (Bu oy / O'tgan oy / Bu yil), Xarajatlardagi bilan bir xil.
+- **Umumiy jami yo'q edi** → yashil sarlavha blokida (Naqd/Plastik alohida chip).
+- **Qidiruv faqat ism bo'yicha edi** → telefon va ota-ona telefoni ham.
+- Saralash `new Date(...)` dan satr solishtirishga o'tkazildi.
+
+⚠️ Sinovda topilgan tuzoq: filtr yoqilganda sarlavha `t.expenses_for_period`
+ni ishlatgan edim — To'lovlar sahifasida "...XARAJATLAR" deb chiqdi.
+Alohida `filtered_total` kaliti qo'shildi.
+
+### Hali qilinmagan (foydalanuvchi alohida hal qiladi)
+- `payments.forMonth` da faqat oy NOMI saqlanadi, YIL yo'q — 2025 va 2026
+  avgusti farqlanmaydi. Mavjud ma'lumotga ta'sir qilgani uchun alohida
+  ehtiyotkorlik bilan qilinadi.
+
 ## Platforma boti YOQILDI ✅ (2026-08-10)
 
 - Bot: **@Eduprocrmbot** ("EduProCrm"). Egasi (xabar keladigan) chat: foydalanuvchi.
