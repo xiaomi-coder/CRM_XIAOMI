@@ -1,11 +1,158 @@
 
-import React, { useState } from 'react';
-import { Building, ShieldAlert, Megaphone, Activity, Users, Wallet, Lock, Unlock, Clock, Trash2, Send, Plus, X, User as UserIcon, Phone, Key, Loader2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Building, ShieldAlert, Megaphone, Activity, Users, Wallet, Lock, Unlock, Clock, Trash2, Send, Plus, X, User as UserIcon, Phone, Key, Loader2, CalendarClock, CheckCircle2 } from 'lucide-react';
 import { SystemSettings, User, Student, Payment, UserRole } from '../types';
 import { db } from '../services/supabase';
 
+/**
+ * Muddati tugayotgan markazlar — creator uchun "bugun kimga qo'ng'iroq qilish
+ * kerak" ro'yxati. Sinov davri ham, pullik obuna ham bir xil `licenseExpiry`
+ * maydonida saqlanadi, shuning uchun ikkalasi ham shu yerda ko'rinadi.
+ *
+ * Muddat tugagach ma'lumot O'CHMAYDI — markaz shunchaki kira olmaydi.
+ * To'lov kelgach shu yerdan bir bosishda uzaytiriladi.
+ */
+const DAYS_MS = 86400000;
+
+const daysLeftOf = (expiry?: string): number | null => {
+  if (!expiry || !expiry.trim()) return null;   // bo'sh = cheksiz
+  return Math.ceil((new Date(expiry).getTime() - Date.now()) / DAYS_MS);
+};
+
+const ExpiringCenters: React.FC<{
+  t: any;
+  settings: SystemSettings[];
+  users: User[];
+  onUpdate?: (s: SystemSettings) => void;
+}> = ({ t, settings, users, onUpdate }) => {
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  // Yaqin 7 kun ichida tugaydigan yoki allaqachon tugagan (bloklanmagan) markazlar
+  const rows = useMemo(() => {
+    return settings
+      .map(s => ({ s, days: daysLeftOf(s.licenseExpiry) }))
+      .filter(r => r.days !== null && r.days <= 7 && !r.s.isBlocked)
+      .sort((a, b) => (a.days as number) - (b.days as number));
+  }, [settings]);
+
+  const directorOf = (centerId: string) =>
+    users.find(u => u.centerId === centerId && u.role === UserRole.DIRECTOR);
+
+  // Muddat tugagan bo'lsa bugundan, tugamagan bo'lsa mavjud sanadan davom
+  // ettiriladi — to'langan kunlar yo'qolmasin
+  const extend = (s: SystemSettings, months: number) => {
+    if (!onUpdate) return;
+    const cur = s.licenseExpiry ? new Date(s.licenseExpiry) : null;
+    const base = cur && cur.getTime() > Date.now() ? cur : new Date();
+    const next = new Date(base);
+    next.setMonth(next.getMonth() + months);
+    const iso = next.toISOString().split('T')[0];
+
+    const label = months === 12 ? '1 yil' : `${months} oy`;
+    if (!window.confirm(`"${s.centerName}" muddati ${label}ga uzaytirilsinmi?\n\nYangi sana: ${iso}`)) return;
+
+    setSavingId(s.centerId);
+    Promise.resolve(onUpdate({ ...s, licenseExpiry: iso })).finally(() => setSavingId(null));
+  };
+
+  const styleOf = (days: number) =>
+    days < 0 ? 'bg-red-50 border-red-200 text-red-700'
+      : days <= 3 ? 'bg-amber-50 border-amber-200 text-amber-700'
+        : 'bg-yellow-50 border-yellow-200 text-yellow-700';
+
+  const labelOf = (days: number) =>
+    days < 0 ? `${-days} ${t.expired_days_ago || "kun oldin tugagan"}`
+      : days === 0 ? (t.expires_today || "Bugun tugaydi")
+        : `${days} ${t.days_left_label || "kun qoldi"}`;
+
+  return (
+    <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200 shrink-0">
+          <CalendarClock size={22} />
+        </div>
+        <div className="flex-1">
+          <h4 className="text-lg font-black text-slate-800 uppercase tracking-tighter leading-none">
+            {t.expiring_centers || "Muddati tugayotgan markazlar"}
+          </h4>
+          <p className="text-[10px] text-slate-400 font-bold mt-1">
+            {t.expiring_centers_note || "Yaqin 7 kun ichida tugaydiganlar va tugab bo'lganlar"}
+          </p>
+        </div>
+        {rows.length > 0 && (
+          <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase border border-amber-100">
+            {rows.length}
+          </span>
+        )}
+      </div>
+
+      {rows.length === 0 ? (
+        <div className="flex items-center gap-3 p-6 bg-emerald-50 rounded-3xl border border-emerald-100">
+          <CheckCircle2 className="text-emerald-500 shrink-0" size={22} />
+          <p className="text-emerald-700 font-bold text-sm">
+            {t.expiring_none || "Yaqin kunlarda muddati tugaydigan markaz yo'q."}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {rows.map(({ s, days }) => {
+            const director = directorOf(s.centerId);
+            const busy = savingId === s.centerId;
+            return (
+              <div key={s.centerId} className={`p-5 rounded-3xl border ${styleOf(days as number)}`}>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-[200px]">
+                    <p className="font-black text-slate-800 uppercase tracking-tight">{s.centerName}</p>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
+                      {director && (
+                        <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
+                          <UserIcon size={12} /> {director.name}
+                        </span>
+                      )}
+                      {s.phone && (
+                        <a href={`tel:${s.phone.replace(/\s/g, '')}`}
+                          className="flex items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700">
+                          <Phone size={12} /> {s.phone}
+                        </a>
+                      )}
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
+                        <Clock size={12} /> {s.licenseExpiry}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="text-xs font-black whitespace-nowrap">{labelOf(days as number)}</span>
+                    {onUpdate && (
+                      <div className="flex gap-1.5">
+                        {[1, 3, 12].map(m => (
+                          <button
+                            key={m}
+                            onClick={() => extend(s, m)}
+                            disabled={busy}
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-700 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all disabled:opacity-40"
+                          >
+                            {busy ? '...' : `+${m === 12 ? '1 ' + (t.year_short || 'yil') : m + ' ' + (t.month_short || 'oy')}`}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Global Dashboard
-export const CreatorDashboard: React.FC<{ t: any, settings: SystemSettings[], allStudents: Student[], allPayments: Payment[] }> = ({ t, settings = [], allStudents = [], allPayments = [] }) => {
+export const CreatorDashboard: React.FC<{
+  t: any, settings: SystemSettings[], allStudents: Student[], allPayments: Payment[],
+  users?: User[], onUpdateCenter?: (s: SystemSettings) => void
+}> = ({ t, settings = [], allStudents = [], allPayments = [], users = [], onUpdateCenter }) => {
   const totalRevenue = Array.isArray(allPayments) ? allPayments.reduce((sum, p) => sum + p.amount, 0) : 0;
 
   if (!settings) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-indigo-600" size={40} /></div>;
@@ -32,6 +179,8 @@ export const CreatorDashboard: React.FC<{ t: any, settings: SystemSettings[], al
           <h3 className="text-3xl font-black text-emerald-400">{totalRevenue.toLocaleString()} UZS</h3>
         </div>
       </div>
+
+      <ExpiringCenters t={t} settings={settings} users={users} onUpdate={onUpdateCenter} />
 
       <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
         <div className="flex justify-between items-center mb-6">

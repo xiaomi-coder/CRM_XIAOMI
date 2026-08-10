@@ -360,7 +360,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       case 'results': return <Results t={t} results={results} students={students} onAdd={r => db.insert('results', { ...r, id: crypto.randomUUID(), "centerId": centerId }).then(loadAllData)} onDelete={id => db.delete('results', id).then(loadAllData)} />;
       case 'library': return <Library t={t} resources={library} user={currentUser} onAdd={r => db.insert('library', { ...r, id: crypto.randomUUID(), "centerId": centerId, uploadedBy: currentUser.name, uploadedAt: new Date().toISOString() }).then(loadAllData)} onDelete={id => db.delete('library', id).then(loadAllData)} />;
       case 'settings': return <Settings t={t} settings={currentSettings || ({} as any)} onSave={s => db.update('settings', centerId, s).then(loadAllData)} userRole={currentUser.role} />;
-      case 'creator_dashboard': return <CreatorDashboard t={t} settings={allSettings} allStudents={students} allPayments={payments} />;
+      case 'creator_dashboard': return <CreatorDashboard t={t} settings={allSettings} allStudents={students} allPayments={payments} users={users} onUpdateCenter={s => db.update('settings', s.centerId, s).then(loadAllData)} />;
       case 'super_centers': return <CenterControl t={t} settings={allSettings} users={users} onAddCenter={(s, a) => Promise.all([db.insert('settings', s), db.insert('users', a)]).then(loadAllData)} onUpdate={s => db.update('settings', s.centerId, s).then(loadAllData)} onDelete={async (centerId) => {
         try {
           // Database'dan to'g'ridan-to'g'ri barcha foydalanuvchilarni olish

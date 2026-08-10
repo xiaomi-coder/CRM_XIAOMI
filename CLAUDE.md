@@ -389,6 +389,26 @@ qaytib yoziladi).
   aks holda progress noto'g'ri tugmada ko'rinardi.
 - Demoda sinaldi: 6 ta belgilangan o'quvchi to'g'ri topildi.
 
+## Creator paneli: muddati tugayotgan markazlar ✅ (2026-08-10)
+
+- `CreatorComponents.tsx` ichida `ExpiringCenters` bloki — creator "Boshqaruv"
+  ekranining tepasida (statistika kartalaridan keyin).
+- Ko'rsatadi: `licenseExpiry` yaqin **7 kun** ichida tugaydigan yoki allaqachon
+  tugagan, **bloklanmagan** markazlar. Eng shoshilinchi tepada.
+  Rang: tugagan=qizil, ≤3 kun=amber, ≤7 kun=sariq. Bo'sh bo'lsa yashil holat.
+- Har qatorda: markaz nomi, direktor ismi, **telefon (tel: havola)** — qo'ng'iroq
+  qilish uchun, va joriy muddat sanasi.
+- **Uzaytirish tugmalari: +1 oy / +3 oy / +1 yil.** Mantiq: muddat TUGAGAN bo'lsa
+  bugundan, tugamagan bo'lsa MAVJUD sanadan davom ettiriladi (to'langan kunlar
+  yo'qolmasin). Tasdiq oynasi yangi sanani ko'rsatadi.
+- Sinov/pullik farqlanmaydi — ikkalasi ham bitta `licenseExpiry` da (bazada
+  `createdAt` yo'q, ajratib bo'lmaydi). Creator uchun farqi yo'q ham.
+- ⚠️ Eslatma: `licenseExpiry` bo'sh = **cheksiz** (blokka tushmaydi). Demo va
+  eski markazlar shunday.
+- Sinovdan o'tkazildi (vaqtinchalik 2 markaz bilan, keyin o'chirildi): qizil/
+  sariq/bo'sh holatlar, +1 oy tugagandan (10.08→10.09), +3 oy tugamagandan
+  (12.08→12.11), baza va UI yangilanishi.
+
 ## ⚠️ Vercel deploy tuzog'i (2026-08-10)
 
 Ikki marta ketma-ket muammo bo'ldi, sababi bizning kodda EMAS:
