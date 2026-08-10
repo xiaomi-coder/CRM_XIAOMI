@@ -2,12 +2,10 @@
 import React, { useState, useMemo } from 'react';
 import { Expense } from '../types';
 import { Plus, Trash2, X, AlertTriangle, MessageSquare, Receipt, Calendar, TrendingDown, Layers, Info, Filter, RefreshCcw, Search } from 'lucide-react';
-
-interface ExpensesProps {
-  expenses: Expense[];
-  onAdd: (expense: Omit<Expense, 'id' | 'centerId'>) => void;
-  onDelete: (id: string) => void;
-}
+import {
+  PageHeader, Card, CardHeader, Button, KpiCard, Field, Input,
+  Table, Th, Td, StatusBadge, EmptyState, TONE, Tone,
+} from './ui';
 
 interface ExpensesProps {
   t: any;
@@ -15,6 +13,11 @@ interface ExpensesProps {
   onAdd: (expense: Omit<Expense, 'id' | 'centerId'>) => void;
   onDelete: (id: string) => void;
 }
+
+// Har turkumga ma'noli rang — dizayn tizimidagi tone tizimi bo'yicha
+const CATEGORY_TONE: Record<string, Tone> = {
+  RENT: 'warning', TAX: 'info', ADVERTISING: 'brand', OTHER: 'muted',
+};
 
 const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => {
   const [showModal, setShowModal] = useState(false);
@@ -117,167 +120,118 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Umumiy Xarajatlar va Statistika */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-red-600 to-rose-700 p-10 rounded-[3rem] shadow-2xl shadow-red-200 text-white flex flex-col md:flex-row justify-between items-center gap-8 border border-white/10">
-        <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12">
-          <Receipt size={180} />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
-              <TrendingDown size={20} className="text-white" />
-            </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80">
-              {startDate || endDate ? t.expenses_for_period : t.expenses_label}
-            </p>
-          </div>
-          <h3 className="text-5xl font-black tracking-tighter italic">
-            {totalFiltered.toLocaleString()} <span className="text-lg font-bold not-italic opacity-70">UZS</span>
-          </h3>
-          <div className="flex items-center gap-4 mt-4">
-            <p className="text-[10px] font-bold text-red-100 bg-white/10 w-fit px-4 py-1 rounded-full backdrop-blur-sm">
-              {t.count}: {filteredExpenses.length}
-            </p>
-            {hasFilter && (
-              <button onClick={clearFilter} className="flex items-center gap-1 text-[10px] font-black uppercase text-white hover:text-amber-300 transition-colors">
-                <RefreshCcw size={12} /> {t.clear_filter}
-              </button>
-            )}
-          </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.expenses_label}
+        subtitle={t.expenses_page_hint || "Markazingiz chiqimlarini turkumlar bo'yicha kuzating."}
+        actions={
+          <Button onClick={() => setShowModal(true)}>
+            <Plus size={16} /> {t.add_expense}
+          </Button>
+        }
+      />
 
-          {/* Turkumlar bo'yicha taqsimot — pul qayerga ketgani darrov ko'rinadi */}
-          {byCategory.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-5">
-              {byCategory.map(([key, sum]) => {
-                const cat = categories[key] || categories.OTHER;
-                const percent = totalFiltered > 0 ? Math.round((sum / totalFiltered) * 100) : 0;
-                return (
-                  <div key={key} className="bg-white/10 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/10">
-                    <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest opacity-80">
-                      <cat.icon size={11} /> {cat.label} · {percent}%
-                    </div>
-                    <div className="text-sm font-black mt-0.5">{sum.toLocaleString()}</div>
-                  </div>
-                );
-              })}
-            </div>
+      {/* Ko'rsatkichlar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <KpiCard
+          label={hasFilter ? (t.filtered_total || "Tanlangan davr bo'yicha") : (t.total_expenses || 'Jami xarajat')}
+          value={totalFiltered.toLocaleString()}
+          hint="UZS"
+        />
+        <KpiCard label={t.count} value={filteredExpenses.length} />
+        {byCategory.slice(0, 2).map(([key, sum]) => {
+          const cat = categories[key] || categories.OTHER;
+          const percent = totalFiltered > 0 ? Math.round((sum / totalFiltered) * 100) : 0;
+          return (
+            <KpiCard key={key} label={cat.label} value={sum.toLocaleString()} hint={`${percent}% · UZS`} />
+          );
+        })}
+      </div>
+
+      {/* Filtr */}
+      <Card className="mb-5">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-2 text-ink-2">
+            <Filter size={16} />
+            <span className="text-[13px] font-semibold">{t.filter || 'Filtr'}</span>
+          </div>
+          {hasFilter && (
+            <Button variant="ghost" size="sm" onClick={clearFilter}>
+              <RefreshCcw size={13} /> {t.clear_filter}
+            </Button>
           )}
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="relative z-10 bg-white text-red-600 px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all group shrink-0"
-        >
-          <Plus size={20} className="stroke-[3px] group-hover:rotate-90 transition-transform duration-300" />
-          {t.add_expense}
-        </button>
-      </div>
-
-      {/* Filtrlash Paneli */}
-      <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-red-50 p-2 rounded-xl text-red-600">
-            <Filter size={18} />
-          </div>
-          <h4 className="font-black text-slate-800 uppercase tracking-widest text-xs">{t.filter || 'Filtr'}</h4>
-        </div>
-
-        {/* Qidiruv + sana oraligi — yorliqlar maydon USTIDA (avval ichida edi
-            va maydonning o'z matni bilan ustma-ust tushib qolardi) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="lg:col-span-2 space-y-2">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.search_label || 'Qidirish'}</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <Field label={t.search_label || 'Qidirish'} className="lg:col-span-2">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-              <input
-                type="text"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:bg-white transition-all"
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} />
+              <Input
+                className="pl-9"
                 placeholder={t.search}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.from_date}</label>
-            <input
-              type="date"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:bg-white transition-all"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.to_date}</label>
-            <input
-              type="date"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-xs text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:bg-white transition-all"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
+          </Field>
+          <Field label={t.from_date}>
+            <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+          </Field>
+          <Field label={t.to_date}>
+            <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+          </Field>
         </div>
 
-        {/* Tez tanlash + turkum */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        <div className="flex flex-wrap items-center gap-2">
           {([['this_month', t.this_month || 'Bu oy'], ['last_month', t.last_month || "O'tgan oy"], ['this_year', t.this_year || 'Bu yil']] as const).map(([key, label]) => (
-            <button
+            <Button
               key={key}
+              size="sm"
+              variant={presetActive(key as any) ? 'primary' : 'secondary'}
               onClick={() => applyPreset(key as any)}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${presetActive(key as any)
-                ? 'bg-red-600 text-white border-red-600 shadow-lg shadow-red-100'
-                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-red-200'}`}
             >
               {label}
-            </button>
+            </Button>
           ))}
 
-          <div className="w-px h-7 bg-slate-200 mx-1 hidden sm:block"></div>
+          <span className="w-px h-6 bg-line mx-1 hidden sm:block" />
 
-          <button
-            onClick={() => setCategoryFilter('ALL')}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${categoryFilter === 'ALL'
-              ? 'bg-slate-900 text-white border-slate-900'
-              : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-slate-300'}`}
-          >
+          <Button size="sm" variant={categoryFilter === 'ALL' ? 'primary' : 'secondary'} onClick={() => setCategoryFilter('ALL')}>
             {t.all_categories || 'Barchasi'}
-          </button>
+          </Button>
           {Object.entries(categories).map(([key, val]) => (
-            <button
+            <Button
               key={key}
+              size="sm"
+              variant={categoryFilter === key ? 'primary' : 'secondary'}
               onClick={() => setCategoryFilter(key as any)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${categoryFilter === key
-                ? 'bg-slate-900 text-white border-slate-900'
-                : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-white hover:border-slate-300'}`}
             >
-              <val.icon size={12} /> {val.label}
-            </button>
+              <val.icon size={13} /> {val.label}
+            </Button>
           ))}
         </div>
-      </div>
+      </Card>
+
 
       {/* Ro'yxat */}
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-gray-50 flex items-center justify-between gap-4">
-          <h4 className="font-black text-slate-800 uppercase tracking-tighter text-lg flex items-center gap-2">
-            <Receipt className="text-red-600" size={20} /> {t.history}
-          </h4>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            {filteredExpenses.length} / {expenses.length}
-          </div>
+      <Card padded={false}>
+        <div className="px-5 pt-5 pb-4">
+          <CardHeader
+            title={t.history}
+            subtitle={`${filteredExpenses.length} / ${expenses.length}`}
+          />
         </div>
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+        <Table>
+          <thead>
             <tr>
-              <th className="px-8 py-5">{t.title}</th>
-              <th className="px-8 py-5">{t.category}</th>
-              <th className="px-8 py-5">{t.attendance_date}</th>
-              <th className="px-8 py-5 text-right">{t.amount}</th>
-              <th className="px-8 py-5 text-right">{t.actions || 'Amallar'}</th>
+              <Th>{t.title}</Th>
+              <Th>{t.category}</Th>
+              <Th>{t.attendance_date}</Th>
+              <Th align="right">{t.amount}</Th>
+              <Th align="right">{t.actions || 'Amallar'}</Th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody>
             {filteredExpenses.map(exp => {
               const hasComment = exp.title.includes('[COMMENT]:');
               const parts = exp.title.split('[COMMENT]:');
@@ -286,57 +240,56 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
               const category = categories[exp.category] || categories.OTHER;
 
               return (
-                <tr key={exp.id} className="hover:bg-slate-50/50 transition-all group">
-                  <td className="px-8 py-6">
-                    <div className="flex flex-col gap-1.5">
-                      <div className="font-black text-slate-800 uppercase tracking-tight text-sm">{title}</div>
-                      {hasComment && (
-                        <div className="flex items-start gap-2 bg-amber-50/50 p-2.5 rounded-xl border border-amber-100/50 w-fit max-w-md">
-                          <MessageSquare size={12} className="text-amber-500 mt-0.5 shrink-0" />
-                          <p className="text-[11px] font-bold text-amber-700 italic leading-relaxed">
-                            {comment}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest ${category.color}`}>
-                      <category.icon size={12} />
-                      {category.label}
-                    </div>
-                  </td>
-                  <td className="px-8 py-6 text-xs font-bold text-slate-400 font-mono italic">{exp.date}</td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="font-black text-red-600 text-lg">-{exp.amount.toLocaleString()}</div>
-                    <div className="text-[8px] font-black text-slate-300 uppercase">UZS</div>
-                  </td>
-                  <td className="px-8 py-6 text-right">
+                <tr key={exp.id} className="hover:bg-[#FAFAFB] transition-colors">
+                  <Td>
+                    <div className="font-semibold text-ink">{title}</div>
+                    {hasComment && (
+                      <div className="flex items-start gap-1.5 mt-1.5 text-[12px] text-ink-2 max-w-md">
+                        <MessageSquare size={12} className="text-muted mt-0.5 shrink-0" />
+                        <span>{comment}</span>
+                      </div>
+                    )}
+                  </Td>
+                  <Td>
+                    <StatusBadge label={category.label} tone={CATEGORY_TONE[exp.category] || 'muted'} />
+                  </Td>
+                  <Td className="text-ink-2 tabular-nums">{exp.date}</Td>
+                  <Td align="right">
+                    <span className="font-semibold text-danger tabular-nums">
+                      −{exp.amount.toLocaleString()}
+                    </span>
+                  </Td>
+                  <Td align="right">
                     <button
                       onClick={() => setDeleteConfirmId(exp.id)}
-                      className="p-3 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all"
+                      title={t.delete_action || "O'chirish"}
+                      className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
-                  </td>
+                  </Td>
                 </tr>
               );
             })}
             {filteredExpenses.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-8 py-24 text-center">
-                  <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center text-slate-200 mx-auto mb-4 border border-dashed border-slate-200">
-                    <Search size={40} />
-                  </div>
-                  <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">
-                    {t.search_empty}
-                  </p>
+                <td colSpan={5}>
+                  <EmptyState
+                    icon={<Search size={22} />}
+                    title={t.search_empty}
+                    description={hasFilter ? (t.clear_filter_hint || "Filtrni tozalab ko'ring.") : undefined}
+                    action={hasFilter ? (
+                      <Button variant="secondary" size="sm" onClick={clearFilter}>
+                        <RefreshCcw size={13} /> {t.clear_filter}
+                      </Button>
+                    ) : undefined}
+                  />
                 </td>
               </tr>
             )}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Card>
 
       {deleteConfirmId && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[120] flex items-center justify-center p-4">

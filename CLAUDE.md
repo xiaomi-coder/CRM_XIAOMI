@@ -413,6 +413,49 @@ Qo'shilgan imkoniyatlar: nom bo'yicha qidiruv, turkum bo'yicha filtr
 **turkumlar bo'yicha taqsimot** (foiz + summa) — direktor pul qayerga
 ketayotganini darrov ko'radi.
 
+## YANGI DIZAYN TIZIMIGA O'TISH — boshlandi (2026-08-10)
+
+Foydalanuvchi Claude Design'da to'liq CRM dizayn tizimi yasadi va **butun
+ilovani** shunga o'tkazishni so'radi (nafaqat ranglar — tuzilma ham; masalan
+o'quvchi profili tab'lar bilan: Umumiy / To'lovlar / Davomat / Natijalar /
+Telegram / Faoliyat).
+
+**Manba:** `~/developer/new project/EduCenter CRM design system.zip`
+(4 fayl: Design System, App Shell, Core Experience, Super Admin).
+Format — Claude Design'ning o'zi (`<x-dc>`, `sc-for`), React EMAS →
+qo'lda ko'chiriladi.
+
+### Dizayn tokenlari (index.html) ✅
+Qiymatlar dizayndan AYNAN olindi:
+- Brend `#3B4FE0` (hover `#2F3FC0`, subtle `#EEF1FE`)
+- Fon `#F7F8FA`, yuza `#FFFFFF`, chegara `#E4E7EC`
+- Matn: `#101828` / `#475467` / `#98A2B3`
+- Holat: success `#157A4F`, warning `#A8650A`, danger `#C13B30`, info `#2563C7`
+  (har birining `bg` juftligi bilan — StatusBadge shundan foydalanadi)
+- Radius **6/8/12px** (avval 2.5–3rem edi), soyalar `e1/e2/e3` (nozik)
+- Yon menyu `#101828`
+
+### Umumiy komponentlar ✅ — `components/ui/index.tsx`
+`PageHeader, Card, CardHeader, Button, StatusBadge, KpiCard, Field, Input,
+Select, Tabs, Table/Th/Td, Avatar, EmptyState, TONE`.
+⚠️ Yangi ekran qilganda SHULARDAN foydalaning — aks holda ilova yana
+har xil ko'rinishga qaytadi.
+⚠️ `text-${align}` kabi yig'ma klass nomlari ishlatilmasin — Tailwind
+ularni topa olmaydi (ALIGN xaritasi orqali qilingan).
+
+### Ko'chirilgan ekranlar
+- ✅ **Xarajatlar** — birinchi namuna (PageHeader + 4 KPI + filtr karta +
+  toza jadval, turkumlar StatusBadge bilan)
+
+### Keyingi navbat
+1. **Layout (karkas)** — yon menyu + yuqori panel. Hozir eski "baland ovozli"
+   uslubda (sariq pill, katta soat bloki) va yangi ekranlar bilan yonma-yon
+   g'alati ko'rinadi.
+2. Boshqaruv paneli (+ dizayndagi "Diqqat talab qiladi" bloki, grafiklar —
+   bular YANGI funksiya, shunchaki bo'yash emas)
+3. O'quvchi profili (tab'lar bilan) — foydalanuvchi eng ko'p xohlagan narsa
+4. Qolgan ekranlar
+
 ## To'lovlar bo'limi (a–g) ✅ (2026-08-10)
 
 Xarajatlardan keyin To'lovlar ham ko'rib chiqildi. Tuzatilgan xatolar:
