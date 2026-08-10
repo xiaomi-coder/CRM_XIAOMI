@@ -495,9 +495,17 @@ menyudagi "Testlar" ga aloqasi yo'q.
 Xarajatlar, To'lovlar, O'quvchilar. Uchchalasi ham tuzatildi. Yangi jadval
 qilganda `t.actions` ishlatilsin.
 
+- ✅ **Guruhlar** — kartalar; Kunlar va Narxi qo'shildi (avval yo'q edi),
+  o'quvchilar ro'yxati avatarlar bilan ochiladi
+- ✅ **Davomat** — filtr kartasi, ommaviy amallar, holat tugmalari ma'noli
+  ranglarda (keldi=yashil, kelmadi=qizil, kechikdi=amber, ketdi=ko'k)
+- ✅ **To'lovlar** — PageHeader + 4 KPI + filtr + toza jadval
+- ✅ **Lidlar** — kanban tuzilmasi saqlandi, faqat yashil/qora tugmalar
+  brend rangiga o'tkazildi
+
 ### Keyingi navbat (qolgan ekranlar)
-Guruhlar, Davomat, To'lovlar (mantiq tayyor — faqat ko'rinish), Lidlar,
-Xodimlar, Oylik maosh, Arxiv, Natijalar, Sozlamalar, Creator paneli, IELTS.
+Xodimlar, Oylik maosh, Arxiv, Natijalar, Kutubxona, Sozlamalari,
+Creator paneli (CreatorComponents), IELTS ekranlari, Login/Register.
 
 ## To'lovlar bo'limi (a–g) ✅ (2026-08-10)
 
