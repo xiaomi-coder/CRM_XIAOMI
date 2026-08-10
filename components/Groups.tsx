@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Group, Student, UserRole, User } from '../types';
 import { Plus, Users, BookOpen, Clock, UserPlus, X, Search, Trash2, Edit2, ChevronDown, ChevronUp, User as UserIcon, CheckCircle2 } from 'lucide-react';
 import { translations, Language } from '../services/languageContext';
+import { PageHeader, Card, Button, StatusBadge, Avatar, EmptyState } from './ui';
 
 interface GroupsProps {
   t: any;
@@ -122,108 +123,141 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
   const weekDays = [t.mon, t.tue, t.wed, t.thu, t.fri, t.sat, t.sun];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-black text-slate-800 uppercase tracking-tighter italic">{t.groups}</h3>
-        {isDirector && (
-          <button
-            onClick={() => { setEditingGroupId(null); setNewGroup({ name: '', teacher: 'Not assigned', subject: '', days: [], time: '', fee: 0 }); setShowAddGroupModal(true); }}
-            className="flex items-center space-x-3 bg-indigo-600 text-white px-8 py-3.5 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all hover:scale-[1.02] active:scale-95 text-[11px] uppercase tracking-widest"
-          >
-            <Plus size={20} />
-            <span>{t.add_group}</span>
-          </button>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.groups}
+        subtitle={`${groups.length} ${t.groups_count_hint || 'guruh'}`}
+        actions={isDirector && (
+          <Button onClick={() => { setEditingGroupId(null); setNewGroup({ name: '', teacher: 'Not assigned', subject: '', days: [], time: '', fee: 0 }); setShowAddGroupModal(true); }}>
+            <Plus size={16} /> {t.add_group}
+          </Button>
         )}
-      </div>
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {groups.map(group => {
-          const currentTeacherName = getGroupTeacher(group.id);
-          return (
-            <div key={group.id} className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 hover:shadow-2xl transition-all relative overflow-hidden flex flex-col group/card border-b-4 border-b-transparent hover:border-b-indigo-500">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h4 className="text-2xl font-black text-slate-800 tracking-tighter uppercase italic leading-none mb-1.5">{group.name}</h4>
-                  <p className="text-indigo-500 font-black text-[10px] uppercase tracking-[0.2em]">{group.subject}</p>
-                </div>
-                <div className="flex gap-2">
+      {groups.length === 0 ? (
+        <Card>
+          <EmptyState
+            icon={<Users size={22} />}
+            title={t.no_groups_yet || "Hali guruh ochilmagan"}
+            description={t.no_groups_hint || "Birinchi guruhni oching: fan, o'qituvchi, dars kunlari va oylik narx."}
+            action={isDirector ? (
+              <Button onClick={() => setShowAddGroupModal(true)}><Plus size={15} /> {t.add_group}</Button>
+            ) : undefined}
+          />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {groups.map(group => {
+            const currentTeacherName = getGroupTeacher(group.id);
+            const noTeacher = currentTeacherName === t.not_assigned;
+            const expanded = expandedGroupId === group.id;
+            return (
+              <Card key={group.id} className="flex flex-col">
+                {/* Sarlavha */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="min-w-0">
+                    <h3 className="text-[16px] font-semibold text-ink leading-6 truncate">{group.name}</h3>
+                    <p className="text-[12.5px] text-primary font-medium mt-0.5 truncate">{group.subject}</p>
+                  </div>
                   {isDirector && (
-                    <>
-                      <button onClick={() => startEdit(group)} className="p-3 bg-slate-50 text-slate-400 hover:text-indigo-600 rounded-2xl transition-all hover:bg-indigo-50">
-                        <Edit2 size={16} />
+                    <div className="flex gap-1 shrink-0">
+                      <button
+                        onClick={() => startEdit(group)}
+                        title={t.edit_staff || 'Tahrirlash'}
+                        className="p-1.5 text-muted hover:text-primary hover:bg-primary-subtle rounded-md transition-colors"
+                      >
+                        <Edit2 size={15} />
                       </button>
-                      <button onClick={() => { if (window.confirm(t.delete_group_confirm || "Delete?")) onDeleteGroup(group.id) }} className="p-3 bg-slate-50 text-slate-400 hover:text-red-600 rounded-2xl transition-all hover:bg-red-50">
-                        <Trash2 size={16} />
+                      <button
+                        onClick={() => { if (window.confirm(t.delete_group_confirm || "Delete?")) onDeleteGroup(group.id) }}
+                        title={t.delete_action || "O'chirish"}
+                        className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors"
+                      >
+                        <Trash2 size={15} />
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
-              </div>
 
-              <div className="space-y-5 mb-8 flex-1">
-                <div className="flex items-center justify-between text-[11px] font-bold">
-                  <span className="text-slate-400 uppercase tracking-widest">{t.teacher}</span>
-                  <span className={`flex items-center gap-2 px-3 py-1.5 rounded-xl ${currentTeacherName === t.not_assigned ? 'bg-red-50 text-red-400 italic' : 'bg-slate-50 text-slate-800'}`}>
-                    <UserIcon size={14} className="text-indigo-400" />
-                    {currentTeacherName}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] font-bold">
-                  <span className="text-slate-400 uppercase tracking-widest">{t.time}</span>
-                  <span className="flex items-center gap-2 text-slate-800 bg-amber-50 px-4 py-1.5 rounded-xl border border-amber-100">
-                    <Clock size={14} className="text-amber-500" />
-                    {group.time}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] font-bold">
-                  <span className="text-slate-400 uppercase tracking-widest">{t.students}</span>
-                  <button
-                    onClick={() => setExpandedGroupId(expandedGroupId === group.id ? null : group.id)}
-                    className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
-                  >
-                    <Users size={14} />
-                    <span className="font-black">{group.studentIds.length}</span>
-                    {expandedGroupId === group.id ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                  </button>
-                </div>
-              </div>
-
-              {expandedGroupId === group.id && (
-                <div className="mb-6 bg-slate-50 rounded-[2rem] p-5 max-h-[250px] overflow-y-auto animate-in slide-in-from-top-4 duration-300 border border-slate-100 custom-scrollbar shadow-inner">
-                  <div className="space-y-2">
-                    {group.studentIds.map(sid => {
-                      const s = getStudentById(sid);
-                      return (
-                        <div key={sid} className="flex justify-between items-center p-3.5 bg-white rounded-2xl text-[11px] border border-slate-100 group/item hover:border-indigo-300 hover:shadow-sm transition-all">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 font-black text-[10px] shadow-sm">
-                              {s?.name.charAt(0)}
-                            </div>
-                            <span className="font-black text-slate-700 tracking-tight">{s?.name || 'Deleted'}</span>
-                          </div>
-                          {isDirector && (
-                            <button onClick={() => onRemoveStudent(group.id, sid)} className="text-slate-300 hover:text-red-500 p-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                              <X size={14} />
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
+                {/* Tafsilotlar */}
+                <div className="space-y-2.5 flex-1">
+                  <div className="flex items-center justify-between gap-3 text-[13px]">
+                    <span className="text-ink-2">{t.teacher}</span>
+                    {noTeacher
+                      ? <StatusBadge label={currentTeacherName} tone="danger" />
+                      : <span className="font-medium text-ink truncate">{currentTeacherName}</span>}
+                  </div>
+                  <div className="flex items-center justify-between gap-3 text-[13px]">
+                    <span className="text-ink-2">{t.time}</span>
+                    <span className="font-medium text-ink inline-flex items-center gap-1.5">
+                      <Clock size={13} className="text-muted" /> {group.time || '—'}
+                    </span>
+                  </div>
+                  {group.days?.length > 0 && (
+                    <div className="flex items-center justify-between gap-3 text-[13px]">
+                      <span className="text-ink-2">{t.days}</span>
+                      <span className="font-medium text-ink">{group.days.join(', ')}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between gap-3 text-[13px]">
+                    <span className="text-ink-2">{t.fee}</span>
+                    <span className="font-medium text-ink tabular-nums">{(group.fee || 0).toLocaleString()} UZS</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 text-[13px]">
+                    <span className="text-ink-2">{t.students}</span>
+                    <button
+                      onClick={() => setExpandedGroupId(expanded ? null : group.id)}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary-subtle text-primary font-semibold hover:bg-[#DDE3FC] transition-colors"
+                    >
+                      <Users size={13} /> {group.studentIds.length}
+                      {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                    </button>
                   </div>
                 </div>
-              )}
 
-              <button
-                onClick={() => setShowAssignModal(group.id)}
-                className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-3 text-[10px] uppercase tracking-widest active:scale-[0.98]"
-              >
-                <UserPlus size={18} />
-                {t.add_student}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+                {/* O'quvchilar ro'yxati */}
+                {expanded && (
+                  <div className="mt-3 border-t border-line pt-3 max-h-56 overflow-y-auto custom-scrollbar">
+                    {group.studentIds.length === 0 ? (
+                      <p className="text-[13px] text-muted py-2">{t.search_empty}</p>
+                    ) : (
+                      <div className="space-y-1">
+                        {group.studentIds.map(sid => {
+                          const s = getStudentById(sid);
+                          return (
+                            <div key={sid} className="flex items-center justify-between gap-2 py-1.5 group/item">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Avatar name={s?.name || '?'} size={26} />
+                                <span className="text-[13px] text-ink truncate">{s?.name || 'Deleted'}</span>
+                              </div>
+                              {isDirector && (
+                                <button
+                                  onClick={() => onRemoveStudent(group.id, sid)}
+                                  className="p-1 text-muted hover:text-danger rounded opacity-0 group-hover/item:opacity-100 transition-opacity shrink-0"
+                                >
+                                  <X size={14} />
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <Button
+                  variant="secondary"
+                  className="w-full mt-4"
+                  onClick={() => setShowAssignModal(group.id)}
+                >
+                  <UserPlus size={15} /> {t.add_student}
+                </Button>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {showAssignModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
