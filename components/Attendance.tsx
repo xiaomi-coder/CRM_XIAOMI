@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Group, Student, Attendance, AttendanceStatus, SystemSettings } from '../types';
 import { Check, X, Clock, Send, Search, Download, AlertCircle, MessageSquare, Users, LogOut, CheckCheck, Loader2 } from 'lucide-react';
 import { sendTelegramMessage } from '../services/telegramService';
+import { PageHeader, Card, Button, Field, Input, Select, Table, Th, Td, Avatar, EmptyState } from './ui';
 
 interface AttendanceProps {
   t: any;
@@ -234,169 +235,155 @@ const AttendanceManager: React.FC<AttendanceProps> = ({ t, groups, students, att
         </div>
       )}
 
-      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-wrap gap-4 items-end">
-        <div className="flex-1 min-w-[200px] space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.select_group}</label>
-          <select
-            value={selectedGroupId}
-            onChange={e => setSelectedGroupId(e.target.value)}
-            className={`w-full px-4 py-3 border rounded-2xl outline-none font-bold text-sm transition-all ${selectedGroupId === 'ALL_STUDENTS' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-100'}`}
-          >
-            <option value="ALL_STUDENTS" className="font-black text-indigo-600">✨ {t.all_students}</option>
-            <option disabled>──────────────────</option>
-            {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-          </select>
-        </div>
-        <div className="w-full md:w-48 space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.attendance_date}</label>
-          <input type="date" value={currentDate} onChange={e => setCurrentDate(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm" />
-        </div>
-        <div className="flex-1 min-w-[200px] space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.search}</label>
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-            <input placeholder={t.search_placeholder} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm" />
-          </div>
-        </div>
+      {/* Filtrlar */}
+      <div className="mb-4">
+        <PageHeader title={t.attendance} subtitle={t.attendance_hint || "Dars kunini belgilang va ota-onalarga xabar yuboring."} />
       </div>
 
-      {/* Hammasini belgilash paneli */}
-      <div className="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 mr-2">
-            <CheckCheck size={18} className="text-indigo-500" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.mark_all || "Hammasini belgilash"}</span>
-          </div>
-          <button
-            onClick={() => handleMarkAll(AttendanceStatus.PRESENT)}
-            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-2xl font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-40 border border-emerald-100 hover:border-emerald-500"
-          >
-            <Check size={16} />
-            {t.mark_all_present || "Hammasini KELDI"}
-          </button>
-          <button
-            onClick={() => handleMarkAll(AttendanceStatus.ABSENT)}
-            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-500 hover:text-white transition-all disabled:opacity-40 border border-red-100 hover:border-red-500"
-          >
-            <X size={16} />
-            {t.mark_all_absent || "Hammasini KELMADI"}
-          </button>
-          <button
-            onClick={() => handleMarkAll(AttendanceStatus.LATE)}
-            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 bg-amber-50 text-amber-600 rounded-2xl font-bold text-sm hover:bg-amber-500 hover:text-white transition-all disabled:opacity-40 border border-amber-100 hover:border-amber-500"
-          >
-            <Clock size={16} />
-            {t.mark_all_late || "Hammasini KECHIKDI"}
-          </button>
-          <div className="w-px h-8 bg-slate-200 mx-1 hidden md:block"></div>
-          <button
-            onClick={handleMarkAllDismissed}
-            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 text-blue-600 rounded-2xl font-bold text-sm hover:bg-blue-600 hover:text-white transition-all disabled:opacity-40 border border-blue-100 hover:border-blue-500"
-          >
-            {bulkLoading ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
-            {bulkProgress
-              ? `${bulkProgress.current}/${bulkProgress.total}...`
-              : (t.mark_all_dismissed || "Hammasini KETDI (xabar yuborish)")}
-          </button>
-          <div className="w-px h-8 bg-slate-200 mx-1 hidden md:block"></div>
-          <button
-            onClick={handleSendAllSms}
-            disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-all disabled:opacity-40 border border-indigo-100 hover:border-indigo-500"
-          >
-            {sendAllLoading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-            {sendAllProgress
-              ? `${sendAllProgress.current}/${sendAllProgress.total}...`
-              : (t.send_all_messages || "Barchasiga xabar yuborish")}
-          </button>
+      <Card className="mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Field label={t.select_group}>
+            <Select value={selectedGroupId} onChange={e => setSelectedGroupId(e.target.value)}>
+              <option value="ALL_STUDENTS">{t.all_students}</option>
+              {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+            </Select>
+          </Field>
+          <Field label={t.attendance_date}>
+            <Input type="date" value={currentDate} onChange={e => setCurrentDate(e.target.value)} />
+          </Field>
+          <Field label={t.search_label || 'Qidirish'}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} />
+              <Input className="pl-9" placeholder={t.search_placeholder} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            </div>
+          </Field>
         </div>
-        {bulkLoading && bulkProgress && (
-          <div className="mt-3">
-            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-              <div
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}
-              ></div>
-            </div>
-            <p className="text-[10px] text-slate-400 font-bold mt-1.5">
-              {t.sending_notifications || "Xabarlar yuborilmoqda..."} ({bulkProgress.current}/{bulkProgress.total})
-            </p>
-          </div>
-        )}
-        {sendAllLoading && sendAllProgress && (
-          <div className="mt-3">
-            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-              <div
-                className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(sendAllProgress.current / sendAllProgress.total) * 100}%` }}
-              ></div>
-            </div>
-            <p className="text-[10px] text-slate-400 font-bold mt-1.5">
-              {t.sending_notifications || "Xabarlar yuborilmoqda..."} ({sendAllProgress.current}/{sendAllProgress.total})
-            </p>
-          </div>
-        )}
-      </div>
+      </Card>
 
-      <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+      {/* Ommaviy amallar */}
+      <Card className="mb-4">
+        <div className="flex items-center gap-2 mb-3 text-ink-2">
+          <CheckCheck size={16} />
+          <span className="text-[13px] font-semibold">{t.mark_all || "Hammasini belgilash"}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" variant="secondary" disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
+            onClick={() => handleMarkAll(AttendanceStatus.PRESENT)}>
+            <Check size={14} /> {t.mark_all_present || "Hammasi KELDI"}
+          </Button>
+          <Button size="sm" variant="secondary" disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
+            onClick={() => handleMarkAll(AttendanceStatus.ABSENT)}>
+            <X size={14} /> {t.mark_all_absent || "Hammasi KELMADI"}
+          </Button>
+          <Button size="sm" variant="secondary" disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
+            onClick={() => handleMarkAll(AttendanceStatus.LATE)}>
+            <Clock size={14} /> {t.mark_all_late || "Hammasi KECHIKDI"}
+          </Button>
+
+          <span className="w-px h-6 bg-line mx-1 hidden sm:block" />
+
+          <Button size="sm" variant="secondary" disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
+            onClick={handleMarkAllDismissed}>
+            {bulkLoading ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />}
+            {bulkProgress ? `${bulkProgress.current}/${bulkProgress.total}...` : (t.mark_all_dismissed || "Hammasi KETDI")}
+          </Button>
+          <Button size="sm" disabled={bulkLoading || sendAllLoading || filteredStudents.length === 0}
+            onClick={handleSendAllSms}>
+            {sendAllLoading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+            {sendAllProgress ? `${sendAllProgress.current}/${sendAllProgress.total}...` : (t.send_all_messages || "Barchasiga xabar")}
+          </Button>
+        </div>
+
+        {(bulkProgress || sendAllProgress) && (
+          <div className="mt-3">
+            <div className="w-full bg-[#F0F1F3] rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-primary h-full rounded-full transition-all"
+                style={{ width: `${(((bulkProgress || sendAllProgress)!.current) / ((bulkProgress || sendAllProgress)!.total)) * 100}%` }}
+              />
+            </div>
+            <p className="text-[12px] text-muted mt-1.5">{t.sending_notifications || "Xabarlar yuborilmoqda..."}</p>
+          </div>
+        )}
+      </Card>
+
+      <Card padded={false}>
+        <Table>
+          <thead>
             <tr>
-              <th className="px-8 py-4">{t.students} (ID)</th>
-              <th className="px-8 py-4 text-center">{t.attendance}</th>
-              <th className="px-8 py-4 text-right">{t.send_message}</th>
+              <Th>{t.students}</Th>
+              <Th align="center">{t.attendance}</Th>
+              <Th align="right">{t.send_message}</Th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50">
+          <tbody>
             {filteredStudents.length > 0 ? filteredStudents.map(student => {
               const studentGroup = getStudentGroup(student.id);
               const currentStatus = getStudentStatus(student.id, studentGroup?.id);
-
+              const btn = (status: AttendanceStatus, Icon: any, tone: string, title: string) => {
+                const on = currentStatus === status;
+                return (
+                  <button
+                    onClick={() => handleStatusChange(student.id, status)}
+                    title={title}
+                    className={`w-9 h-9 rounded-md flex items-center justify-center border transition-colors
+                      ${on ? 'text-white border-transparent' : 'bg-canvas text-muted border-line hover:text-ink'}`}
+                    style={on ? { background: tone } : undefined}
+                  >
+                    <Icon size={17} />
+                  </button>
+                );
+              };
               return (
-                <tr key={student.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-indigo-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-[10px] shadow-lg shadow-indigo-100 uppercase tracking-tighter">
-                        {student.id.slice(-4)}
-                      </div>
-                      <div>
-                        <div className="font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                <tr key={student.id} className="hover:bg-[#FAFAFB] transition-colors">
+                  <Td>
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name={student.name} size={32} />
+                      <div className="min-w-0">
+                        <div className="font-semibold text-ink truncate flex items-center gap-2">
                           {student.name}
                           {selectedGroupId === 'ALL_STUDENTS' && (
-                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-500 rounded text-[8px] font-black uppercase border border-indigo-100">
+                            <span className="text-[11px] font-medium text-primary bg-primary-subtle px-1.5 py-0.5 rounded">
                               {studentGroup?.name || t.not_assigned}
                             </span>
                           )}
                         </div>
-                        <div className="text-[10px] text-slate-400 font-medium">{student.phone}</div>
+                        <div className="text-[12px] text-muted truncate">{student.phone}</div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex justify-center gap-4">
-                      <button onClick={() => handleStatusChange(student.id, AttendanceStatus.PRESENT)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.PRESENT ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-emerald-500'}`}><Check size={24} /></button>
-                      <button onClick={() => handleStatusChange(student.id, AttendanceStatus.ABSENT)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.ABSENT ? 'bg-red-500 border-red-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-red-500'}`}><X size={24} /></button>
-                      <button onClick={() => handleStatusChange(student.id, AttendanceStatus.LATE)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.LATE ? 'bg-amber-500 border-amber-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-amber-500'}`}><Clock size={24} /></button>
-                      <button onClick={() => handleStatusChange(student.id, AttendanceStatus.DISMISSED)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 ${currentStatus === AttendanceStatus.DISMISSED ? 'bg-blue-500 border-blue-500 text-white shadow-lg' : 'bg-slate-50 border-transparent text-slate-300 hover:text-blue-500'}`} title={t.dismissed_title || "Dars tugadi"}><LogOut size={24} /></button>
+                  </Td>
+                  <Td align="center">
+                    <div className="flex justify-center gap-2">
+                      {btn(AttendanceStatus.PRESENT, Check, '#157A4F', t.status_present)}
+                      {btn(AttendanceStatus.ABSENT, X, '#C13B30', t.status_absent)}
+                      {btn(AttendanceStatus.LATE, Clock, '#A8650A', t.status_late)}
+                      {btn(AttendanceStatus.DISMISSED, LogOut, '#2563C7', t.status_dismissed || 'Dars tugadi')}
                     </div>
-                  </td>
-                  <td className="px-8 py-5 text-right">
-                    <button onClick={() => handleSendSms(student)} disabled={!currentStatus || sendingSms === student.id} className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all disabled:opacity-30">
-                      {sendingSms === student.id ? <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div> : <Send size={20} />}
+                  </Td>
+                  <Td align="right">
+                    <button
+                      onClick={() => handleSendSms(student)}
+                      disabled={!currentStatus || sendingSms === student.id}
+                      title={t.send_message}
+                      className="p-2 text-muted hover:text-primary hover:bg-primary-subtle rounded-md transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                    >
+                      {sendingSms === student.id
+                        ? <Loader2 size={17} className="animate-spin" />
+                        : <Send size={17} />}
                     </button>
-                  </td>
+                  </Td>
                 </tr>
               );
             }) : (
-              <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 font-black uppercase text-[10px] tracking-widest italic opacity-50">{t.search_empty}</td></tr>
+              <tr>
+                <td colSpan={3}>
+                  <EmptyState icon={<Users size={22} />} title={t.search_empty} />
+                </td>
+              </tr>
             )}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Card>
     </div>
   );
 };
