@@ -446,15 +446,25 @@ ularni topa olmaydi (ALIGN xaritasi orqali qilingan).
 ### Ko'chirilgan ekranlar
 - ✅ **Xarajatlar** — birinchi namuna (PageHeader + 4 KPI + filtr karta +
   toza jadval, turkumlar StatusBadge bilan)
+- ✅ **Boshqaruv paneli** — dizayndagi to'liq tuzilma, HAMMASI haqiqiy
+  ma'lumotdan hisoblanadi (soxta raqam yo'q):
+  - 8 ta KPI (o'quvchi, guruh, 7 kunlik yangi lid, daromad, qarzdor,
+    davomat, ketib qolish xavfi, sof foyda)
+  - **"Diqqat talab qiladi"** — kechikkan to'lovlar / bugungi qo'ng'iroqlar
+    (`followUpDate <= bugun`) / past davomatli guruhlar (14 kunda <70%,
+    kamida 3 yozuv) / xavf ostidagi o'quvchilar
+  - **Daromad grafigi** — oxirgi 6 oy, `payments.date` dan guruhlanadi
+  - **Lid konversiyasi** — voronka, `leads.status` bo'yicha
+  - **Yaqinlashayotgan to'lovlar** — keyingi 14 kun, muddat belgisi bilan
+  - Ketib qolish xavfi (telefon havolasi bilan), moliyaviy hisobot, AI tahlil
 
 ### Keyingi navbat
 1. **Layout (karkas)** — yon menyu + yuqori panel. Hozir eski "baland ovozli"
    uslubda (sariq pill, katta soat bloki) va yangi ekranlar bilan yonma-yon
-   g'alati ko'rinadi.
-2. Boshqaruv paneli (+ dizayndagi "Diqqat talab qiladi" bloki, grafiklar —
-   bular YANGI funksiya, shunchaki bo'yash emas)
-3. O'quvchi profili (tab'lar bilan) — foydalanuvchi eng ko'p xohlagan narsa
-4. Qolgan ekranlar
+   g'alati ko'rinadi. ENG KO'RINADIGAN qolgan ish.
+2. O'quvchi profili (tab'lar bilan: Umumiy/To'lovlar/Davomat/Natijalar/
+   Telegram/Faoliyat) — foydalanuvchi eng ko'p xohlagan narsa
+3. Qolgan ekranlar (O'quvchilar, Guruhlar, Davomat, To'lovlar, Lidlar...)
 
 ## To'lovlar bo'limi (a–g) ✅ (2026-08-10)
 

@@ -3,10 +3,14 @@ import {
   Users, Activity, Sparkles, Loader2 as LucideLoader2, BrainCircuit, Wallet,
   UserCheck, FileText, Download, AlertCircle, Layers, TrendingUp, TrendingDown, ArrowUpRight, BarChart3, Banknote, Calendar as CalendarIcon, X, Phone, Search
 } from 'lucide-react';
-import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead } from '../types';
+import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead, LeadStatus } from '../types';
 import { analyzeDataWithAI } from '../services/geminiService';
 import { computeChurnRisk } from '../services/churnRisk';
 import { db } from '../services/supabase';
+import {
+  PageHeader, Card, CardHeader, Button, KpiCard, StatusBadge,
+  Field, Input, Table, Th, Td, EmptyState, TONE, Tone,
+} from './ui';
 
 interface DashboardProps {
   t: any;
@@ -87,6 +91,76 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
     () => computeChurnRisk(students, attendance),
     [students, attendance]
   );
+
+  const todayKey = useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }, []);
+
+  // So'nggi 7 kunda kelgan lidlar
+  const newLeads = useMemo(() => {
+    const cutoff = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+    return leads.filter(l => (l.createdAt || '').slice(0, 10) >= cutoff).length;
+  }, [leads]);
+
+  // Bugun qo'ng'iroq qilish kerak bo'lgan lidlar (sanasi bugun yoki o'tib ketgan)
+  const callsToday = useMemo(() => leads.filter(l =>
+    l.followUpDate && l.followUpDate <= todayKey &&
+    l.status !== LeadStatus.REGISTERED && l.status !== LeadStatus.REJECTED
+  ).length, [leads, todayKey]);
+
+  // Davomati past guruhlar — so'nggi 14 kunda 70% dan past
+  const lowAttendanceGroups = useMemo(() => {
+    const cutoff = new Date(Date.now() - 14 * 86400000).toISOString().split('T')[0];
+    return groups.filter(g => {
+      const recs = attendance.filter(a => a.groupId === g.id && a.date >= cutoff);
+      if (recs.length < 3) return false;   // ma'lumot yetarli emas — hisobga olmaymiz
+      const present = recs.filter(a => a.status !== AttendanceStatus.ABSENT).length;
+      return (present / recs.length) * 100 < 70;
+    }).length;
+  }, [groups, attendance]);
+
+  // Oxirgi 6 oy daromadi (grafik uchun)
+  const revenueTrend = useMemo(() => {
+    const months: { key: string; label: string; total: number }[] = [];
+    const names = [t.jan, t.feb, t.mar, t.apr, t.may, t.jun, t.jul, t.aug, t.sep, t.oct, t.nov, t.dec];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      months.push({ key, label: String(names[d.getMonth()] || '').slice(0, 3), total: 0 });
+    }
+    payments.forEach(p => {
+      const k = (p.date || '').slice(0, 7);
+      const m = months.find(x => x.key === k);
+      if (m) m.total += p.amount;
+    });
+    return months;
+  }, [payments, t]);
+
+  const maxRevenue = useMemo(() => Math.max(1, ...revenueTrend.map(m => m.total)), [revenueTrend]);
+
+  // Lid voronkasi
+  const funnel = useMemo(() => {
+    const count = (s: LeadStatus) => leads.filter(l => l.status === s).length;
+    const rows = [
+      { label: t.lead_new || 'Yangi', value: count(LeadStatus.NEW) },
+      { label: t.lead_contacted || "Bog'lanildi", value: count(LeadStatus.CONTACTED) },
+      { label: t.lead_trial || 'Sinov darsida', value: count(LeadStatus.TRIAL) },
+      { label: t.lead_success || "Ro'yxatdan o'tdi", value: count(LeadStatus.REGISTERED) },
+    ];
+    const max = Math.max(1, ...rows.map(r => r.value));
+    return rows.map(r => ({ ...r, pct: Math.round((r.value / max) * 100) }));
+  }, [leads, t]);
+
+  // Yaqinlashayotgan to'lovlar — keyingi 14 kun ichida
+  const upcomingPayments = useMemo(() => {
+    const limit = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
+    return students
+      .filter(s => s.nextPaymentDate && s.nextPaymentDate >= todayKey && s.nextPaymentDate <= limit)
+      .sort((a, b) => (a.nextPaymentDate || '').localeCompare(b.nextPaymentDate || ''))
+      .slice(0, 6);
+  }, [students, todayKey]);
 
   // Qarzdorlar qidiruvi
   const filteredDebtors = useMemo(() => {
@@ -179,168 +253,254 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Premium Filter Section */}
-      <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-2 h-full bg-indigo-600"></div>
-        <div className="flex flex-col md:flex-row items-center gap-8 w-full xl:w-auto">
-          <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-100 min-w-[300px]">
-            <div className="bg-white p-2 rounded-xl shadow-sm"><CalendarIcon size={18} className="text-indigo-600" /></div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{t.from_date}</span>
-              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="bg-transparent border-none outline-none font-black text-slate-800 text-sm focus:ring-0 p-0" />
-            </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.dashboard}
+        subtitle={t.dashboard_hint || "Markazingizda bugun nima bo'layotganini bir qarashda ko'ring."}
+        actions={
+          <>
+            <Button variant="secondary" size="sm" onClick={exportToCSV}>
+              <Download size={15} /> {t.excel_csv}
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => window.print()}>
+              <FileText size={15} /> {t.export_pdf || 'PDF'}
+            </Button>
+          </>
+        }
+      />
+
+      {/* Davr tanlash */}
+      <Card className="mb-5">
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="flex items-center gap-2 text-ink-2 pb-2.5">
+            <CalendarIcon size={16} />
+            <span className="text-[13px] font-semibold">{t.filter || 'Davr'}</span>
           </div>
-
-          <div className="text-slate-300 hidden md:block"><ArrowUpRight size={24} className="rotate-45" /></div>
-
-          <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-100 min-w-[300px]">
-            <div className="bg-white p-2 rounded-xl shadow-sm"><CalendarIcon size={18} className="text-amber-500" /></div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{t.to_date}</span>
-              <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="bg-transparent border-none outline-none font-black text-slate-800 text-sm focus:ring-0 p-0" />
-            </div>
-          </div>
+          <Field label={t.from_date} className="w-full sm:w-44">
+            <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+          </Field>
+          <Field label={t.to_date} className="w-full sm:w-44">
+            <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+          </Field>
         </div>
+      </Card>
 
-        <div className="flex gap-4 w-full xl:w-auto">
-          <button onClick={exportToCSV} className="flex-1 xl:flex-none flex items-center justify-center gap-3 bg-white text-emerald-600 px-8 py-4 rounded-2xl text-[10px] font-black uppercase border border-emerald-100 hover:bg-emerald-50 transition-all shadow-lg shadow-emerald-50">
-            <Download size={18} /> {t.excel_csv}
-          </button>
-          <button onClick={() => window.print()} className="flex-1 xl:flex-none flex items-center justify-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
-            <FileText size={18} /> {t.export_pdf?.toUpperCase() || 'PDF'}
-          </button>
-        </div>
+      {/* Asosiy ko'rsatkichlar */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <KpiCard label={t.students} value={students.length} />
+        <KpiCard label={t.groups} value={groups.length} />
+        <KpiCard label={t.leads} value={newLeads} hint={t.last_7_days || "so'nggi 7 kun"} />
+        {user.role !== UserRole.TEACHER && (
+          <KpiCard label={t.revenue} value={stats.totalRevenue.toLocaleString()} hint="UZS" />
+        )}
       </div>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        {[
-          { label: (t.students || 'Students').toUpperCase(), val: students.length, color: 'text-slate-800', icon: <Users size={20} />, bg: 'bg-indigo-50', show: true, clickable: false },
-          { label: (t.groups || 'Groups').toUpperCase(), val: groups.length, color: 'text-slate-800', icon: <Layers size={20} />, bg: 'bg-purple-50', show: true, clickable: false },
-          { label: (t.revenue || 'Revenue').toUpperCase(), val: stats.totalRevenue.toLocaleString(), color: 'text-emerald-600', icon: <TrendingUp size={20} />, bg: 'bg-emerald-50', show: user.role !== UserRole.TEACHER, clickable: false },
-          { label: (t.attendance || 'Attendance').toUpperCase(), val: `${stats.attPercentage}%`, color: 'text-amber-600', icon: <BarChart3 size={20} />, bg: 'bg-amber-50', show: true, clickable: false },
-          { label: (t.debtors || 'Debtors').toUpperCase(), val: debtorStudents.length, color: 'text-rose-600', icon: <AlertCircle size={20} />, bg: 'bg-rose-50', show: user.role !== UserRole.TEACHER, clickable: true, onClick: () => setShowDebtorsModal(true) }
-        ].filter(i => i.show).map((item, i) => (
-          <div
-            key={i}
-            onClick={item.clickable ? item.onClick : undefined}
-            className={`bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all relative group overflow-hidden ${item.clickable ? 'cursor-pointer hover:border-rose-300 hover:scale-[1.02]' : ''}`}
-          >
-            <div className={`absolute top-0 right-0 p-4 ${item.bg} rounded-bl-[2rem] opacity-40 group-hover:scale-110 transition-transform`}>
-              {item.icon}
-            </div>
-            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-3">{item.label}</p>
-            <h3 className={`text-3xl font-black tracking-tighter ${item.color}`}>{item.val}</h3>
-            {item.clickable && <p className="text-[9px] text-rose-400 mt-2 font-bold">{t.click_to_view || "Batafsil ko'rish uchun bosing"}</p>}
-          </div>
-        ))}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {user.role !== UserRole.TEACHER && (
+          <KpiCard
+            label={t.debtors}
+            value={debtorStudents.length}
+            hint={t.click_to_view || "Batafsil ko'rish uchun bosing"}
+            onClick={() => setShowDebtorsModal(true)}
+          />
+        )}
+        <KpiCard label={t.attendance} value={`${stats.attPercentage}%`} />
+        <KpiCard label={t.churn_risk} value={riskStudents.length} />
+        {user.role !== UserRole.TEACHER && (
+          <KpiCard label={t.net_profit} value={stats.profit.toLocaleString()} hint="UZS" />
+        )}
       </div>
 
-      {/* Ketib qolish xavfi — davomat pasayishi / ketma-ket kelmaslik / to'lov
-          kechikishi asosidagi bashorat. O'quvchi hali ketmasdan oldin ushlab
-          qolish uchun. */}
+      {/* Diqqat talab qiladi */}
       {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
-        <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-          <div className="flex justify-between items-center mb-8 flex-wrap gap-3">
-            <div className="flex items-center gap-3">
-              <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-100"><TrendingDown size={20} className="text-amber-600" /></div>
-              <div>
-                <h3 className="font-black text-slate-800 uppercase tracking-tighter text-sm">{t.churn_risk || "Ketib qolish xavfi"}</h3>
-                <p className="text-[10px] text-slate-400 font-bold">{t.churn_risk_desc || "Davomat, kelmaslik va to'lov kechikishi asosida"}</p>
-              </div>
-            </div>
-            {riskStudents.length > 0 && (
-              <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100">
-                {riskStudents.length} {t.students?.toLowerCase() || "o'quvchi"}
-              </span>
-            )}
+        <>
+          <div className="text-[12px] font-bold uppercase tracking-[0.05em] text-[#5B6478] mb-2">
+            {t.needs_attention || 'Diqqat talab qiladi'}
           </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {([
+              { count: debtorStudents.length, label: t.overdue_payments || "Kechikkan to'lovlar", tone: 'danger' as Tone, onClick: () => setShowDebtorsModal(true) },
+              { count: callsToday, label: t.calls_today || "Bugungi qo'ng'iroqlar", tone: 'info' as Tone },
+              { count: lowAttendanceGroups, label: t.low_attendance_groups || 'Past davomatli guruhlar', tone: 'warning' as Tone },
+              { count: riskStudents.length, label: t.at_risk_students || "Xavf ostidagi o'quvchilar", tone: 'warning' as Tone },
+            ]).map((a, i) => (
+              <div
+                key={i}
+                onClick={a.onClick}
+                className={`rounded-lg p-3.5 border ${a.onClick ? 'cursor-pointer hover:brightness-[0.98]' : ''} transition-all`}
+                style={{ background: TONE[a.tone].bg, borderColor: TONE[a.tone].dot + '33' }}
+              >
+                <div className="text-[20px] font-bold leading-tight" style={{ color: TONE[a.tone].fg }}>{a.count}</div>
+                <div className="text-[12.5px] font-semibold mt-0.5" style={{ color: TONE[a.tone].fg }}>{a.label}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
-          {riskStudents.length === 0 ? (
-            <div className="flex items-center gap-3 p-5 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-700 text-sm font-bold">
-              <UserCheck size={18} />
-              {t.no_risk_students || "Hozircha xavf ostidagi o'quvchi yo'q — davom eting!"}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {riskStudents.map(r => (
-                <div key={r.student.id} className={`p-4 rounded-2xl border flex items-start justify-between gap-3 ${r.level === 'HIGH' ? 'bg-rose-50 border-rose-100' : 'bg-amber-50 border-amber-100'}`}>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${r.level === 'HIGH' ? 'bg-rose-500' : 'bg-amber-500'}`}></span>
-                      <p className="font-black text-slate-800 truncate">{r.student.name}</p>
-                    </div>
-                    <p className="text-[11px] text-slate-500 font-bold mt-1">{r.factors.join(' · ')}</p>
-                    {(r.student.phone || r.student.parentPhone) && (
-                      <a href={`tel:${r.student.parentPhone || r.student.phone}`} className="inline-flex items-center gap-1.5 text-[11px] font-black text-indigo-600 mt-2 hover:underline">
-                        <Phone size={11} /> {r.student.parentPhone || r.student.phone}
-                      </a>
-                    )}
-                  </div>
-                  <span className={`shrink-0 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg ${r.level === 'HIGH' ? 'bg-rose-600 text-white' : 'bg-amber-500 text-white'}`}>
-                    {r.level === 'HIGH' ? (t.risk_high || 'Yuqori') : (t.risk_medium || "O'rta")}
-                  </span>
+      {/* Grafik + voronka */}
+      {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
+        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4 mb-5">
+          <Card>
+            <CardHeader title={t.revenue_chart || 'Oylik daromad tendensiyasi'} />
+            <div className="flex items-end gap-2 h-28">
+              {revenueTrend.map(m => (
+                <div key={m.key} className="flex-1 flex flex-col justify-end h-full" title={m.total.toLocaleString()}>
+                  <div
+                    className="w-full bg-primary rounded-t-[4px] min-h-[2px] transition-all"
+                    style={{ height: `${Math.round((m.total / maxRevenue) * 100)}%` }}
+                  />
                 </div>
               ))}
             </div>
-          )}
+            <div className="flex justify-between text-[11px] text-muted mt-1.5">
+              {revenueTrend.map(m => <span key={m.key} className="flex-1 text-center">{m.label}</span>)}
+            </div>
+          </Card>
+
+          <Card>
+            <CardHeader title={t.lead_conversion || 'Lid konversiyasi'} />
+            <div className="space-y-2.5">
+              {funnel.map(f => (
+                <div key={f.label}>
+                  <div className="flex justify-between text-[12px] text-ink-2 mb-1">
+                    <span>{f.label}</span>
+                    <span className="font-semibold text-ink tabular-nums">{f.value}</span>
+                  </div>
+                  <div className="h-1.5 bg-[#F0F1F3] rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${f.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       )}
 
+      {/* Yaqinlashayotgan to'lovlar + ketib qolish xavfi */}
       {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-            <div className="flex justify-between items-center mb-10">
-              <h3 className="font-black text-slate-800 uppercase tracking-tighter text-sm">{(t.financial_report || 'Financial Report').toUpperCase()}</h3>
-              <div className="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">
-                {(t.net_profit || 'Profit').toUpperCase()}: {stats.profit.toLocaleString()} UZS
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4 mb-5">
+          <Card padded={false}>
+            <div className="px-5 pt-5">
+              <CardHeader title={t.upcoming_payments || "Yaqinlashayotgan to'lovlar"} subtitle={t.next_14_days || 'Keyingi 14 kun'} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-6 bg-emerald-50 rounded-[2rem] border border-emerald-100">
-                <p className="text-[9px] font-black text-emerald-600 uppercase mb-2">{t.revenue}</p>
-                <h4 className="text-xl font-black text-emerald-700">{stats.totalRevenue.toLocaleString()}</h4>
+            {upcomingPayments.length === 0 ? (
+              <EmptyState title={t.no_upcoming_payments || "Yaqin kunlarda to'lov muddati yo'q."} />
+            ) : (
+              <Table>
+                <tbody>
+                  {upcomingPayments.map(s => {
+                    const days = Math.ceil((new Date(s.nextPaymentDate!).getTime() - Date.now()) / 86400000);
+                    return (
+                      <tr key={s.id} className="hover:bg-[#FAFAFB]">
+                        <Td className="font-semibold">{s.name}</Td>
+                        <Td className="text-ink-2">{getStudentGroups(s.id).map(g => g.name).join(', ') || '—'}</Td>
+                        <Td align="right" className="text-muted tabular-nums">{s.nextPaymentDate}</Td>
+                        <Td align="right">
+                          <StatusBadge
+                            label={days <= 1 ? (t.expires_today || 'Bugun') : `${days} ${t.days_left_label || 'kun qoldi'}`}
+                            tone={days <= 3 ? 'warning' : 'success'}
+                          />
+                        </Td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            )}
+          </Card>
+
+          <Card>
+            <CardHeader title={t.churn_risk} subtitle={t.churn_risk_desc} />
+            {riskStudents.length === 0 ? (
+              <p className="text-[13px] text-success bg-success-bg rounded-md px-3 py-2.5">
+                {t.no_risk_students}
+              </p>
+            ) : (
+              <div className="space-y-2.5">
+                {riskStudents.slice(0, 5).map(r => (
+                  <div key={r.student.id} className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-[13px] font-semibold text-ink truncate">{r.student.name}</div>
+                      <div className="text-[12px] text-ink-2 truncate">{r.factors.join(' · ')}</div>
+                      {(r.student.parentPhone || r.student.phone) && (
+                        <a href={`tel:${(r.student.parentPhone || r.student.phone).replace(/\s/g, '')}`}
+                          className="text-[12px] font-semibold text-primary inline-flex items-center gap-1 mt-0.5">
+                          <Phone size={11} /> {r.student.parentPhone || r.student.phone}
+                        </a>
+                      )}
+                    </div>
+                    <StatusBadge
+                      label={r.level === 'HIGH' ? (t.risk_high || 'Yuqori') : (t.risk_medium || "O'rta")}
+                      tone={r.level === 'HIGH' ? 'danger' : 'warning'}
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="p-6 bg-blue-50 rounded-[2rem] border border-blue-100">
-                <p className="text-[9px] font-black text-blue-600 uppercase mb-2">{t.salaries}</p>
-                <h4 className="text-xl font-black text-blue-700">{stats.totalSalaries.toLocaleString()}</h4>
-              </div>
-              <div className="p-6 bg-rose-50 rounded-[2rem] border border-rose-100">
-                <p className="text-[9px] font-black text-rose-600 uppercase mb-2">{t.expenses_label}</p>
-                <h4 className="text-xl font-black text-rose-700">{stats.totalOfficeExpenses.toLocaleString()}</h4>
-              </div>
-            </div>
-          </div>
-          <div className="bg-[#0a0d14] rounded-[2.5rem] p-8 text-white flex flex-col shadow-2xl">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="bg-indigo-600 p-2 rounded-xl"><Sparkles size={20} /></div>
-              <div className="flex flex-col">
-                <span className="text-[8px] font-black text-indigo-400 uppercase tracking-[0.4em] leading-none mb-1">EDUCONTROL</span>
-                <h3 className="text-lg font-black italic tracking-tighter uppercase leading-none">{t.ai_analysis}</h3>
-              </div>
-            </div>
-            <p className="text-indigo-100 text-[11px] leading-relaxed mb-8 opacity-70">{t.ai_analysis_note}</p>
-            <button onClick={async () => {
-              setLoadingAi(true);
-              let apiKey = undefined;
-              try {
-                if (user.centerId) {
-                  const settings = await db.getOne('settings', 'centerId', user.centerId);
-                  if (settings && settings.geminiApiKey) apiKey = settings.geminiApiKey;
-                }
-              } catch (e) {
-                console.error("Settings fetch error:", e);
-              }
-              const res = await analyzeDataWithAI(students, payments, groups, attendance, apiKey);
-              alert(res);
-              setLoadingAi(false);
-            }} disabled={loadingAi} className="w-full bg-[#ffc107] text-black font-black py-4 rounded-2xl text-[10px] uppercase shadow-xl hover:scale-105 active:scale-95 transition-all">
-              {loadingAi ? t.ai_analyzing : t.start_analysis}
-            </button>
-          </div>
+            )}
+          </Card>
         </div>
       )}
+
+      {/* Moliya + AI */}
+      {(user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN) && (
+        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4">
+          <Card>
+            <CardHeader
+              title={t.financial_report}
+              actions={
+                <span className="text-[12px] font-semibold text-ink-2">
+                  {t.net_profit}: <span className="text-ink tabular-nums">{stats.profit.toLocaleString()}</span> UZS
+                </span>
+              }
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { label: t.revenue, value: stats.totalRevenue, tone: 'success' as Tone },
+                { label: t.salaries, value: stats.totalSalaries, tone: 'info' as Tone },
+                { label: t.expenses_label, value: stats.totalOfficeExpenses, tone: 'danger' as Tone },
+              ].map(x => (
+                <div key={x.label} className="rounded-md p-3" style={{ background: TONE[x.tone].bg }}>
+                  <div className="text-[12px] font-semibold" style={{ color: TONE[x.tone].fg }}>{x.label}</div>
+                  <div className="text-[18px] font-bold tabular-nums mt-0.5" style={{ color: TONE[x.tone].fg }}>
+                    {x.value.toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card>
+            <CardHeader
+              title={t.ai_analysis}
+              actions={<span className="text-[10.5px] font-bold text-white bg-primary rounded-[5px] px-1.5 py-0.5">AI</span>}
+            />
+            <p className="text-[12.5px] text-ink-2 leading-5 mb-4">{t.ai_analysis_note}</p>
+            <Button
+              className="w-full"
+              disabled={loadingAi}
+              onClick={async () => {
+                setLoadingAi(true);
+                let apiKey = undefined;
+                try {
+                  if (user.centerId) {
+                    const settings = await db.getOne('settings', 'centerId', user.centerId);
+                    if (settings && settings.geminiApiKey) apiKey = settings.geminiApiKey;
+                  }
+                } catch (e) {
+                  console.error("Settings fetch error:", e);
+                }
+                const res = await analyzeDataWithAI(students, payments, groups, attendance, apiKey);
+                alert(res);
+                setLoadingAi(false);
+              }}
+            >
+              {loadingAi ? <><LucideLoader2 size={15} className="animate-spin" /> {t.ai_analyzing}</> : <><Sparkles size={15} /> {t.start_analysis}</>}
+            </Button>
+          </Card>
+        </div>
+      )}
+
 
       {/* ========== Qarzdorlar Modal ========== */}
       {showDebtorsModal && (
