@@ -458,13 +458,24 @@ ularni topa olmaydi (ALIGN xaritasi orqali qilingan).
   - **Yaqinlashayotgan to'lovlar** — keyingi 14 kun, muddat belgisi bilan
   - Ketib qolish xavfi (telefon havolasi bilan), moliyaviy hisobot, AI tahlil
 
-### Keyingi navbat
-1. **Layout (karkas)** — yon menyu + yuqori panel. Hozir eski "baland ovozli"
-   uslubda (sariq pill, katta soat bloki) va yangi ekranlar bilan yonma-yon
-   g'alati ko'rinadi. ENG KO'RINADIGAN qolgan ish.
-2. O'quvchi profili (tab'lar bilan: Umumiy/To'lovlar/Davomat/Natijalar/
-   Telegram/Faoliyat) — foydalanuvchi eng ko'p xohlagan narsa
-3. Qolgan ekranlar (O'quvchilar, Guruhlar, Davomat, To'lovlar, Lidlar...)
+- ✅ **Karkas (Layout)** — yon menyu 240px `#101828`, faol element ko'k;
+  yuqori panel 56px: yo'lchi (Asosiy / Boshqaruv), til, soat, avatar
+- ✅ **O'quvchilar** — tokenlar tufayli avtomatik yangilandi; "ASOSIY" ustun
+  sarlavhasi (`t.main`) va id'dan yasalgan avatar (`-S1`) tuzatildi
+- ✅ **O'quvchi profili** (`components/StudentProfile.tsx`) — ro'yxatda
+  ism/avatarga bosilsa ochiladi. Tab'lar: Umumiy / To'lovlar / Davomat /
+  Natijalar / Telegram / Faoliyat. Hammasi mavjud ma'lumotdan, qo'shimcha
+  so'rov yo'q (payments va results AuthenticatedApp'dan uzatiladi).
+  Telegram tabida ulanmagan o'quvchining KODI ko'rsatiladi.
+
+### ⚠️ Butun ilova bo'ylab takrorlangan xato
+"Amallar" ustuni **uch joyda** `t.main` ("Asosiy") deb nomlangan edi —
+Xarajatlar, To'lovlar, O'quvchilar. Uchchalasi ham tuzatildi. Yangi jadval
+qilganda `t.actions` ishlatilsin.
+
+### Keyingi navbat (qolgan ekranlar)
+Guruhlar, Davomat, To'lovlar (mantiq tayyor — faqat ko'rinish), Lidlar,
+Xodimlar, Oylik maosh, Arxiv, Natijalar, Sozlamalar, Creator paneli, IELTS.
 
 ## To'lovlar bo'limi (a–g) ✅ (2026-08-10)
 
