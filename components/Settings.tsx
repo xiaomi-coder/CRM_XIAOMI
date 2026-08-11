@@ -192,13 +192,17 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
           <div className="space-y-5">
             <form onSubmit={async (e) => {
               e.preventDefault();
-              onSave(formData);
+              let toSave = formData;
+
               if (formData.botToken) {
                 setBotStatus('checking');
                 setBotError('');
                 const botInfo = await getTelegramBotInfo(formData.botToken);
                 if (botInfo.success && botInfo.username) {
                   setBotUsername(botInfo.username);
+                  // Username ham saqlanadi — ota-onaga beriladigan ulanish
+                  // havolasi (t.me/<username>?start=KOD) shundan yasaladi
+                  toSave = { ...formData, botUsername: botInfo.username };
                   const webhookResult = await setTelegramWebhook(formData.botToken);
                   if (webhookResult.success) setBotStatus('success');
                   else { setBotStatus('error'); setBotError(webhookResult.error || 'Webhook xatosi'); }
@@ -207,6 +211,9 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                   setBotError(botInfo.error || 'Bot topilmadi');
                 }
               }
+
+              // Bot tekshiruvi qanday tugashidan qat'i nazar sozlamalar saqlanadi
+              onSave(toSave);
               alert(t.save);
             }} className="space-y-5">
 

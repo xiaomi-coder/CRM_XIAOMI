@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   ChevronLeft, Phone, Pencil, Plus, Send, CheckCircle2, XCircle, Clock,
-  LogOut, Wallet, CalendarCheck, Trophy, Activity, User as UserIcon,
+  LogOut, Wallet, CalendarCheck, Trophy, Activity, User as UserIcon, Copy, Check,
 } from 'lucide-react';
 import {
   Student, Group, Payment, Attendance, AttendanceStatus, Result, StudentStatus,
@@ -26,6 +26,8 @@ interface Props {
   payments: Payment[];
   attendance: Attendance[];
   results: Result[];
+  /** Markaz botining @username — ulanish havolasi shundan yasaladi */
+  botUsername?: string;
   onBack: () => void;
   onEdit?: () => void;
   onSendMessage?: () => void;
@@ -45,9 +47,23 @@ const ATT_TONE: Record<string, Tone> = {
 };
 
 const StudentProfile: React.FC<Props> = ({
-  t, student, groups, payments, attendance, results, onBack, onEdit, onSendMessage,
+  t, student, groups, payments, attendance, results, botUsername, onBack, onEdit, onSendMessage,
 }) => {
   const [tab, setTab] = useState('overview');
+  const [copied, setCopied] = useState(false);
+
+  // Ota-onaga beriladigan havola: bosadi → bot ochiladi → Start → ulandi.
+  // Bot username Sozlamalarda bot ulanganda saqlanadi.
+  const connectLink = botUsername && student.tgConnectionCode
+    ? `https://t.me/${botUsername}?start=${student.tgConnectionCode}`
+    : '';
+
+  const copyLink = () => {
+    if (!connectLink) return;
+    navigator.clipboard.writeText(connectLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
 
   const myGroups = useMemo(
     () => groups.filter(g => g.studentIds.includes(student.id)),
@@ -364,16 +380,43 @@ const StudentProfile: React.FC<Props> = ({
             </div>
 
             {!student.tgChatId && (
-              <div className="bg-canvas border border-line rounded-md p-4">
-                <div className="text-[12px] font-bold uppercase tracking-[0.05em] text-muted mb-1.5">
-                  {t.student_code || "O'quvchi kodi"}
+              <div className="space-y-3">
+                {connectLink ? (
+                  <div className="bg-canvas border border-line rounded-md p-4">
+                    <div className="text-[12px] font-bold uppercase tracking-[0.05em] text-muted mb-1.5">
+                      {t.connect_link || "Ulanish havolasi"}
+                    </div>
+                    <p className="text-[12.5px] text-ink-2 leading-5 mb-3">
+                      {t.connect_link_hint || "Havolani ota-onaga yuboring. U bosadi va 'Start' tugmasini bosadi — tamom, hech narsa yozish shart emas."}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 min-w-0 truncate text-[12.5px] bg-surface border border-line rounded-field px-3 py-2 text-ink-2">
+                        {connectLink}
+                      </code>
+                      <Button variant="secondary" size="sm" onClick={copyLink}>
+                        {copied ? <><Check size={14} /> {t.copied || 'Nusxalandi'}</> : <><Copy size={14} /> {t.copy || 'Nusxalash'}</>}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-warning-bg border border-line rounded-md p-4">
+                    <p className="text-[12.5px] text-warning leading-5">
+                      {t.no_bot_hint || "Ulanish havolasi uchun avval Sozlamalarda markazning Telegram botini ulang."}
+                    </p>
+                  </div>
+                )}
+
+                <div className="bg-canvas border border-line rounded-md p-4">
+                  <div className="text-[12px] font-bold uppercase tracking-[0.05em] text-muted mb-1.5">
+                    {t.student_code || "O'quvchi kodi"}
+                  </div>
+                  <div className="text-[16px] font-semibold tracking-[0.15em] text-ink font-mono">
+                    {(student.tgConnectionCode || '').toUpperCase() || '—'}
+                  </div>
+                  <p className="text-[12.5px] text-ink-2 mt-2 leading-5">
+                    {t.tg_code_hint || "Havola ishlamasa, ota-ona botga shu kodni yozsa ham bo'ladi."}
+                  </p>
                 </div>
-                <div className="text-[20px] font-bold tracking-[0.2em] text-ink font-mono">
-                  {(student.tgConnectionCode || student.id.slice(-4)).toUpperCase()}
-                </div>
-                <p className="text-[12.5px] text-ink-2 mt-2 leading-5">
-                  {t.tg_connect_hint || "Ota-ona markazning Telegram botiga shu kodni yozsa, farzandiga ulanadi."}
-                </p>
               </div>
             )}
 

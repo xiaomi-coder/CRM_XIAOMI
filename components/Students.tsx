@@ -16,7 +16,7 @@ interface StudentsProps {
   attendance: Attendance[];
   payments?: Payment[];
   results?: Result[];
-  settings: { botToken: string; centerName: string };
+  settings: { botToken: string; centerName: string; botUsername?: string };
   onAdd: (student: Omit<Student, 'id' | 'centerId' | 'tgEnabled' | 'tgConnectionCode' | 'status'>, groupId?: string) => void;
   onDelete: (id: string) => void;
   onUpdateStatus: (id: string, status: StudentStatus, lastGroup?: string, lastTeacher?: string, exitNote?: string) => void;
@@ -192,6 +192,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
         payments={payments}
         attendance={attendance}
         results={results}
+        botUsername={settings.botUsername}
         onBack={() => setProfileId(null)}
         onSendMessage={() => setSendMessageStudent(profileStudent)}
       />

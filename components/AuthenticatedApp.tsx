@@ -262,7 +262,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           attendance={attendance}
           payments={payments}
           results={results}
-          settings={{ botToken: currentSettings?.botToken || '', centerName: currentSettings?.centerName || "O'quv markazi" }}
+          settings={{ botToken: currentSettings?.botToken || '', centerName: currentSettings?.centerName || "O'quv markazi", botUsername: currentSettings?.botUsername }}
           onAdd={async (s, gid) => {
             const id = crypto.randomUUID();
             const student = { ...s, id, "centerId": centerId, tgEnabled: false, status: StudentStatus.ACTIVE, tgConnectionCode: '' };

@@ -389,6 +389,32 @@ qaytib yoziladi).
   aks holda progress noto'g'ri tugmada ko'rinardi.
 - Demoda sinaldi: 6 ta belgilangan o'quvchi to'g'ri topildi.
 
+
+## Telegram: havola orqali ulanish ✅ (2026-08-11)
+
+**Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona
+botni topib, /start bosib, keyin o'quvchi kodini QO'LDA terishi kerak edi.
+Ustiga kod = id ning oxirgi 3-4 belgisi, ya'ni **taxmin qilsa bo'lardi**
+(begona odam boshqa bolaning davomati/to'lovini ko'rishi mumkin edi).
+
+**Yechim** (`db/13-tg-connect-link.sql`):
+- Har o'quvchida **12 belgili tasodifiy kod** (`tgConnectionCode`). Trigger
+  bilan kafolatlanadi — frontend `''` yuborsa ham to'ldiriladi. 48 mavjud
+  o'quvchiga backfill qilindi.
+- `settings."botUsername"` ustuni qo'shildi — havola shundan yasaladi
+  (avval faqat botToken saqlanardi).
+- `tg_connect` dan **id-suffiks bo'yicha ulanish OLIB TASHLANDI** — endi
+  faqat uzun kod. Sinovda tasdiqlandi: uzun kod → topadi, qisqa → not_found.
+- `api/telegram-webhook.ts`: `/start <KOD>` qabul qiladi. Ota-ona
+  `https://t.me/<bot>?start=<KOD>` havolasini bosadi → Start → ulandi.
+  Hech narsa terilmaydi. Kodsiz /start bo'lsa — ko'rsatma chiqadi.
+  Qo'lda kod yozish ham ishlaydi (zaxira yo'l).
+- O'quvchi profili → Telegram tabida **ulanish havolasi + nusxalash tugmasi**.
+  Bot ulanmagan bo'lsa ogohlantirish chiqadi.
+
+⚠️ Bot username Sozlamalarda bot ulanganda saqlanadi — eski markazlar
+Sozlamalarni bir marta qayta saqlashi kerak, aks holda havola yasalmaydi.
+
 ## Xarajatlar bo'limi qayta ishlandi ✅ (2026-08-10)
 
 Foydalanuvchi UI/UX yomonligini va sana filtrida "ikkita yozuv ustma-ust"

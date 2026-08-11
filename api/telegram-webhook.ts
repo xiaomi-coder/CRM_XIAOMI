@@ -30,20 +30,26 @@ export default async function handler(req: any, res: any) {
             return res.status(200).json({ ok: true });
         }
 
-        // Handle /start command
-        if (text === '/start' || text.startsWith('/start')) {
-            await sendTelegramMessage(botToken, chatId,
-                `Assalomu alaykum, ${firstName}! 👋\n\n` +
-                `Farzandingizni tizimga ulash uchun o'quvchi kodini kiriting.\n\n` +
-                `📝 O'quvchi kodini o'quv markazidan so'rang.\n` +
-                `(Kod 3-4 ta harf/raqamdan iborat, masalan: A1B yoki 4CQ5)\n\n` +
-                `O'quvchi kodini kiriting:`
-            );
-            return res.status(200).json({ ok: true });
+        // /start — havola bilan kelgan bo'lsa kod ichida bo'ladi:
+        //   https://t.me/<bot>?start=<KOD>  →  Telegram "/start <KOD>" yuboradi
+        // Shunda ota-ona hech narsa termaydi. Kodsiz /start bo'lsa — ko'rsatma.
+        let studentCode = '';
+        if (text.startsWith('/start')) {
+            const payload = text.slice('/start'.length).trim();
+            if (!payload) {
+                await sendTelegramMessage(botToken, chatId,
+                    `Assalomu alaykum, ${firstName}! 👋\n\n` +
+                    `Farzandingizni tizimga ulash uchun o'quv markazidan olgan ` +
+                    `<b>ulanish havolasini</b> bosing.\n\n` +
+                    `Havola bo'lmasa, o'quvchi kodini shu yerga yozing.`
+                );
+                return res.status(200).json({ ok: true });
+            }
+            studentCode = payload.toUpperCase();
+        } else {
+            // Kodni qo'lda yozgan bo'lsa ham ishlaydi
+            studentCode = text.toUpperCase().trim();
         }
-
-        // Handle student code input
-        const studentCode = text.toUpperCase().trim();
 
         // RLS yoqilgandan beri anon kalit jadvallarni to'g'ridan-to'g'ri o'qiy
         // olmaydi (avval shu yerda o'qirdi va oqim jimgina buzilgan edi).
