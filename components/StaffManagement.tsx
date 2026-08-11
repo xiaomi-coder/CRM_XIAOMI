@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { User, UserRole, Group } from '../types';
 import { Shield, Trash2, Check, X, Plus, AlertTriangle, Crown, UserCog, GraduationCap, ToggleLeft, ToggleRight, KeyRound } from 'lucide-react';
+import { PageHeader, Card, Button, Table, Th, Td, StatusBadge, Avatar } from './ui';
 import { db } from '../services/supabase';
 
 interface StaffManagementProps {
@@ -227,73 +228,79 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
   const availableRoles = [UserRole.DIRECTOR, UserRole.ADMIN, UserRole.TEACHER];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-end">
-        <button
-          onClick={() => { setEditingUser(null); resetForm(); setShowModal(true); }}
-          className="flex items-center space-x-2 bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition-all"
-        >
-          <Plus size={20} />
-          <span>{t.add_staff}</span>
-        </button>
-      </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.staff}
+        subtitle={`${users.length} ${t.staff_count_hint || 'xodim'}`}
+        actions={
+          <Button onClick={() => { setEditingUser(null); resetForm(); setShowModal(true); }}>
+            <Plus size={16} /> {t.add_staff}
+          </Button>
+        }
+      />
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left">
+      <Card padded={false}>
+        <Table>
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest">
-              <th className="px-6 py-4">{t.student_name}</th>
-              <th className="px-6 py-4">{t.role}</th>
-              <th className="px-6 py-4 text-center">{t.share}</th>
-              <th className="px-6 py-4">{t.groups}</th>
-              <th className="px-6 py-4 text-right">{t.main}</th>
+            <tr>
+              <Th>{t.full_name}</Th>
+              <Th>{t.role}</Th>
+              <Th align="center">{t.share}</Th>
+              <Th>{t.groups}</Th>
+              <Th align="right">{t.actions || 'Amallar'}</Th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody>
             {users.map(u => (
-              <tr key={u.id} className="hover:bg-gray-50 transition-all group">
-                <td className="px-6 py-4 font-bold text-gray-800">{u.name}</td>
-                <td className="px-6 py-4">{getRoleBadge(u.role)}</td>
-                <td className="px-6 py-4 text-center">
-                  <div className="font-black text-indigo-600">
-                    {u.role === UserRole.SUPER_ADMIN || u.role === UserRole.DIRECTOR ? '—' : (u.salaryPercentage || 40) + '%'}
+              <tr key={u.id} className="hover:bg-[#FAFAFB] transition-colors">
+                <Td>
+                  <div className="flex items-center gap-2.5">
+                    <Avatar name={u.name} size={32} />
+                    <div className="min-w-0">
+                      <div className="font-semibold text-ink truncate">{u.name}</div>
+                      <div className="text-[12px] text-muted truncate">{u.username}</div>
+                    </div>
                   </div>
-                </td>
-                <td className="px-6 py-4">
+                </Td>
+                <Td>{getRoleBadge(u.role)}</Td>
+                <Td align="center" className="tabular-nums text-ink-2">
+                  {u.role === UserRole.SUPER_ADMIN || u.role === UserRole.DIRECTOR ? '—' : (u.salaryPercentage || 40) + '%'}
+                </Td>
+                <Td>
                   <div className="flex flex-wrap gap-1">
                     {u.groupIds?.map(gid => {
                       const gr = groups.find(g => g.id === gid);
-                      return gr ? (
-                        <span key={gid} className="bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-[10px] font-bold border border-indigo-100">
-                          {gr.name}
-                        </span>
-                      ) : null;
+                      return gr ? <StatusBadge key={gid} label={gr.name} tone="brand" dot={false} /> : null;
                     })}
-                    {(!u.groupIds || u.groupIds.length === 0) && <span className="text-gray-300 text-xs italic">{t.not_assigned}</span>}
+                    {(!u.groupIds || u.groupIds.length === 0) && <span className="text-muted text-[13px]">{t.not_assigned}</span>}
                   </div>
-                </td>
-                <td className="px-6 py-4 text-right space-x-2">
-                  <button onClick={() => handleEditUser(u)} className="text-indigo-600 hover:bg-indigo-100 p-2 rounded-lg transition-all">
-                    <Shield size={18} />
-                  </button>
-                  {/* Parolni tiklash — xodim parolini unutsa. Parol bazada
-                      hash bo'lib saqlanadi, shuning uchun uni "ko'rish" mumkin emas. */}
-                  <button onClick={() => { setResetUser(u); setResetValue(''); setResetMsg(null); }}
-                    title={t.reset_password || 'Parolni tiklash'}
-                    className="text-amber-500 hover:bg-amber-50 p-2 rounded-lg transition-all">
-                    <KeyRound size={18} />
-                  </button>
-                  {u.role !== UserRole.DIRECTOR && u.role !== UserRole.SUPER_ADMIN && (
-                    <button onClick={() => setDeleteConfirmId(u.id)} className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-all">
-                      <Trash2 size={18} />
+                </Td>
+                <Td align="right">
+                  <div className="inline-flex items-center gap-1">
+                    <button onClick={() => handleEditUser(u)} title={t.edit_staff}
+                      className="p-1.5 text-muted hover:text-primary hover:bg-primary-subtle rounded-md transition-colors">
+                      <Shield size={16} />
                     </button>
-                  )}
-                </td>
+                    {/* Parolni tiklash — parol bazada hash, uni "ko'rish" mumkin emas */}
+                    <button onClick={() => { setResetUser(u); setResetValue(''); setResetMsg(null); }}
+                      title={t.reset_password || 'Parolni tiklash'}
+                      className="p-1.5 text-muted hover:text-warning hover:bg-warning-bg rounded-md transition-colors">
+                      <KeyRound size={16} />
+                    </button>
+                    {u.role !== UserRole.DIRECTOR && u.role !== UserRole.SUPER_ADMIN && (
+                      <button onClick={() => setDeleteConfirmId(u.id)} title={t.delete_action || "O'chirish"}
+                        className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors">
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                </Td>
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Card>
+
 
       {/* Delete Confirmation Modal */}
       {/* Parolni tiklash */}

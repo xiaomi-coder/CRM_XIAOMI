@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Result, Student } from '../types';
 import { Trophy, Plus, Search, Trash2, GraduationCap, Award, BookOpen, Star, Image, X, Download } from 'lucide-react';
+import { PageHeader, Card, Button, Field, Input, StatusBadge, Avatar, EmptyState } from './ui';
 
 interface ResultsProps {
     t: any;
@@ -103,113 +104,99 @@ const Results: React.FC<ResultsProps> = ({ t, results, students, onAdd, onDelete
     }));
 
     return (
-        <div className="space-y-6">
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {statsByType.map(stat => {
-                    const Icon = stat.icon;
-                    return (
-                        <div
-                            key={stat.value}
-                            onClick={() => setFilterType(filterType === stat.value ? 'ALL' : stat.value)}
-                            className={`bg-white p-6 rounded-2xl border shadow-sm hover:shadow-md transition-all cursor-pointer ${filterType === stat.value ? 'ring-2 ring-indigo-500 scale-[1.02]' : 'border-gray-100'}`}
-                        >
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${stat.color}`}>
-                                <Icon size={20} />
-                            </div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
-                            <p className="text-2xl font-black text-slate-800 mt-1">{stat.count}</p>
-                        </div>
-                    );
-                })}
+        <div className="animate-in fade-in duration-300">
+            <PageHeader
+                title={t.results_section || 'Natijalar'}
+                subtitle={`${filteredResults.length} / ${results.length}`}
+                actions={
+                    <Button onClick={() => setShowModal(true)}>
+                        <Plus size={16} /> {t.add_result || "Natija qo'shish"}
+                    </Button>
+                }
+            />
+
+            {/* Turlar bo'yicha — bosilsa filtrlaydi */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                {statsByType.map(stat => (
+                    <div
+                        key={stat.value}
+                        onClick={() => setFilterType(filterType === stat.value ? 'ALL' : stat.value)}
+                        className={`bg-surface border rounded-lg shadow-e1 p-4 cursor-pointer transition-colors
+                            ${filterType === stat.value ? 'border-primary ring-1 ring-primary' : 'border-line hover:border-line-strong'}`}
+                    >
+                        <div className="text-[13px] leading-[18px] text-ink-2 font-medium">{stat.label}</div>
+                        <div className="text-[30px] leading-9 font-bold text-ink tabular-nums mt-1.5">{stat.count}</div>
+                    </div>
+                ))}
             </div>
 
-            {/* Header Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                    <input
-                        className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-                        placeholder={t.search || "Qidirish..."}
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                    />
-                </div>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold flex items-center gap-2 hover:bg-indigo-700 transition-all text-sm"
-                >
-                    <Plus size={18} />
-                    {t.add_result || "Natija qo'shish"}
-                </button>
-            </div>
+            <Card className="mb-5">
+                <Field label={t.search_label || 'Qidirish'}>
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} />
+                        <Input
+                            className="pl-9"
+                            placeholder={t.search}
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                </Field>
+            </Card>
 
-            {/* Results Grid */}
             {filteredResults.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center">
-                    <Trophy size={48} className="mx-auto text-gray-200 mb-4" />
-                    <p className="text-gray-400 font-bold">{t.no_results || "Hali natijalar yo'q"}</p>
-                    <p className="text-gray-300 text-sm mt-1">{t.add_first_result || "Birinchi natijani qo'shish uchun tugmani bosing"}</p>
-                </div>
+                <Card>
+                    <EmptyState
+                        icon={<Trophy size={22} />}
+                        title={t.no_results || "Hali natijalar yo'q"}
+                        description={t.add_first_result || "Birinchi natijani qo'shish uchun tugmani bosing"}
+                    />
+                </Card>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {filteredResults.map(result => {
                         const typeInfo = getTypeInfo(result.type);
-                        const TypeIcon = typeInfo.icon;
                         return (
-                            <div key={result.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all overflow-hidden group">
-                                {/* Certificate image */}
+                            <Card key={result.id} padded={false} className="overflow-hidden group">
                                 {result.certificateImage && (
                                     <div
-                                        className="h-44 bg-gray-100 overflow-hidden cursor-pointer relative"
+                                        className="h-40 bg-[#F0F1F3] overflow-hidden cursor-pointer"
                                         onClick={() => setViewImage(result.certificateImage!)}
                                     >
-                                        <img src={result.certificateImage} alt="Certificate" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
-                                            <Image size={24} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        </div>
+                                        <img src={result.certificateImage} alt="" className="w-full h-full object-cover" />
                                     </div>
                                 )}
-
-                                <div className="p-5">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${typeInfo.color}`}>
-                                            {typeInfo.label}
-                                        </span>
+                                <div className="p-4">
+                                    <div className="flex items-start justify-between gap-2 mb-2">
+                                        <StatusBadge label={typeInfo.label} tone="brand" dot={false} />
                                         <button
                                             onClick={() => {
-                                                if (window.confirm(t.delete_confirm || "O'chirmoqchimisiz?")) {
-                                                    onDelete(result.id);
-                                                }
+                                                if (window.confirm(t.delete_confirm || "O'chirmoqchimisiz?")) onDelete(result.id);
                                             }}
-                                            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            title={t.delete_action || "O'chirish"}
+                                            className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors"
                                         >
-                                            <Trash2 size={14} />
+                                            <Trash2 size={15} />
                                         </button>
                                     </div>
 
-                                    <h3 className="font-black text-slate-800 text-lg leading-tight mb-1">{result.title}</h3>
-                                    <p className="text-indigo-600 font-black text-xl mb-3">{result.score}</p>
+                                    <h3 className="text-[15px] font-semibold text-ink leading-tight">{result.title}</h3>
+                                    <p className="text-[22px] font-bold text-primary tabular-nums mt-1">{result.score}</p>
 
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm font-bold text-slate-600">{result.studentName}</p>
-                                            <p className="text-[10px] text-gray-400 font-medium">{result.date}</p>
-                                        </div>
-                                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${typeInfo.color}`}>
-                                            <TypeIcon size={16} />
+                                    <div className="flex items-center gap-2.5 pt-3 mt-3 border-t border-line">
+                                        <Avatar name={result.studentName} size={30} />
+                                        <div className="min-w-0">
+                                            <div className="text-[13px] font-medium text-ink truncate">{result.studentName}</div>
+                                            <div className="text-[12px] text-muted tabular-nums">{result.date}</div>
                                         </div>
                                     </div>
-
-                                    {result.description && (
-                                        <p className="text-xs text-gray-400 mt-3 line-clamp-2 italic">{result.description}</p>
-                                    )}
                                 </div>
-                            </div>
+                            </Card>
                         );
                     })}
                 </div>
             )}
+
 
             {/* Add Modal */}
             {showModal && (
