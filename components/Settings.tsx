@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { SystemSettings, Student, TestTemplate, Question, UserRole } from '../types';
-import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink, Sparkles, KeyRound } from 'lucide-react';
+import { Building2, Bot, X, BookOpen, Download, CheckCircle2, Edit2, Trash2, Loader2, AlertCircle, ExternalLink, Sparkles, KeyRound, Plus } from 'lucide-react';
+import { PageHeader, Card, CardHeader, Button, Field, Input, StatusBadge, EmptyState } from './ui';
 import { db } from '../services/supabase';
 import { setTelegramWebhook, getTelegramBotInfo } from '../services/telegramService';
 
@@ -164,241 +165,193 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12 pb-32">
-      {/* O'z parolini o'zgartirish — har qanday rol uchun.
-          Parol bazada hash bo'lib saqlanadi, shuning uchun eski parolni
-          bilish shart va uni hech kim "ko'ra" olmaydi. */}
-      <div className="bg-white p-8 rounded-lg border border-line shadow-e1">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="bg-amber-500 p-3.5 rounded-md shadow-lg"><KeyRound className="text-white" size={20} /></div>
-          <h3 className="text-xl font-semibold text-ink uppercase ">{t.change_password || "Parolni o'zgartirish"}</h3>
-        </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader title={t.system_settings} subtitle={t.settings_hint || "Markaz ma'lumotlari, Telegram bot va xabarnomalar."} />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <input type="password" value={pwOld} onChange={e => { setPwOld(e.target.value); setPwMsg(null); }}
-            placeholder={t.old_password || 'Eski parol'}
-            className="px-5 py-3.5 bg-slate-50 border border-line rounded-md outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
-          <input type="password" value={pwNew} onChange={e => { setPwNew(e.target.value); setPwMsg(null); }}
-            placeholder={t.new_password || 'Yangi parol'}
-            className="px-5 py-3.5 bg-slate-50 border border-line rounded-md outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
-          <button onClick={handleChangePassword} disabled={pwBusy || pwOld.length < 1 || pwNew.length < 6}
-            className="px-6 py-3.5 bg-amber-600 text-white rounded-md font-semibold uppercase text-[11px] tracking-widest hover:bg-amber-700 transition-colors disabled:opacity-40">
+      {/* Parolni o'zgartirish — parol bazada hash, uni hech kim "ko'ra" olmaydi */}
+      <Card className="mb-5">
+        <CardHeader title={t.change_password || "Parolni o'zgartirish"} subtitle={t.change_password_hint || "Eski parolni bilish shart."} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+          <Field label={t.old_password || 'Eski parol'}>
+            <Input type="password" value={pwOld} onChange={e => { setPwOld(e.target.value); setPwMsg(null); }} />
+          </Field>
+          <Field label={t.new_password || 'Yangi parol'}>
+            <Input type="password" value={pwNew} onChange={e => { setPwNew(e.target.value); setPwMsg(null); }} />
+          </Field>
+          <Button onClick={handleChangePassword} disabled={pwBusy || pwOld.length < 1 || pwNew.length < 6}>
             {pwBusy ? '...' : (t.save || 'Saqlash')}
-          </button>
+          </Button>
         </div>
         {pwMsg && (
-          <p className={`text-[11px] font-semibold mt-3 px-1 ${pwMsg.ok ? 'text-emerald-600' : 'text-red-500'}`}>
-            {pwMsg.text}
-          </p>
+          <p className={`text-[13px] font-medium mt-3 ${pwMsg.ok ? 'text-success' : 'text-danger'}`}>{pwMsg.text}</p>
         )}
-      </div>
+      </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {userRole === UserRole.DIRECTOR && (
-          <div className="bg-white p-10 rounded-lg border border-line shadow-e1">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="bg-primary p-4 rounded-lg shadow-lg"><Building2 className="text-white" size={24} /></div>
-              <h3 className="text-2xl font-semibold text-ink uppercase ">{t.settings}</h3>
-            </div>
+          <div className="space-y-5">
             <form onSubmit={async (e) => {
               e.preventDefault();
-
-              // Save settings first
               onSave(formData);
-
-              // If bot token exists, setup webhook
               if (formData.botToken) {
                 setBotStatus('checking');
                 setBotError('');
-
-                // Get bot info
                 const botInfo = await getTelegramBotInfo(formData.botToken);
                 if (botInfo.success && botInfo.username) {
                   setBotUsername(botInfo.username);
-
-                  // Setup webhook
                   const webhookResult = await setTelegramWebhook(formData.botToken);
-                  if (webhookResult.success) {
-                    setBotStatus('success');
-                  } else {
-                    setBotStatus('error');
-                    setBotError(webhookResult.error || 'Webhook xatosi');
-                  }
+                  if (webhookResult.success) setBotStatus('success');
+                  else { setBotStatus('error'); setBotError(webhookResult.error || 'Webhook xatosi'); }
                 } else {
                   setBotStatus('error');
                   setBotError(botInfo.error || 'Bot topilmadi');
                 }
               }
-
               alert(t.save);
-            }} className="space-y-6">
-              <input className="w-full px-6 py-4 bg-slate-50 border rounded-md font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder={t.center_name} />
+            }} className="space-y-5">
 
-              {/* Telegram Bot Section */}
-              <div className="p-6 bg-slate-900 rounded-md text-white space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Bot size={18} className="text-indigo-400" />
-                    <span className="text-[10px] font-semibold uppercase tracking-widest">Telegram Bot</span>
-                  </div>
-                  {botStatus === 'checking' && <Loader2 size={16} className="animate-spin text-indigo-400" />}
-                  {botStatus === 'success' && <CheckCircle2 size={16} className="text-emerald-400" />}
-                  {botStatus === 'error' && <AlertCircle size={16} className="text-red-400" />}
-                </div>
+              {/* Markaz */}
+              <Card>
+                <CardHeader title={t.settings} />
+                <Field label={t.center_name}>
+                  <Input value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder={t.center_name} />
+                </Field>
+              </Card>
 
-                <input
-                  className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none"
-                  value={formData.botToken}
-                  onChange={e => setFormData({ ...formData, botToken: e.target.value })}
-                  placeholder="Bot tokenini kiriting (@BotFather dan oling)"
+              {/* Telegram bot */}
+              <Card>
+                <CardHeader
+                  title="Telegram bot"
+                  subtitle={t.bot_hint || "Ota-onalarga davomat va to'lov xabarlari shu bot orqali boradi."}
+                  actions={
+                    botStatus === 'checking' ? <Loader2 size={16} className="animate-spin text-primary" />
+                      : botStatus === 'success' ? <StatusBadge label={t.tg_connected || 'Ulangan'} tone="success" />
+                        : botStatus === 'error' ? <StatusBadge label={t.error || 'Xato'} tone="danger" /> : null
+                  }
                 />
+                <Field label={t.bot_token || 'Bot tokeni'}>
+                  <Input
+                    value={formData.botToken}
+                    onChange={e => setFormData({ ...formData, botToken: e.target.value })}
+                    placeholder="123456:ABC-DEF… (@BotFather)"
+                  />
+                </Field>
 
                 {botStatus === 'error' && botError && (
-                  <p className="text-red-400 text-xs">❌ {botError}</p>
+                  <p className="text-[13px] text-danger mt-2">{botError}</p>
                 )}
 
                 {botStatus === 'success' && botUsername && (
-                  <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl p-4 space-y-3">
-                    <p className="text-emerald-400 text-xs font-bold">✅ Bot ulandi!</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-white/70">Bot:</span>
-                      <a
-                        href={`https://t.me/${botUsername}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-400 font-bold text-sm flex items-center gap-1 hover:underline"
-                      >
-                        @{botUsername} <ExternalLink size={12} />
-                      </a>
-                    </div>
-                    <div className="border-t border-white/10 pt-3 mt-3">
-                      <p className="text-[10px] text-white/50 uppercase font-bold mb-2">Ota-onalar uchun yo'riqnoma:</p>
-                      <p className="text-xs text-white/80">1. <a href={`https://t.me/${botUsername}`} target="_blank" className="text-indigo-400">@{botUsername}</a> botini oching</p>
-                      <p className="text-xs text-white/80">2. /start buyrug'ini yuboring</p>
-                      <p className="text-xs text-white/80">3. O'quvchi kodini kiriting (masalan: EDU-4CQ5)</p>
-                    </div>
+                  <div className="mt-3 p-3 rounded-md bg-success-bg">
+                    <a href={`https://t.me/${botUsername}`} target="_blank" rel="noreferrer"
+                      className="text-[13.5px] font-semibold text-success inline-flex items-center gap-1.5">
+                      @{botUsername} <ExternalLink size={13} />
+                    </a>
+                    <p className="text-[12.5px] text-ink-2 mt-2 leading-5">
+                      {t.parent_instruction || "Ota-ona: botni ochadi → /start → o'quvchi kodini yozadi."}
+                    </p>
                   </div>
                 )}
 
                 {!formData.botToken && (
-                  <div className="bg-white/5 rounded-xl p-4">
-                    <p className="text-[10px] text-white/50 uppercase font-bold mb-2">Bot yaratish:</p>
-                    <p className="text-xs text-white/70">1. Telegramda <a href="https://t.me/BotFather" target="_blank" className="text-indigo-400">@BotFather</a> ga yozing</p>
-                    <p className="text-xs text-white/70">2. /newbot buyrug'ini yuboring</p>
-                    <p className="text-xs text-white/70">3. Bot nomini kiriting</p>
-                    <p className="text-xs text-white/70">4. Olingan tokenni shu yerga qo'ying</p>
+                  <div className="mt-3 p-3 rounded-md bg-canvas border border-line">
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-muted mb-1.5">
+                      {t.create_bot || 'Bot yaratish'}
+                    </p>
+                    <ol className="text-[12.5px] text-ink-2 leading-5 list-decimal list-inside space-y-0.5">
+                      <li>Telegramda <a href="https://t.me/BotFather" target="_blank" rel="noreferrer" className="text-primary">@BotFather</a> ga yozing</li>
+                      <li><code className="bg-white px-1 rounded border border-line">/newbot</code> buyrug'ini yuboring</li>
+                      <li>Bot nomini kiriting</li>
+                      <li>Olingan tokenni shu yerga qo'ying</li>
+                    </ol>
                   </div>
                 )}
+              </Card>
 
-                {/* AI Integration Section */}
-                <div className="p-6 bg-slate-900 rounded-md text-white space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={18} className="text-amber-400" />
-                    <span className="text-[10px] font-semibold uppercase tracking-widest">AI Integration (Gemini)</span>
-                  </div>
+              {/* Kunlik hisobot */}
+              <Card>
+                <CardHeader title={t.daily_report || 'Kunlik hisobot'} subtitle={t.daily_report_hint || "Har kuni kechqurun direktorga Telegram orqali yuboriladi."} />
+                <Field label={t.chat_id || 'Telegram Chat ID'} hint={t.chat_id_hint || "@userinfobot ga /start yozsangiz ID'ingizni aytadi."}>
+                  <Input
+                    value={formData.reportChatId || ''}
+                    onChange={e => setFormData({ ...formData, reportChatId: e.target.value })}
+                    placeholder="123456789"
+                  />
+                </Field>
+              </Card>
 
-                  <div className="space-y-2">
-                    <p className="text-[10px] text-white/50 uppercase font-bold">Custom API Key (Optional)</p>
-                    <input
-                      type="password"
-                      className="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-indigo-500 transition-colors"
-                      value={formData.geminiApiKey || ''}
-                      onChange={e => setFormData({ ...formData, geminiApiKey: e.target.value })}
-                      placeholder="AI_... (Bo'sh qoldirsangiz, tizimning umumiy kaliti ishlatiladi)"
-                    />
-                    <p className="text-[9px] text-white/40">Faqat o'zingizning shaxsiy limiti ishlatmoqchi bo'lsangiz to'ldiring. Aks holda bo'sh qoldiring.</p>
-                  </div>
-                </div>
+              {/* AI */}
+              <Card>
+                <CardHeader title="AI (Gemini)" subtitle={t.ai_key_hint || "Bo'sh qoldirsangiz tizimning umumiy kaliti ishlatiladi."} />
+                <Field label={t.api_key || 'API kalit'}>
+                  <Input
+                    type="password"
+                    value={formData.geminiApiKey || ''}
+                    onChange={e => setFormData({ ...formData, geminiApiKey: e.target.value })}
+                    placeholder="AI_…"
+                  />
+                </Field>
+              </Card>
 
-                {/* Direktor Telegram Hisobot */}
-                <div className="p-6 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-md text-white space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Bot size={18} className="text-blue-200" />
-                    <span className="text-[10px] font-semibold uppercase tracking-widest">Kunlik Hisobot (Telegram)</span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-[10px] text-white/70 uppercase font-bold">Direktor Telegram Chat ID</p>
-                    <input
-                      className="w-full bg-white/10 border border-white/20 p-3 rounded-xl text-xs outline-none focus:border-white/50 transition-colors placeholder-white/30"
-                      value={formData.reportChatId || ''}
-                      onChange={e => setFormData({ ...formData, reportChatId: e.target.value })}
-                      placeholder="Masalan: 123456789"
-                    />
-                    <div className="bg-white/10 rounded-xl p-3 space-y-1">
-                      <p className="text-[10px] text-white/70 font-bold">Chat ID olish uchun:</p>
-                      <p className="text-[10px] text-white/60">1. Botingizga Telegramda /start yuboring</p>
-                      <p className="text-[10px] text-white/60">2. <a href="https://t.me/userinfobot" target="_blank" className="text-blue-200 underline">@userinfobot</a> ga /start yuboring</p>
-                      <p className="text-[10px] text-white/60">3. Ko'rsatilgan ID ni shu yerga yozing</p>
-                    </div>
-                    <p className="text-[9px] text-white/50">Har kuni kechqurun kunlik hisobot va test natijalari shu chatga yuboriladi.</p>
-                  </div>
-                </div>
-
-              </div>
-
-              <button type="submit" className="w-full bg-primary text-white py-4 rounded-md font-semibold uppercase shadow-e1">{t.save}</button>
+              <Button type="submit" className="w-full">{t.save}</Button>
             </form>
           </div>
         )}
 
-        <div className={`bg-white p-10 rounded-lg border border-line shadow-e1 ${userRole !== UserRole.DIRECTOR ? 'lg:col-span-2' : ''}`}>
-          <div className="flex justify-between items-center mb-8">
-            <div className="flex items-center gap-4">
-              <div className="bg-amber-500 p-4 rounded-lg shadow-lg"><BookOpen className="text-white" size={24} /></div>
-              <h3 className="text-2xl font-semibold text-ink uppercase ">{t.tests}</h3>
+        {/* Testlar (eski so'rovnoma tizimi) */}
+        <div className={userRole !== UserRole.DIRECTOR ? 'lg:col-span-2' : ''}>
+          <Card padded={false}>
+            <div className="p-5">
+              <CardHeader
+                title={t.tests}
+                subtitle={`${templates.length}`}
+                actions={
+                  <Button variant="secondary" size="sm"
+                    onClick={() => { setEditingTestId(null); setNewTemplate({ title: '', subject: t.subject, durationMinutes: 30, questions: [] }); setShowAddTestModal(true); }}>
+                    <Plus size={14} /> {t.add_test}
+                  </Button>
+                }
+              />
+              {templates.length === 0 ? (
+                <EmptyState icon={<BookOpen size={22} />} title={t.search_empty} />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {templates.map(test => (
+                    <div key={test.id} className="border border-line rounded-md p-3.5 flex flex-col">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-[14px] font-semibold text-ink truncate">{test.title}</p>
+                          <p className="text-[12px] text-muted">{test.subject} · {test.questions.length}</p>
+                        </div>
+                        <div className="flex gap-1 shrink-0">
+                          <button onClick={() => openEditModal(test)} title={t.edit_staff}
+                            className="p-1.5 text-muted hover:text-primary hover:bg-primary-subtle rounded-md transition-colors">
+                            <Edit2 size={15} />
+                          </button>
+                          {onDeleteTest && (
+                            <button
+                              onClick={async () => {
+                                if (window.confirm(t.delete_confirm)) { await onDeleteTest(test.id); loadTemplates(); }
+                              }}
+                              title={t.delete_action || "O'chirish"}
+                              className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors">
+                              <Trash2 size={15} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <Button variant="secondary" size="sm" className="w-full mt-3" onClick={() => exportToWord(test)}>
+                        <Download size={13} /> Doc
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <button
-              onClick={() => { setEditingTestId(null); setNewTemplate({ title: '', subject: t.subject, durationMinutes: 30, questions: [] }); setShowAddTestModal(true); }}
-              className="px-6 py-3 bg-amber-50 text-amber-600 rounded-md hover:bg-amber-500 hover:text-white transition-all font-semibold uppercase text-[10px] tracking-widest"
-            >
-              + {t.add_test}
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {templates.map(test => (
-              <div key={test.id} className="p-6 bg-slate-50 rounded-lg border border-indigo-100 flex flex-col justify-between hover:shadow-lg transition-all relative group">
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <button
-                    onClick={() => openEditModal(test)}
-                    className="p-2 text-indigo-400 hover:text-primary hover:bg-primary-subtle rounded-xl transition-all"
-                  >
-                    <Edit2 size={18} />
-                  </button>
-                  {onDeleteTest && (
-                    <button
-                      onClick={async () => {
-                        if (window.confirm(t.delete_confirm)) {
-                          await onDeleteTest(test.id);
-                          loadTemplates();
-                        }
-                      }}
-                      className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  )}
-                </div>
-
-                <div>
-                  <p className="font-semibold text-ink text-sm uppercase mb-1">{test.title}</p>
-                  <p className="text-[9px] font-semibold text-muted uppercase tracking-widest">{test.subject} • {test.questions.length}</p>
-                </div>
-                <div className="mt-6">
-                  <button
-                    type="button"
-                    onClick={() => exportToWord(test)}
-                    className="w-full bg-white border border-slate-200 p-3 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center justify-center gap-2 text-[9px] font-semibold uppercase"
-                  >
-                    <Download size={14} /> Doc
-                  </button>
-                </div>
-              </div>
-            ))}
-            {templates.length === 0 && <p className="col-span-2 text-center text-muted py-10 font-bold ">{t.search_empty}</p>}
-          </div>
+          </Card>
         </div>
       </div>
+
 
       {showAddTestModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">

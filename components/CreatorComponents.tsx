@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Building, ShieldAlert, Megaphone, Activity, Users, Wallet, Lock, Unlock, Clock, Trash2, Send, Plus, X, User as UserIcon, Phone, Key, Loader2, CalendarClock, CheckCircle2 } from 'lucide-react';
 import { SystemSettings, User, Student, Payment, UserRole } from '../types';
 import { db } from '../services/supabase';
+import { PageHeader, Card, CardHeader, Button, KpiCard, StatusBadge, Table, Th, Td, Avatar, EmptyState, Field, Input } from './ui';
 
 /**
  * Muddati tugayotgan markazlar — creator uchun "bugun kimga qo'ng'iroq qilish
@@ -66,43 +67,27 @@ const ExpiringCenters: React.FC<{
         : `${days} ${t.days_left_label || "kun qoldi"}`;
 
   return (
-    <div className="bg-white p-8 rounded-lg border border-line shadow-sm">
-      <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 rounded-md bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200 shrink-0">
-          <CalendarClock size={22} />
-        </div>
-        <div className="flex-1">
-          <h4 className="text-lg font-semibold text-ink uppercase tracking-tight leading-none">
-            {t.expiring_centers || "Muddati tugayotgan markazlar"}
-          </h4>
-          <p className="text-[10px] text-muted font-bold mt-1">
-            {t.expiring_centers_note || "Yaqin 7 kun ichida tugaydiganlar va tugab bo'lganlar"}
-          </p>
-        </div>
-        {rows.length > 0 && (
-          <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-xl text-[10px] font-semibold uppercase border border-amber-100">
-            {rows.length}
-          </span>
-        )}
-      </div>
+    <Card>
+      <CardHeader
+        title={t.expiring_centers || "Muddati tugayotgan markazlar"}
+        subtitle={t.expiring_centers_note || "Yaqin 7 kun ichida tugaydiganlar va tugab bo'lganlar"}
+        actions={rows.length > 0 ? <StatusBadge label={String(rows.length)} tone="warning" dot={false} /> : undefined}
+      />
 
       {rows.length === 0 ? (
-        <div className="flex items-center gap-3 p-6 bg-emerald-50 rounded-lg border border-emerald-100">
-          <CheckCircle2 className="text-emerald-500 shrink-0" size={22} />
-          <p className="text-emerald-700 font-bold text-sm">
-            {t.expiring_none || "Yaqin kunlarda muddati tugaydigan markaz yo'q."}
-          </p>
-        </div>
+        <p className="text-[13px] text-success bg-success-bg rounded-md px-3 py-2.5">
+          {t.expiring_none || "Yaqin kunlarda muddati tugaydigan markaz yo'q."}
+        </p>
       ) : (
         <div className="space-y-3">
           {rows.map(({ s, days }) => {
             const director = directorOf(s.centerId);
             const busy = savingId === s.centerId;
             return (
-              <div key={s.centerId} className={`p-5 rounded-lg border ${styleOf(days as number)}`}>
+              <div key={s.centerId} className={`p-3.5 rounded-md border ${styleOf(days as number)}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-[200px]">
-                    <p className="font-semibold text-ink uppercase tracking-tight">{s.centerName}</p>
+                    <p className="text-[14px] font-semibold text-ink">{s.centerName}</p>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
                       {director && (
                         <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
@@ -111,18 +96,18 @@ const ExpiringCenters: React.FC<{
                       )}
                       {s.phone && (
                         <a href={`tel:${s.phone.replace(/\s/g, '')}`}
-                          className="flex items-center gap-1.5 text-[11px] font-semibold text-primary hover:text-indigo-700">
+                          className="flex items-center gap-1.5 text-[12px] font-semibold text-primary hover:text-primary-hover">
                           <Phone size={12} /> {s.phone}
                         </a>
                       )}
-                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-muted">
+                      <span className="flex items-center gap-1.5 text-[12px] text-muted">
                         <Clock size={12} /> {s.licenseExpiry}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-xs font-semibold whitespace-nowrap">{labelOf(days as number)}</span>
+                    <span className="text-[12.5px] font-semibold whitespace-nowrap">{labelOf(days as number)}</span>
                     {onUpdate && (
                       <div className="flex gap-1.5">
                         {[1, 3, 12].map(m => (
@@ -130,7 +115,7 @@ const ExpiringCenters: React.FC<{
                             key={m}
                             onClick={() => extend(s, m)}
                             disabled={busy}
-                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-semibold text-slate-700 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all disabled:opacity-40"
+                            className="px-2.5 py-1.5 bg-white border border-line rounded-md text-[12px] font-semibold text-ink-2 hover:bg-primary hover:text-white hover:border-primary transition-colors disabled:opacity-40"
                           >
                             {busy ? '...' : `+${m === 12 ? '1 ' + (t.year_short || 'yil') : m + ' ' + (t.month_short || 'oy')}`}
                           </button>
@@ -144,7 +129,7 @@ const ExpiringCenters: React.FC<{
           })}
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 
@@ -158,54 +143,47 @@ export const CreatorDashboard: React.FC<{
   if (!settings) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-primary" size={40} /></div>;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900 p-8 rounded-md border border-white/5 text-white shadow-e1 relative overflow-hidden group">
-          <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Building size={100} /></div>
-          <Activity className="text-amber-500 mb-4" size={32} />
-          <p className="text-muted text-xs font-semibold uppercase tracking-widest">{t.centers || 'Centers'}</p>
-          <h3 className="text-3xl font-semibold">{settings.length}</h3>
-        </div>
-        <div className="bg-slate-900 p-8 rounded-md border border-white/5 text-white shadow-e1 relative overflow-hidden group">
-          <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Users size={100} /></div>
-          <Users className="text-blue-500 mb-4" size={32} />
-          <p className="text-muted text-xs font-semibold uppercase tracking-widest">{t.students}</p>
-          <h3 className="text-3xl font-semibold">{allStudents.length}</h3>
-        </div>
-        <div className="bg-slate-900 p-8 rounded-md border border-white/5 text-white shadow-e1 relative overflow-hidden group">
-          <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Wallet size={100} /></div>
-          <Wallet className="text-emerald-500 mb-4" size={32} />
-          <p className="text-muted text-xs font-semibold uppercase tracking-widest">{t.revenue || 'Revenue'}</p>
-          <h3 className="text-3xl font-semibold text-emerald-400">{totalRevenue.toLocaleString()} UZS</h3>
-        </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader title={t.dashboard} subtitle={t.global_control} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+        <KpiCard label={t.centers || 'Markazlar'} value={settings.length} />
+        <KpiCard label={t.students} value={allStudents.length} />
+        <KpiCard label={t.revenue || 'Daromad'} value={totalRevenue.toLocaleString()} hint="UZS" />
       </div>
 
-      <ExpiringCenters t={t} settings={settings} users={users} onUpdate={onUpdateCenter} />
+      <div className="mb-5">
+        <ExpiringCenters t={t} settings={settings} users={users} onUpdate={onUpdateCenter} />
+      </div>
 
-      <div className="bg-white p-8 rounded-lg border border-line shadow-sm">
-        <div className="flex justify-between items-center mb-6">
-          <h4 className="text-lg font-semibold text-ink uppercase tracking-tight">{t.centers_list || 'Centers List'}</h4>
-          <div className="text-[10px] font-semibold text-muted uppercase tracking-widest">{t.recent || 'Recent'}</div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {settings.length > 0 ? settings.map(s => (
-            <div key={s.centerId} className="flex items-center justify-between p-5 bg-slate-50 rounded-lg border border-line hover:border-indigo-200 transition-all group">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white rounded-md flex items-center justify-center shadow-sm border border-slate-200 group-hover:bg-primary group-hover:text-white transition-all">
-                  <Building size={20} />
+      <Card padded={false}>
+        <div className="p-5">
+          <CardHeader title={t.centers_list || 'Markazlar ro\'yxati'} subtitle={`${settings.length}`} />
+          {settings.length === 0 ? (
+            <EmptyState icon={<Building size={22} />} title={t.search_empty} />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {settings.map(s => (
+                <div key={s.centerId} className="flex items-center justify-between gap-3 border border-line rounded-md p-3.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="w-9 h-9 rounded-md bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                      <Building size={17} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-semibold text-ink truncate">{s.centerName}</p>
+                      <p className="text-[12px] text-muted truncate">{s.phone || s.centerId.slice(0, 8)}</p>
+                    </div>
+                  </div>
+                  <StatusBadge
+                    label={s.isBlocked ? (t.blocked || 'Bloklangan') : (t.active || 'Faol')}
+                    tone={s.isBlocked ? 'danger' : 'success'}
+                  />
                 </div>
-                <div>
-                  <p className="font-semibold text-ink uppercase tracking-tight">{s.centerName}</p>
-                  <p className="text-[9px] text-muted font-bold uppercase tracking-widest">{s.centerId}</p>
-                </div>
-              </div>
-              <span className={`text-[9px] font-semibold ${s.isBlocked ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50'} px-4 py-1.5 rounded-xl uppercase border ${s.isBlocked ? 'border-red-100' : 'border-emerald-100'}`}>
-                {s.isBlocked ? 'Blocked' : 'Active'}
-              </span>
+              ))}
             </div>
-          )) : <div className="col-span-2 py-20 text-center text-muted font-bold uppercase text-[10px] tracking-widest opacity-50">{t.search_empty || 'No centers found'}</div>}
+          )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
@@ -281,110 +259,101 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-end">
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-slate-900 text-white px-10 py-4 rounded-md font-semibold flex items-center gap-3 hover:bg-black transition-all shadow-e1 active:scale-95 uppercase text-[10px] tracking-widest"
-        >
-          <Plus size={20} /> {t.add_center || 'New Center'}
-        </button>
-      </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.centers || 'Markazlar'}
+        subtitle={`${settings.length}`}
+        actions={
+          <Button onClick={() => setShowModal(true)}>
+            <Plus size={16} /> {t.add_center || 'Yangi markaz'}
+          </Button>
+        }
+      />
 
-      <div className="bg-white rounded-lg border border-line shadow-sm overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-900 text-white text-[10px] font-semibold uppercase tracking-[0.2em]">
+      <Card padded={false}>
+        <Table>
+          <thead>
             <tr>
-              <th className="px-10 py-6">{t.center_name || 'Center'}</th>
-              <th className="px-10 py-6">{t.login_data || 'Login Info'}</th>
-              <th className="px-10 py-6">{t.expiry_date || 'Expiry'}</th>
-              <th className="px-10 py-6">{t.status}</th>
-              <th className="px-10 py-6 text-right">{t.actions || 'Actions'}</th>
+              <Th>{t.center_name || 'Markaz'}</Th>
+              <Th>{t.login_data || 'Login'}</Th>
+              <Th>{t.expiry_date || 'Muddat'}</Th>
+              <Th>{t.status}</Th>
+              <Th align="right">{t.actions || 'Amallar'}</Th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody>
             {settings.map(s => {
               const admin = users.find(u => u.centerId === s.centerId && u.role === UserRole.DIRECTOR);
+              const days = s.licenseExpiry
+                ? Math.ceil((new Date(s.licenseExpiry).getTime() - Date.now()) / 86400000)
+                : null;
               return (
-                <tr key={s.centerId} className="hover:bg-slate-50 transition-colors group">
-                  <td className="px-10 py-6">
-                    <div className="font-semibold text-ink uppercase tracking-tight text-base">{s.centerName}</div>
-                    <div className="text-[10px] font-bold text-indigo-500 mt-1 uppercase tracking-widest flex items-center gap-1.5">
-                      <UserIcon size={12} /> {admin?.name || 'No Director'}
+                <tr key={s.centerId} className="hover:bg-[#FAFAFB] transition-colors">
+                  <Td>
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name={s.centerName} size={32} />
+                      <div className="min-w-0">
+                        <div className="font-semibold text-ink truncate">{s.centerName}</div>
+                        <div className="text-[12px] text-muted truncate">{admin?.name || '—'}</div>
+                      </div>
                     </div>
-                  </td>
-                  <td className="px-10 py-6">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-[10px] font-semibold text-muted uppercase tracking-widest">Login: <span className="text-ink">{admin?.username}</span></div>
-                      {/* Parol endi bcrypt hash — ko'rsatishning ma'nosi yo'q va
-                          ilgari uni ochiq chiqarish o'zi xavf edi. */}
-                      <div className="text-[10px] font-semibold text-slate-300 uppercase tracking-widest">Parol: <span className="text-muted">••••••••</span></div>
-                    </div>
-                  </td>
-                  <td className="px-10 py-6">
-                    {(() => {
-                      // Muddat endi login'da HAQIQATAN tekshiriladi, shuning uchun
-                      // necha kun qolgani ko'rinib turishi kerak.
-                      if (!s.licenseExpiry) {
-                        return (
-                          <div className="flex items-center gap-2 text-xs font-semibold text-muted bg-slate-50 px-4 py-2 rounded-xl border border-line w-fit">
-                            <Clock size={14} /> Cheksiz
-                          </div>
-                        );
-                      }
-                      const days = Math.ceil(
-                        (new Date(s.licenseExpiry).getTime() - Date.now()) / 86400000
-                      );
-                      const style = days < 0
-                        ? 'text-red-600 bg-red-50 border-red-100'
-                        : days <= 14
-                          ? 'text-amber-700 bg-amber-50 border-amber-100'
-                          : 'text-emerald-700 bg-emerald-50 border-emerald-100';
-                      return (
-                        <div className={`flex flex-col gap-0.5 px-4 py-2 rounded-xl border w-fit ${style}`}>
-                          <span className="text-xs font-semibold">{s.licenseExpiry}</span>
-                          <span className="text-[9px] font-semibold uppercase tracking-widest">
-                            {days < 0 ? `${-days} kun oldin tugagan` : `${days} kun qoldi`}
-                          </span>
-                        </div>
-                      );
-                    })()}
-                  </td>
-                  <td className="px-10 py-6">
-                    {s.isBlocked ? (
-                      <span className="bg-red-50 text-red-600 px-4 py-1.5 rounded-xl text-[9px] font-semibold uppercase border border-red-100">Blocked</span>
+                  </Td>
+                  <Td>
+                    <div className="text-ink">{admin?.username || '—'}</div>
+                    {/* Parol bcrypt hash — ko'rsatishning ma'nosi yo'q va xavfli edi */}
+                    <div className="text-[12px] text-muted">••••••••</div>
+                  </Td>
+                  <Td>
+                    {days === null ? (
+                      <span className="text-[13px] text-muted">{t.unlimited || 'Cheksiz'}</span>
                     ) : (
-                      <span className="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-xl text-[9px] font-semibold uppercase border border-emerald-100">Active</span>
+                      <div>
+                        <div className="text-ink tabular-nums">{s.licenseExpiry}</div>
+                        <div className={`text-[12px] font-medium ${days < 0 ? 'text-danger' : days <= 14 ? 'text-warning' : 'text-success'}`}>
+                          {days < 0
+                            ? `${-days} ${t.expired_days_ago || 'kun oldin tugagan'}`
+                            : `${days} ${t.days_left_label || 'kun qoldi'}`}
+                        </div>
+                      </div>
                     )}
-                  </td>
-                  <td className="px-10 py-6 text-right space-x-2">
-                    <button
-                      onClick={() => onUpdate({ ...s, isBlocked: !s.isBlocked })}
-                      className={`p-3 rounded-md transition-all ${s.isBlocked ? 'bg-emerald-50 text-emerald-600 shadow-emerald-100' : 'bg-red-50 text-red-600 shadow-red-100'} shadow-e1 hover:scale-110`}
-                    >
-                      {s.isBlocked ? <Unlock size={18} /> : <Lock size={18} />}
-                    </button>
-                    <button
-                      onClick={async () => {
-                        const firstConfirm = window.confirm(`"${s.centerName}" markazini o'chirmoqchimisiz?`);
-                        if (!firstConfirm) return;
-
-                        const secondConfirm = window.confirm(`DIQQAT! Bu amalni qaytarib bo'lmaydi!\n\nMarkaz: ${s.centerName}\n\nBarcha ma'lumotlar (foydalanuvchilar, login/parol) o'chib ketadi.\n\nRostdan ham o'chirmoqchimisiz?`);
-                        if (!secondConfirm) return;
-
-                        onDelete(s.centerId);
-                      }}
-                      className="p-3 bg-red-100 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all hover:scale-110 shadow-lg"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
+                  </Td>
+                  <Td>
+                    <StatusBadge
+                      label={s.isBlocked ? (t.blocked || 'Bloklangan') : (t.active || 'Faol')}
+                      tone={s.isBlocked ? 'danger' : 'success'}
+                    />
+                  </Td>
+                  <Td align="right">
+                    <div className="inline-flex items-center gap-1">
+                      <button
+                        onClick={() => onUpdate({ ...s, isBlocked: !s.isBlocked })}
+                        title={s.isBlocked ? (t.unblock || 'Blokdan chiqarish') : (t.block || 'Bloklash')}
+                        className={`p-1.5 rounded-md transition-colors ${s.isBlocked
+                          ? 'text-success hover:bg-success-bg'
+                          : 'text-muted hover:text-danger hover:bg-danger-bg'}`}
+                      >
+                        {s.isBlocked ? <Unlock size={16} /> : <Lock size={16} />}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!window.confirm(`"${s.centerName}" markazini o'chirmoqchimisiz?`)) return;
+                          if (!window.confirm(`DIQQAT! Bu amalni qaytarib bo'lmaydi!\n\nMarkaz: ${s.centerName}\n\nBarcha ma'lumotlar (foydalanuvchilar, login/parol) o'chib ketadi.\n\nRostdan ham o'chirmoqchimisiz?`)) return;
+                          onDelete(s.centerId);
+                        }}
+                        title={t.delete_action || "O'chirish"}
+                        className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </Td>
                 </tr>
-              )
+              );
             })}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Card>
+
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
@@ -455,23 +424,24 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 export const BroadcastSystem: React.FC<{ t: any }> = ({ t }) => {
   const [msg, setMsg] = useState('');
   return (
-    <div className="bg-white p-12 rounded-[3.5rem] border border-line shadow-e1 max-w-2xl mx-auto animate-in slide-in-from-bottom-10 duration-700">
-      <div className="bg-primary w-20 h-20 rounded-md flex items-center justify-center text-white mb-8 shadow-e1 shadow-indigo-200">
-        <Megaphone size={32} />
-      </div>
-      <h3 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight uppercase leading-none">{t.broadcast || 'Global Broadcast'}</h3>
-      <p className="text-muted text-sm mb-10 font-medium">{t.uz === "Boshqaruv" ? "Ushbu xabar barcha o'quv markazlari tizimida e'lon qilinadi." : "This message will be broadcast to all training centers."}</p>
-
-      <textarea
-        className="w-full h-48 bg-slate-50 border border-line rounded-md p-8 outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white transition-all font-bold text-slate-700 shadow-inner"
-        placeholder={t.note || "Message..."}
-        value={msg}
-        onChange={(e) => setMsg(e.target.value)}
-      ></textarea>
-
-      <button className="w-full mt-8 bg-slate-900 text-white font-semibold py-5 rounded-md flex items-center justify-center gap-4 hover:bg-black transition-all shadow-e1 uppercase text-xs tracking-[0.2em] active:scale-[0.98]">
-        {t.send_message || 'Broadcast Message'} <Send size={20} />
-      </button>
+    <div className="animate-in fade-in duration-300 max-w-2xl">
+      <PageHeader
+        title={t.broadcast || 'Xabarnomalar'}
+        subtitle={t.broadcast_hint || "Ushbu xabar barcha o'quv markazlariga e'lon qilinadi."}
+      />
+      <Card>
+        <Field label={t.note || 'Xabar matni'}>
+          <textarea
+            className="w-full h-40 text-[13.5px] px-3 py-2.5 border border-line rounded-field bg-surface text-ink outline-none resize-none transition-colors placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/15"
+            placeholder={t.note_placeholder}
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
+          />
+        </Field>
+        <Button className="w-full mt-4" disabled={!msg.trim()}>
+          <Send size={15} /> {t.send_message || 'Yuborish'}
+        </Button>
+      </Card>
     </div>
   );
 };
@@ -506,35 +476,54 @@ export const SystemLogs: React.FC<{ t: any; settings?: SystemSettings[] }> = ({ 
     id ? (settings.find(s => s.centerId === id)?.centerName || id.slice(0, 8)) : '—';
 
   return (
-    <div className="bg-slate-950 rounded-lg p-10 text-indigo-300 font-mono text-[11px] overflow-hidden border border-white/5 shadow-e1 animate-in fade-in duration-700">
-      <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
-        <div className="flex items-center gap-3">
-          <ShieldAlert size={20} className="text-amber-500" />
-          <span className="uppercase font-semibold tracking-[0.3em] text-white">{t.logs || 'System Audit & Access Log'}</span>
-        </div>
-        <button onClick={load} disabled={loading}
-          className="bg-white/5 hover:bg-white/10 px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest text-indigo-400 transition-colors disabled:opacity-40">
-          {loading ? '...' : (t.refresh || 'Yangilash')}
-        </button>
-      </div>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.logs || 'Loglar'}
+        subtitle={t.logs_hint || "Kirish urinishlari va parol o'zgarishlari"}
+        actions={
+          <Button variant="secondary" size="sm" onClick={load} disabled={loading}>
+            {loading ? '...' : (t.refresh || 'Yangilash')}
+          </Button>
+        }
+      />
 
-      <div className="space-y-2 h-[500px] overflow-y-auto custom-scrollbar pr-4">
-        {!loading && rows.length === 0 && (
-          <p className="text-slate-500 ">Hozircha yozuv yo'q.</p>
+      <Card padded={false}>
+        {!loading && rows.length === 0 ? (
+          <EmptyState icon={<ShieldAlert size={22} />} title={t.search_empty} />
+        ) : (
+          <Table>
+            <thead>
+              <tr>
+                <Th>{t.attendance_date}</Th>
+                <Th>{t.status}</Th>
+                <Th>{t.username}</Th>
+                <Th>{t.centers}</Th>
+                <Th>{t.note}</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={i} className="hover:bg-[#FAFAFB] transition-colors">
+                  <Td className="text-muted tabular-nums whitespace-nowrap">
+                    {new Date(r.at).toLocaleString('uz-UZ', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                  </Td>
+                  <Td>
+                    <StatusBadge
+                      label={r.action}
+                      tone={r.action === 'LOGIN_OK' ? 'success'
+                        : r.action === 'LOGIN_FAIL' ? 'danger'
+                          : r.action.startsWith('PASSWORD') ? 'info' : 'warning'}
+                    />
+                  </Td>
+                  <Td className="text-ink">{r.username || '—'}</Td>
+                  <Td className="text-ink-2">{centerName(r.centerId)}</Td>
+                  <Td className="text-muted">{r.detail || '—'}</Td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         )}
-        {rows.map((r, i) => (
-          <p key={i} className={`flex gap-4 ${ACTION_STYLE[r.action] || 'text-muted'}`}>
-            <span className="text-slate-600 shrink-0">
-              [{new Date(r.at).toLocaleString('uz-UZ', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}]
-            </span>
-            <span className="font-bold shrink-0">{r.action}</span>
-            <span className="text-slate-300 shrink-0">{r.username || '—'}</span>
-            <span className="text-slate-500 truncate">
-              {centerName(r.centerId)}{r.detail ? ` · ${r.detail}` : ''}
-            </span>
-          </p>
-        ))}
-      </div>
+      </Card>
     </div>
   );
 };

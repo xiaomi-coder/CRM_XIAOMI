@@ -508,10 +508,15 @@ Barcha asosiy ekranlar yangi dizaynda: Boshqaruv, Lidlar, IELTS testlari,
 O'quvchilar (+ profil), Guruhlar, Davomat, Arxiv, Natijalar, To'lovlar,
 Oylik maosh, Xarajatlar, Xodimlar, Sozlamalar, Kutubxona, Creator paneli.
 
-Sozlamalar va Creator panelida to'liq qayta yozish o'rniga **uslub naqshlari
-almashtirildi** (radius 3rem->12px, shadow-2xl->e1, font-black->font-semibold,
-italic olib tashlandi, ranglar token nomlariga) — ular ko'p formali, to'liq
-qayta yozish xavfli edi.
+**Sozlamalar va Creator paneli ham keyin TO'LIQ qayta yozildi** (avval faqat
+uslub naqshlari almashtirilgan edi):
+- Sozlamalar: qora `slate-900` bloklar (bot/AI/hisobot) o'rniga toza Card'lar,
+  yorliqlar maydon ustida, Field/Input/Button ishlatilgan
+- Creator Boshqaruv: qora KPI kartalar -> KpiCard, markazlar ro'yxati toza
+- Markazlar nazorati: jadval Th/Td ga, muddat rangli (qizil/amber/yashil),
+  parol ustuni olib tashlandi (bcrypt hash, ko'rsatishning ma'nosi yo'q)
+- Loglar: qora "terminal" ko'rinish -> o'qiladigan jadval, holat StatusBadge bilan
+- Xabarnomalar: soddalashtirildi
 
 Tekshirildi: 13 ta menyu bandi ketma-ket ochildi, hech birida xato yo'q,
 konsol toza.
