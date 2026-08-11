@@ -168,26 +168,26 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
       {/* O'z parolini o'zgartirish — har qanday rol uchun.
           Parol bazada hash bo'lib saqlanadi, shuning uchun eski parolni
           bilish shart va uni hech kim "ko'ra" olmaydi. */}
-      <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl">
+      <div className="bg-white p-8 rounded-lg border border-line shadow-e1">
         <div className="flex items-center gap-4 mb-6">
-          <div className="bg-amber-500 p-3.5 rounded-2xl shadow-lg"><KeyRound className="text-white" size={20} /></div>
-          <h3 className="text-xl font-black text-slate-800 uppercase italic">{t.change_password || "Parolni o'zgartirish"}</h3>
+          <div className="bg-amber-500 p-3.5 rounded-md shadow-lg"><KeyRound className="text-white" size={20} /></div>
+          <h3 className="text-xl font-semibold text-ink uppercase ">{t.change_password || "Parolni o'zgartirish"}</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <input type="password" value={pwOld} onChange={e => { setPwOld(e.target.value); setPwMsg(null); }}
             placeholder={t.old_password || 'Eski parol'}
-            className="px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
+            className="px-5 py-3.5 bg-slate-50 border border-line rounded-md outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
           <input type="password" value={pwNew} onChange={e => { setPwNew(e.target.value); setPwMsg(null); }}
             placeholder={t.new_password || 'Yangi parol'}
-            className="px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
+            className="px-5 py-3.5 bg-slate-50 border border-line rounded-md outline-none font-bold focus:ring-2 focus:ring-amber-400/40" />
           <button onClick={handleChangePassword} disabled={pwBusy || pwOld.length < 1 || pwNew.length < 6}
-            className="px-6 py-3.5 bg-amber-600 text-white rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-amber-700 transition-colors disabled:opacity-40">
+            className="px-6 py-3.5 bg-amber-600 text-white rounded-md font-semibold uppercase text-[11px] tracking-widest hover:bg-amber-700 transition-colors disabled:opacity-40">
             {pwBusy ? '...' : (t.save || 'Saqlash')}
           </button>
         </div>
         {pwMsg && (
-          <p className={`text-[11px] font-black mt-3 px-1 ${pwMsg.ok ? 'text-emerald-600' : 'text-red-500'}`}>
+          <p className={`text-[11px] font-semibold mt-3 px-1 ${pwMsg.ok ? 'text-emerald-600' : 'text-red-500'}`}>
             {pwMsg.text}
           </p>
         )}
@@ -195,10 +195,10 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {userRole === UserRole.DIRECTOR && (
-          <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl">
+          <div className="bg-white p-10 rounded-lg border border-line shadow-e1">
             <div className="flex items-center gap-4 mb-8">
-              <div className="bg-indigo-600 p-4 rounded-3xl shadow-lg"><Building2 className="text-white" size={24} /></div>
-              <h3 className="text-2xl font-black text-slate-800 uppercase italic">{t.settings}</h3>
+              <div className="bg-primary p-4 rounded-lg shadow-lg"><Building2 className="text-white" size={24} /></div>
+              <h3 className="text-2xl font-semibold text-ink uppercase ">{t.settings}</h3>
             </div>
             <form onSubmit={async (e) => {
               e.preventDefault();
@@ -232,14 +232,14 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
 
               alert(t.save);
             }} className="space-y-6">
-              <input className="w-full px-6 py-4 bg-slate-50 border rounded-2xl font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder={t.center_name} />
+              <input className="w-full px-6 py-4 bg-slate-50 border rounded-md font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder={t.center_name} />
 
               {/* Telegram Bot Section */}
-              <div className="p-6 bg-slate-900 rounded-[2rem] text-white space-y-4">
+              <div className="p-6 bg-slate-900 rounded-md text-white space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Bot size={18} className="text-indigo-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Telegram Bot</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest">Telegram Bot</span>
                   </div>
                   {botStatus === 'checking' && <Loader2 size={16} className="animate-spin text-indigo-400" />}
                   {botStatus === 'success' && <CheckCircle2 size={16} className="text-emerald-400" />}
@@ -291,10 +291,10 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                 )}
 
                 {/* AI Integration Section */}
-                <div className="p-6 bg-slate-900 rounded-[2rem] text-white space-y-4">
+                <div className="p-6 bg-slate-900 rounded-md text-white space-y-4">
                   <div className="flex items-center gap-2">
                     <Sparkles size={18} className="text-amber-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">AI Integration (Gemini)</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest">AI Integration (Gemini)</span>
                   </div>
 
                   <div className="space-y-2">
@@ -311,10 +311,10 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                 </div>
 
                 {/* Direktor Telegram Hisobot */}
-                <div className="p-6 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] text-white space-y-4">
+                <div className="p-6 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-md text-white space-y-4">
                   <div className="flex items-center gap-2">
                     <Bot size={18} className="text-blue-200" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Kunlik Hisobot (Telegram)</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest">Kunlik Hisobot (Telegram)</span>
                   </div>
 
                   <div className="space-y-2">
@@ -337,31 +337,31 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
 
               </div>
 
-              <button type="submit" className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase shadow-xl">{t.save}</button>
+              <button type="submit" className="w-full bg-primary text-white py-4 rounded-md font-semibold uppercase shadow-e1">{t.save}</button>
             </form>
           </div>
         )}
 
-        <div className={`bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl ${userRole !== UserRole.DIRECTOR ? 'lg:col-span-2' : ''}`}>
+        <div className={`bg-white p-10 rounded-lg border border-line shadow-e1 ${userRole !== UserRole.DIRECTOR ? 'lg:col-span-2' : ''}`}>
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-4">
-              <div className="bg-amber-500 p-4 rounded-3xl shadow-lg"><BookOpen className="text-white" size={24} /></div>
-              <h3 className="text-2xl font-black text-slate-800 uppercase italic">{t.tests}</h3>
+              <div className="bg-amber-500 p-4 rounded-lg shadow-lg"><BookOpen className="text-white" size={24} /></div>
+              <h3 className="text-2xl font-semibold text-ink uppercase ">{t.tests}</h3>
             </div>
             <button
               onClick={() => { setEditingTestId(null); setNewTemplate({ title: '', subject: t.subject, durationMinutes: 30, questions: [] }); setShowAddTestModal(true); }}
-              className="px-6 py-3 bg-amber-50 text-amber-600 rounded-2xl hover:bg-amber-500 hover:text-white transition-all font-black uppercase text-[10px] tracking-widest"
+              className="px-6 py-3 bg-amber-50 text-amber-600 rounded-md hover:bg-amber-500 hover:text-white transition-all font-semibold uppercase text-[10px] tracking-widest"
             >
               + {t.add_test}
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {templates.map(test => (
-              <div key={test.id} className="p-6 bg-slate-50 rounded-[2.5rem] border border-indigo-100 flex flex-col justify-between hover:shadow-lg transition-all relative group">
+              <div key={test.id} className="p-6 bg-slate-50 rounded-lg border border-indigo-100 flex flex-col justify-between hover:shadow-lg transition-all relative group">
                 <div className="absolute top-4 right-4 flex gap-2">
                   <button
                     onClick={() => openEditModal(test)}
-                    className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                    className="p-2 text-indigo-400 hover:text-primary hover:bg-primary-subtle rounded-xl transition-all"
                   >
                     <Edit2 size={18} />
                   </button>
@@ -381,49 +381,49 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                 </div>
 
                 <div>
-                  <p className="font-black text-slate-800 text-sm uppercase mb-1">{test.title}</p>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{test.subject} • {test.questions.length}</p>
+                  <p className="font-semibold text-ink text-sm uppercase mb-1">{test.title}</p>
+                  <p className="text-[9px] font-semibold text-muted uppercase tracking-widest">{test.subject} • {test.questions.length}</p>
                 </div>
                 <div className="mt-6">
                   <button
                     type="button"
                     onClick={() => exportToWord(test)}
-                    className="w-full bg-white border border-slate-200 p-3 rounded-2xl hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center justify-center gap-2 text-[9px] font-black uppercase"
+                    className="w-full bg-white border border-slate-200 p-3 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center justify-center gap-2 text-[9px] font-semibold uppercase"
                   >
                     <Download size={14} /> Doc
                   </button>
                 </div>
               </div>
             ))}
-            {templates.length === 0 && <p className="col-span-2 text-center text-slate-400 py-10 font-bold italic">{t.search_empty}</p>}
+            {templates.length === 0 && <p className="col-span-2 text-center text-muted py-10 font-bold ">{t.search_empty}</p>}
           </div>
         </div>
       </div>
 
       {showAddTestModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
+          <div className="bg-white w-full max-w-3xl rounded-lg shadow-e1 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
             <div className="bg-amber-500 p-8 text-white flex justify-between items-center">
-              <h3 className="text-2xl font-black italic uppercase tracking-tighter">
+              <h3 className="text-2xl font-semibold uppercase tracking-tight">
                 {editingTestId ? (t.save) : t.add_test}
               </h3>
               <button onClick={() => setShowAddTestModal(false)}><X size={24} /></button>
             </div>
             <div className="p-10 overflow-y-auto custom-scrollbar space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <input className="w-full px-5 py-4 bg-slate-50 border rounded-2xl font-bold outline-none" value={newTemplate.title} onChange={e => setNewTemplate({ ...newTemplate, title: e.target.value })} placeholder={t.main} />
-                <input className="w-full px-5 py-4 bg-slate-50 border rounded-2xl font-bold outline-none" value={newTemplate.subject} onChange={e => setNewTemplate({ ...newTemplate, subject: e.target.value })} placeholder={t.subject} />
-                <input type="number" className="w-full px-5 py-4 bg-slate-50 border rounded-2xl font-bold outline-none" value={newTemplate.durationMinutes} onChange={e => setNewTemplate({ ...newTemplate, durationMinutes: Number(e.target.value) })} placeholder={t.minute} />
+                <input className="w-full px-5 py-4 bg-slate-50 border rounded-md font-bold outline-none" value={newTemplate.title} onChange={e => setNewTemplate({ ...newTemplate, title: e.target.value })} placeholder={t.main} />
+                <input className="w-full px-5 py-4 bg-slate-50 border rounded-md font-bold outline-none" value={newTemplate.subject} onChange={e => setNewTemplate({ ...newTemplate, subject: e.target.value })} placeholder={t.subject} />
+                <input type="number" className="w-full px-5 py-4 bg-slate-50 border rounded-md font-bold outline-none" value={newTemplate.durationMinutes} onChange={e => setNewTemplate({ ...newTemplate, durationMinutes: Number(e.target.value) })} placeholder={t.minute} />
               </div>
               <div className="space-y-6">
                 <div className="flex justify-between items-center border-b pb-4">
-                  <h4 className="font-black text-slate-800 uppercase text-xs">{t.question} ({newTemplate.questions?.length || 0})</h4>
-                  <button onClick={() => setNewTemplate(p => ({ ...p, questions: [...(p.questions || []), { id: Math.random().toString(), text: '', options: ['', '', '', ''], correctAnswer: 0 }] }))} className="bg-indigo-600 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase text-nowrap">+ {t.question}</button>
+                  <h4 className="font-semibold text-ink uppercase text-xs">{t.question} ({newTemplate.questions?.length || 0})</h4>
+                  <button onClick={() => setNewTemplate(p => ({ ...p, questions: [...(p.questions || []), { id: Math.random().toString(), text: '', options: ['', '', '', ''], correctAnswer: 0 }] }))} className="bg-primary text-white px-5 py-2 rounded-xl text-[10px] font-semibold uppercase text-nowrap">+ {t.question}</button>
                 </div>
                 {newTemplate.questions?.map((q, qIdx) => (
-                  <div key={q.id} className="p-6 bg-slate-50 rounded-[2.5rem] border border-slate-200 space-y-4">
+                  <div key={q.id} className="p-6 bg-slate-50 rounded-lg border border-slate-200 space-y-4">
                     <div className="flex justify-between">
-                      <span className="font-black text-[10px] uppercase text-indigo-500">{t.question} {qIdx + 1}</span>
+                      <span className="font-semibold text-[10px] uppercase text-indigo-500">{t.question} {qIdx + 1}</span>
                       <button type="button" onClick={() => {
                         const qs = [...newTemplate.questions!];
                         qs.splice(qIdx, 1);
@@ -441,7 +441,7 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
                           }} className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${q.correctAnswer === i ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300'}`}>
                             {q.correctAnswer === i && <CheckCircle2 size={14} />}
                           </button>
-                          <span className="font-black text-[12px] text-slate-400">{optionLetters[i]}</span>
+                          <span className="font-semibold text-[12px] text-muted">{optionLetters[i]}</span>
                           <input
                             className="w-full bg-transparent outline-none font-bold text-xs"
                             value={opt}
@@ -456,8 +456,8 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
               </div>
             </div>
             <div className="p-8 bg-slate-50 border-t flex gap-4">
-              <button type="button" onClick={() => setShowAddTestModal(false)} className="flex-1 font-black uppercase text-xs text-slate-400">{t.cancel}</button>
-              <button type="button" onClick={handleSaveTemplate} className="flex-1 bg-amber-500 text-white font-black py-4 rounded-2xl uppercase text-xs shadow-xl">
+              <button type="button" onClick={() => setShowAddTestModal(false)} className="flex-1 font-semibold uppercase text-xs text-muted">{t.cancel}</button>
+              <button type="button" onClick={handleSaveTemplate} className="flex-1 bg-amber-500 text-white font-semibold py-4 rounded-md uppercase text-xs shadow-e1">
                 {t.save}
               </button>
             </div>

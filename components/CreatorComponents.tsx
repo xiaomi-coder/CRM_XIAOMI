@@ -66,28 +66,28 @@ const ExpiringCenters: React.FC<{
         : `${days} ${t.days_left_label || "kun qoldi"}`;
 
   return (
-    <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+    <div className="bg-white p-8 rounded-lg border border-line shadow-sm">
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200 shrink-0">
+        <div className="w-12 h-12 rounded-md bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200 shrink-0">
           <CalendarClock size={22} />
         </div>
         <div className="flex-1">
-          <h4 className="text-lg font-black text-slate-800 uppercase tracking-tighter leading-none">
+          <h4 className="text-lg font-semibold text-ink uppercase tracking-tight leading-none">
             {t.expiring_centers || "Muddati tugayotgan markazlar"}
           </h4>
-          <p className="text-[10px] text-slate-400 font-bold mt-1">
+          <p className="text-[10px] text-muted font-bold mt-1">
             {t.expiring_centers_note || "Yaqin 7 kun ichida tugaydiganlar va tugab bo'lganlar"}
           </p>
         </div>
         {rows.length > 0 && (
-          <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase border border-amber-100">
+          <span className="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-xl text-[10px] font-semibold uppercase border border-amber-100">
             {rows.length}
           </span>
         )}
       </div>
 
       {rows.length === 0 ? (
-        <div className="flex items-center gap-3 p-6 bg-emerald-50 rounded-3xl border border-emerald-100">
+        <div className="flex items-center gap-3 p-6 bg-emerald-50 rounded-lg border border-emerald-100">
           <CheckCircle2 className="text-emerald-500 shrink-0" size={22} />
           <p className="text-emerald-700 font-bold text-sm">
             {t.expiring_none || "Yaqin kunlarda muddati tugaydigan markaz yo'q."}
@@ -99,10 +99,10 @@ const ExpiringCenters: React.FC<{
             const director = directorOf(s.centerId);
             const busy = savingId === s.centerId;
             return (
-              <div key={s.centerId} className={`p-5 rounded-3xl border ${styleOf(days as number)}`}>
+              <div key={s.centerId} className={`p-5 rounded-lg border ${styleOf(days as number)}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-[200px]">
-                    <p className="font-black text-slate-800 uppercase tracking-tight">{s.centerName}</p>
+                    <p className="font-semibold text-ink uppercase tracking-tight">{s.centerName}</p>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
                       {director && (
                         <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
@@ -111,18 +111,18 @@ const ExpiringCenters: React.FC<{
                       )}
                       {s.phone && (
                         <a href={`tel:${s.phone.replace(/\s/g, '')}`}
-                          className="flex items-center gap-1.5 text-[11px] font-black text-indigo-600 hover:text-indigo-700">
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-primary hover:text-indigo-700">
                           <Phone size={12} /> {s.phone}
                         </a>
                       )}
-                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-muted">
                         <Clock size={12} /> {s.licenseExpiry}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-xs font-black whitespace-nowrap">{labelOf(days as number)}</span>
+                    <span className="text-xs font-semibold whitespace-nowrap">{labelOf(days as number)}</span>
                     {onUpdate && (
                       <div className="flex gap-1.5">
                         {[1, 3, 12].map(m => (
@@ -130,7 +130,7 @@ const ExpiringCenters: React.FC<{
                             key={m}
                             onClick={() => extend(s, m)}
                             disabled={busy}
-                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-700 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all disabled:opacity-40"
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-semibold text-slate-700 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all disabled:opacity-40"
                           >
                             {busy ? '...' : `+${m === 12 ? '1 ' + (t.year_short || 'yil') : m + ' ' + (t.month_short || 'oy')}`}
                           </button>
@@ -155,55 +155,55 @@ export const CreatorDashboard: React.FC<{
 }> = ({ t, settings = [], allStudents = [], allPayments = [], users = [], onUpdateCenter }) => {
   const totalRevenue = Array.isArray(allPayments) ? allPayments.reduce((sum, p) => sum + p.amount, 0) : 0;
 
-  if (!settings) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-indigo-600" size={40} /></div>;
+  if (!settings) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-primary" size={40} /></div>;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 p-8 rounded-md border border-white/5 text-white shadow-e1 relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Building size={100} /></div>
           <Activity className="text-amber-500 mb-4" size={32} />
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.centers || 'Centers'}</p>
-          <h3 className="text-3xl font-black">{settings.length}</h3>
+          <p className="text-muted text-xs font-semibold uppercase tracking-widest">{t.centers || 'Centers'}</p>
+          <h3 className="text-3xl font-semibold">{settings.length}</h3>
         </div>
-        <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 p-8 rounded-md border border-white/5 text-white shadow-e1 relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Users size={100} /></div>
           <Users className="text-blue-500 mb-4" size={32} />
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.students}</p>
-          <h3 className="text-3xl font-black">{allStudents.length}</h3>
+          <p className="text-muted text-xs font-semibold uppercase tracking-widest">{t.students}</p>
+          <h3 className="text-3xl font-semibold">{allStudents.length}</h3>
         </div>
-        <div className="bg-slate-900 p-8 rounded-[2rem] border border-white/5 text-white shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 p-8 rounded-md border border-white/5 text-white shadow-e1 relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-4 opacity-5 group-hover:scale-110 transition-transform"><Wallet size={100} /></div>
           <Wallet className="text-emerald-500 mb-4" size={32} />
-          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{t.revenue || 'Revenue'}</p>
-          <h3 className="text-3xl font-black text-emerald-400">{totalRevenue.toLocaleString()} UZS</h3>
+          <p className="text-muted text-xs font-semibold uppercase tracking-widest">{t.revenue || 'Revenue'}</p>
+          <h3 className="text-3xl font-semibold text-emerald-400">{totalRevenue.toLocaleString()} UZS</h3>
         </div>
       </div>
 
       <ExpiringCenters t={t} settings={settings} users={users} onUpdate={onUpdateCenter} />
 
-      <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+      <div className="bg-white p-8 rounded-lg border border-line shadow-sm">
         <div className="flex justify-between items-center mb-6">
-          <h4 className="text-lg font-black text-slate-800 uppercase tracking-tighter">{t.centers_list || 'Centers List'}</h4>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t.recent || 'Recent'}</div>
+          <h4 className="text-lg font-semibold text-ink uppercase tracking-tight">{t.centers_list || 'Centers List'}</h4>
+          <div className="text-[10px] font-semibold text-muted uppercase tracking-widest">{t.recent || 'Recent'}</div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {settings.length > 0 ? settings.map(s => (
-            <div key={s.centerId} className="flex items-center justify-between p-5 bg-slate-50 rounded-3xl border border-slate-100 hover:border-indigo-200 transition-all group">
+            <div key={s.centerId} className="flex items-center justify-between p-5 bg-slate-50 rounded-lg border border-line hover:border-indigo-200 transition-all group">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-200 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                <div className="w-12 h-12 bg-white rounded-md flex items-center justify-center shadow-sm border border-slate-200 group-hover:bg-primary group-hover:text-white transition-all">
                   <Building size={20} />
                 </div>
                 <div>
-                  <p className="font-black text-slate-800 uppercase tracking-tight">{s.centerName}</p>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{s.centerId}</p>
+                  <p className="font-semibold text-ink uppercase tracking-tight">{s.centerName}</p>
+                  <p className="text-[9px] text-muted font-bold uppercase tracking-widest">{s.centerId}</p>
                 </div>
               </div>
-              <span className={`text-[9px] font-black ${s.isBlocked ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50'} px-4 py-1.5 rounded-xl uppercase border ${s.isBlocked ? 'border-red-100' : 'border-emerald-100'}`}>
+              <span className={`text-[9px] font-semibold ${s.isBlocked ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50'} px-4 py-1.5 rounded-xl uppercase border ${s.isBlocked ? 'border-red-100' : 'border-emerald-100'}`}>
                 {s.isBlocked ? 'Blocked' : 'Active'}
               </span>
             </div>
-          )) : <div className="col-span-2 py-20 text-center text-slate-400 font-bold italic uppercase text-[10px] tracking-widest opacity-50">{t.search_empty || 'No centers found'}</div>}
+          )) : <div className="col-span-2 py-20 text-center text-muted font-bold uppercase text-[10px] tracking-widest opacity-50">{t.search_empty || 'No centers found'}</div>}
         </div>
       </div>
     </div>
@@ -285,15 +285,15 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
       <div className="flex justify-end">
         <button
           onClick={() => setShowModal(true)}
-          className="bg-slate-900 text-white px-10 py-4 rounded-[1.5rem] font-black flex items-center gap-3 hover:bg-black transition-all shadow-2xl active:scale-95 uppercase text-[10px] tracking-widest"
+          className="bg-slate-900 text-white px-10 py-4 rounded-md font-semibold flex items-center gap-3 hover:bg-black transition-all shadow-e1 active:scale-95 uppercase text-[10px] tracking-widest"
         >
           <Plus size={20} /> {t.add_center || 'New Center'}
         </button>
       </div>
 
-      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-line shadow-sm overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em]">
+          <thead className="bg-slate-900 text-white text-[10px] font-semibold uppercase tracking-[0.2em]">
             <tr>
               <th className="px-10 py-6">{t.center_name || 'Center'}</th>
               <th className="px-10 py-6">{t.login_data || 'Login Info'}</th>
@@ -308,17 +308,17 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
               return (
                 <tr key={s.centerId} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-10 py-6">
-                    <div className="font-black text-slate-800 uppercase tracking-tighter text-base">{s.centerName}</div>
+                    <div className="font-semibold text-ink uppercase tracking-tight text-base">{s.centerName}</div>
                     <div className="text-[10px] font-bold text-indigo-500 mt-1 uppercase tracking-widest flex items-center gap-1.5">
                       <UserIcon size={12} /> {admin?.name || 'No Director'}
                     </div>
                   </td>
                   <td className="px-10 py-6">
                     <div className="flex flex-col gap-1">
-                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Login: <span className="text-slate-800">{admin?.username}</span></div>
+                      <div className="text-[10px] font-semibold text-muted uppercase tracking-widest">Login: <span className="text-ink">{admin?.username}</span></div>
                       {/* Parol endi bcrypt hash — ko'rsatishning ma'nosi yo'q va
                           ilgari uni ochiq chiqarish o'zi xavf edi. */}
-                      <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Parol: <span className="text-slate-400">••••••••</span></div>
+                      <div className="text-[10px] font-semibold text-slate-300 uppercase tracking-widest">Parol: <span className="text-muted">••••••••</span></div>
                     </div>
                   </td>
                   <td className="px-10 py-6">
@@ -327,7 +327,7 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
                       // necha kun qolgani ko'rinib turishi kerak.
                       if (!s.licenseExpiry) {
                         return (
-                          <div className="flex items-center gap-2 text-xs font-black text-slate-400 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 w-fit">
+                          <div className="flex items-center gap-2 text-xs font-semibold text-muted bg-slate-50 px-4 py-2 rounded-xl border border-line w-fit">
                             <Clock size={14} /> Cheksiz
                           </div>
                         );
@@ -342,8 +342,8 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
                           : 'text-emerald-700 bg-emerald-50 border-emerald-100';
                       return (
                         <div className={`flex flex-col gap-0.5 px-4 py-2 rounded-xl border w-fit ${style}`}>
-                          <span className="text-xs font-black">{s.licenseExpiry}</span>
-                          <span className="text-[9px] font-black uppercase tracking-widest">
+                          <span className="text-xs font-semibold">{s.licenseExpiry}</span>
+                          <span className="text-[9px] font-semibold uppercase tracking-widest">
                             {days < 0 ? `${-days} kun oldin tugagan` : `${days} kun qoldi`}
                           </span>
                         </div>
@@ -352,15 +352,15 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
                   </td>
                   <td className="px-10 py-6">
                     {s.isBlocked ? (
-                      <span className="bg-red-50 text-red-600 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase border border-red-100">Blocked</span>
+                      <span className="bg-red-50 text-red-600 px-4 py-1.5 rounded-xl text-[9px] font-semibold uppercase border border-red-100">Blocked</span>
                     ) : (
-                      <span className="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase border border-emerald-100">Active</span>
+                      <span className="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-xl text-[9px] font-semibold uppercase border border-emerald-100">Active</span>
                     )}
                   </td>
                   <td className="px-10 py-6 text-right space-x-2">
                     <button
                       onClick={() => onUpdate({ ...s, isBlocked: !s.isBlocked })}
-                      className={`p-3 rounded-2xl transition-all ${s.isBlocked ? 'bg-emerald-50 text-emerald-600 shadow-emerald-100' : 'bg-red-50 text-red-600 shadow-red-100'} shadow-xl hover:scale-110`}
+                      className={`p-3 rounded-md transition-all ${s.isBlocked ? 'bg-emerald-50 text-emerald-600 shadow-emerald-100' : 'bg-red-50 text-red-600 shadow-red-100'} shadow-e1 hover:scale-110`}
                     >
                       {s.isBlocked ? <Unlock size={18} /> : <Lock size={18} />}
                     </button>
@@ -374,7 +374,7 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 
                         onDelete(s.centerId);
                       }}
-                      className="p-3 bg-red-100 text-red-600 rounded-2xl hover:bg-red-600 hover:text-white transition-all hover:scale-110 shadow-lg"
+                      className="p-3 bg-red-100 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all hover:scale-110 shadow-lg"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -388,12 +388,12 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-lg shadow-e1 overflow-hidden animate-in zoom-in duration-300">
             <div className="bg-slate-900 p-8 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12"><ShieldAlert size={140} /></div>
               <div className="relative z-10">
-                <h3 className="text-2xl font-black italic tracking-tighter uppercase">{t.add_center || 'New Center'}</h3>
-                <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2 opacity-80">Global License Manager</p>
+                <h3 className="text-2xl font-semibold tracking-tight uppercase">{t.add_center || 'New Center'}</h3>
+                <p className="text-muted text-[10px] font-semibold uppercase tracking-[0.3em] mt-2 opacity-80">Global License Manager</p>
               </div>
               <button onClick={() => setShowModal(false)} className="relative z-10 p-2 hover:bg-white/10 rounded-full transition-colors"><X size={24} /></button>
             </div>
@@ -401,44 +401,44 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
             <form onSubmit={handleSubmit} className="p-10 space-y-8">
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Business Info</p>
+                  <p className="text-[9px] font-semibold text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Business Info</p>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Center Name</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/5 font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder="Elite Academy" />
+                    <label className="block text-[9px] font-semibold text-muted uppercase mb-2 ml-1">Center Name</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-line rounded-md outline-none focus:ring-4 focus:ring-indigo-500/5 font-bold" value={formData.centerName} onChange={e => setFormData({ ...formData, centerName: e.target.value })} placeholder="Elite Academy" />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Phone</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="+998" />
+                    <label className="block text-[9px] font-semibold text-muted uppercase mb-2 ml-1">Phone</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-line rounded-md outline-none" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="+998" />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Expiry</label>
-                    <input type="date" required className="w-full px-5 py-4 bg-amber-50 border border-amber-100 rounded-2xl outline-none font-black text-amber-700" value={formData.expiryDate} onChange={e => setFormData({ ...formData, expiryDate: e.target.value })} />
+                    <label className="block text-[9px] font-semibold text-muted uppercase mb-2 ml-1">Expiry</label>
+                    <input type="date" required className="w-full px-5 py-4 bg-amber-50 border border-amber-100 rounded-md outline-none font-semibold text-amber-700" value={formData.expiryDate} onChange={e => setFormData({ ...formData, expiryDate: e.target.value })} />
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Director (Super User)</p>
+                  <p className="text-[9px] font-semibold text-indigo-500 uppercase tracking-widest border-b border-indigo-50 pb-2">Director (Super User)</p>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Full Name</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold" value={formData.adminName} onChange={e => setFormData({ ...formData, adminName: e.target.value })} placeholder="..." />
+                    <label className="block text-[9px] font-semibold text-muted uppercase mb-2 ml-1">Full Name</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-line rounded-md outline-none font-bold" value={formData.adminName} onChange={e => setFormData({ ...formData, adminName: e.target.value })} placeholder="..." />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Login</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black text-indigo-600" value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="admin" />
+                    <label className="block text-[9px] font-semibold text-muted uppercase mb-2 ml-1">Login</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-line rounded-md outline-none font-semibold text-primary" value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} placeholder="admin" />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-1">Parol</label>
-                    <input required className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} placeholder="••••" />
+                    <label className="block text-[9px] font-semibold text-muted uppercase mb-2 ml-1">Parol</label>
+                    <input required className="w-full px-5 py-4 bg-slate-50 border border-line rounded-md outline-none font-semibold" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} placeholder="••••" />
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-black text-slate-400 hover:bg-slate-50 rounded-2xl transition-all uppercase text-[10px] tracking-widest">{t.cancel}</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-semibold text-muted hover:bg-slate-50 rounded-md transition-all uppercase text-[10px] tracking-widest">{t.cancel}</button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-5 bg-indigo-600 text-white rounded-2xl font-black shadow-2xl shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all uppercase text-[10px] tracking-widest"
+                  className="flex-1 py-5 bg-primary text-white rounded-md font-semibold shadow-e1 shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all uppercase text-[10px] tracking-widest"
                 >
                   {isSubmitting ? "..." : t.save}
                 </button>
@@ -455,21 +455,21 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 export const BroadcastSystem: React.FC<{ t: any }> = ({ t }) => {
   const [msg, setMsg] = useState('');
   return (
-    <div className="bg-white p-12 rounded-[3.5rem] border border-gray-100 shadow-2xl max-w-2xl mx-auto animate-in slide-in-from-bottom-10 duration-700">
-      <div className="bg-indigo-600 w-20 h-20 rounded-[2rem] flex items-center justify-center text-white mb-8 shadow-2xl shadow-indigo-200">
+    <div className="bg-white p-12 rounded-[3.5rem] border border-line shadow-e1 max-w-2xl mx-auto animate-in slide-in-from-bottom-10 duration-700">
+      <div className="bg-primary w-20 h-20 rounded-md flex items-center justify-center text-white mb-8 shadow-e1 shadow-indigo-200">
         <Megaphone size={32} />
       </div>
-      <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tighter italic uppercase leading-none">{t.broadcast || 'Global Broadcast'}</h3>
-      <p className="text-slate-400 text-sm mb-10 font-medium">{t.uz === "Boshqaruv" ? "Ushbu xabar barcha o'quv markazlari tizimida e'lon qilinadi." : "This message will be broadcast to all training centers."}</p>
+      <h3 className="text-3xl font-semibold text-slate-900 mb-3 tracking-tight uppercase leading-none">{t.broadcast || 'Global Broadcast'}</h3>
+      <p className="text-muted text-sm mb-10 font-medium">{t.uz === "Boshqaruv" ? "Ushbu xabar barcha o'quv markazlari tizimida e'lon qilinadi." : "This message will be broadcast to all training centers."}</p>
 
       <textarea
-        className="w-full h-48 bg-slate-50 border border-slate-100 rounded-[2rem] p-8 outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white transition-all font-bold text-slate-700 shadow-inner"
+        className="w-full h-48 bg-slate-50 border border-line rounded-md p-8 outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white transition-all font-bold text-slate-700 shadow-inner"
         placeholder={t.note || "Message..."}
         value={msg}
         onChange={(e) => setMsg(e.target.value)}
       ></textarea>
 
-      <button className="w-full mt-8 bg-slate-900 text-white font-black py-5 rounded-[2rem] flex items-center justify-center gap-4 hover:bg-black transition-all shadow-2xl uppercase text-xs tracking-[0.2em] active:scale-[0.98]">
+      <button className="w-full mt-8 bg-slate-900 text-white font-semibold py-5 rounded-md flex items-center justify-center gap-4 hover:bg-black transition-all shadow-e1 uppercase text-xs tracking-[0.2em] active:scale-[0.98]">
         {t.send_message || 'Broadcast Message'} <Send size={20} />
       </button>
     </div>
@@ -506,24 +506,24 @@ export const SystemLogs: React.FC<{ t: any; settings?: SystemSettings[] }> = ({ 
     id ? (settings.find(s => s.centerId === id)?.centerName || id.slice(0, 8)) : '—';
 
   return (
-    <div className="bg-slate-950 rounded-[3rem] p-10 text-indigo-300 font-mono text-[11px] overflow-hidden border border-white/5 shadow-2xl animate-in fade-in duration-700">
+    <div className="bg-slate-950 rounded-lg p-10 text-indigo-300 font-mono text-[11px] overflow-hidden border border-white/5 shadow-e1 animate-in fade-in duration-700">
       <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-6">
         <div className="flex items-center gap-3">
           <ShieldAlert size={20} className="text-amber-500" />
-          <span className="uppercase font-black tracking-[0.3em] text-white">{t.logs || 'System Audit & Access Log'}</span>
+          <span className="uppercase font-semibold tracking-[0.3em] text-white">{t.logs || 'System Audit & Access Log'}</span>
         </div>
         <button onClick={load} disabled={loading}
-          className="bg-white/5 hover:bg-white/10 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-400 transition-colors disabled:opacity-40">
+          className="bg-white/5 hover:bg-white/10 px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest text-indigo-400 transition-colors disabled:opacity-40">
           {loading ? '...' : (t.refresh || 'Yangilash')}
         </button>
       </div>
 
       <div className="space-y-2 h-[500px] overflow-y-auto custom-scrollbar pr-4">
         {!loading && rows.length === 0 && (
-          <p className="text-slate-500 italic">Hozircha yozuv yo'q.</p>
+          <p className="text-slate-500 ">Hozircha yozuv yo'q.</p>
         )}
         {rows.map((r, i) => (
-          <p key={i} className={`flex gap-4 ${ACTION_STYLE[r.action] || 'text-slate-400'}`}>
+          <p key={i} className={`flex gap-4 ${ACTION_STYLE[r.action] || 'text-muted'}`}>
             <span className="text-slate-600 shrink-0">
               [{new Date(r.at).toLocaleString('uz-UZ', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}]
             </span>
