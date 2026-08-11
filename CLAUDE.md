@@ -503,9 +503,28 @@ qilganda `t.actions` ishlatilsin.
 - ✅ **Lidlar** — kanban tuzilmasi saqlandi, faqat yashil/qora tugmalar
   brend rangiga o'tkazildi
 
-### Keyingi navbat (qolgan ekranlar)
-Xodimlar, Oylik maosh, Arxiv, Natijalar, Kutubxona, Sozlamalari,
-Creator paneli (CreatorComponents), IELTS ekranlari, Login/Register.
+### Ko'chirish YAKUNLANDI ✅ (2026-08-11)
+Barcha asosiy ekranlar yangi dizaynda: Boshqaruv, Lidlar, IELTS testlari,
+O'quvchilar (+ profil), Guruhlar, Davomat, Arxiv, Natijalar, To'lovlar,
+Oylik maosh, Xarajatlar, Xodimlar, Sozlamalar, Kutubxona, Creator paneli.
+
+Sozlamalar va Creator panelida to'liq qayta yozish o'rniga **uslub naqshlari
+almashtirildi** (radius 3rem->12px, shadow-2xl->e1, font-black->font-semibold,
+italic olib tashlandi, ranglar token nomlariga) — ular ko'p formali, to'liq
+qayta yozish xavfli edi.
+
+Tekshirildi: 13 ta menyu bandi ketma-ket ochildi, hech birida xato yo'q,
+konsol toza.
+
+### Yana topilgan takroriy xatolar
+- Xodimlar jadvalida birinchi ustun `t.student_name` ("O'quvchi") edi —
+  xodimlar sahifasida. → `t.full_name`.
+- Shu bilan "Amallar" ustuni xatosi 4 joyda tuzatilgan bo'ldi
+  (Xarajatlar, To'lovlar, O'quvchilar, Xodimlar).
+
+### Hali tegilmagan
+Login/Register (allaqachon zumrad-qora, alohida uslubda — ataylab qoldirildi),
+IELTS imtihon ekranlari (o'quvchi ko'radi, alohida kontekst).
 
 ## To'lovlar bo'limi (a–g) ✅ (2026-08-10)
 
