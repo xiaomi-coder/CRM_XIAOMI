@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Send, MessageSquare, BarChart3, TrendingUp, Calendar } from 'lucide-react';
+import { Search, Plus, Trash2, UserCheck, X, GraduationCap, UserMinus, Settings2, Send, MessageSquare, BarChart3, TrendingUp, Calendar, Link2, Check } from 'lucide-react';
 import { Student, Group, User, StudentStatus, Attendance, AttendanceStatus, Payment, Result } from '../types';
 import StudentProfile from './StudentProfile';
 import { translations, Language } from '../services/languageContext';
@@ -38,6 +38,26 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
 
   // Delete confirmation state
   const [deleteConfirmStudent, setDeleteConfirmStudent] = useState<Student | null>(null);
+
+  // Telegram ulanish havolasi — qaysi qatorda "nusxalandi" ko'rsatilyapti
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const connectLinkFor = (student: Student) =>
+    settings.botUsername && student.tgConnectionCode
+      ? `https://t.me/${settings.botUsername}?start=${student.tgConnectionCode}`
+      : '';
+
+  const copyConnectLink = (student: Student) => {
+    const link = connectLinkFor(student);
+    if (!link) {
+      // Bot ulanmagan bo'lsa havola yasab bo'lmaydi — direktorni Sozlamalarga yo'naltiramiz
+      toast.error(t.bot_not_connected_hint || "Avval Sozlamalarda Telegram botni ulang");
+      return;
+    }
+    navigator.clipboard.writeText(link);
+    setCopiedId(student.id);
+    setTimeout(() => setCopiedId(null), 1800);
+  };
 
   // Arxivlash uchun modal state
   const [showExitModal, setShowExitModal] = useState<{ student: Student, status: StudentStatus } | null>(null);
@@ -308,14 +328,26 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
                     <div className="text-xs text-muted mt-0.5">{student.parentPhone}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <button
-                      onClick={() => setSendMessageStudent(student)}
-                      disabled={!student.tgChatId}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-field text-xs font-semibold transition-all ${student.tgChatId ? 'bg-primary-50 text-primary hover:bg-primary-100' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
-                    >
-                      <Send size={14} />
-                      {student.tgChatId ? (t.send_message || 'Xabar yuborish') : (t.not_linked || 'Ulanmagan')}
-                    </button>
+                    {student.tgChatId ? (
+                      <button
+                        onClick={() => setSendMessageStudent(student)}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-field text-xs font-semibold transition-all bg-primary-50 text-primary hover:bg-primary-100"
+                      >
+                        <Send size={14} />
+                        {t.send_message || 'Xabar yuborish'}
+                      </button>
+                    ) : (
+                      /* Ulanmagan — ota-onaga yuboriladigan havolani nusxalash */
+                      <button
+                        onClick={() => copyConnectLink(student)}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-field text-xs font-semibold transition-all bg-amber-50 text-warning hover:bg-amber-100"
+                        title={connectLinkFor(student) || undefined}
+                      >
+                        {copiedId === student.id
+                          ? <><Check size={14} /> {t.copied || 'Nusxalandi'}</>
+                          : <><Link2 size={14} /> {t.copy_connect_link || 'Ulanish havolasi'}</>}
+                      </button>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <div className={`font-semibold text-xs px-2.5 py-1 rounded-lg w-fit ${student.balance >= 0 ? 'bg-emerald-50 text-success' : 'bg-red-50 text-danger'}`}>

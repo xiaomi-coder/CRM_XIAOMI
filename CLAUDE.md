@@ -412,8 +412,26 @@ Ustiga kod = id ning oxirgi 3-4 belgisi, ya'ni **taxmin qilsa bo'lardi**
 - O'quvchi profili → Telegram tabida **ulanish havolasi + nusxalash tugmasi**.
   Bot ulanmagan bo'lsa ogohlantirish chiqadi.
 
+**Havola qayerda ko'rinadi** (uchchalasi ham `botUsername` bo'lsagina):
+- **O'quvchilar ro'yxati** — "Xabar" ustunida. Ulangan bo'lsa "Xabar yuborish"
+  (ko'k), ulanmagan bo'lsa **"Ulanish havolasi"** (amber, nusxalash). Avval
+  o'sha joyda o'lik "Ulanmagan" tugmasi turardi.
+- **Boshqaruv paneli** — "Diqqat talab qiladi" qatorida beshinchi katak:
+  **"Telegramga ulanmagan"**. Bosilsa modal — har o'quvchi yonida nusxalash
+  tugmasi (faqat ACTIVE o'quvchilar sanaladi).
+- **Guruhlar** — har karta pastida QR tugmasi: **chop etiladigan varaq**
+  (3 ustunli, har o'quvchiga ism + ota-ona + QR + kod). `qrcode` paketi bilan
+  brauzerda yasaladi (SVG, CDN'siz), yangi oynada avtomatik print oynasi ochiladi.
+
 ⚠️ Bot username Sozlamalarda bot ulanganda saqlanadi — eski markazlar
-Sozlamalarni bir marta qayta saqlashi kerak, aks holda havola yasalmaydi.
+Sozlamalarni bir marta qayta saqlashi kerak, aks holda havola yasalmaydi
+(uch joyda ham ogohlantirish chiqadi).
+
+Tekshirildi (demo markazda, botUsername vaqtincha qo'yib): ro'yxatdagi tugma
+`https://t.me/Eduprocrmbot?start=BPZGFKDAMKH4` ni nusxaladi, Boshqaruvdagi
+katak 8 ta ulanmaganni ko'rsatdi, QR varaq 3 o'quvchiga to'g'ri SVG yasadi
+(kodlangan URL alohida tekshirildi). Webhook'ga Telegram nomidan `/start <KOD>`
+yuborilganda o'quvchi haqiqatan ulandi. Sinov ma'lumotlari qaytarildi.
 
 ## Xarajatlar bo'limi qayta ishlandi ✅ (2026-08-10)
 

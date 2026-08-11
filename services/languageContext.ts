@@ -295,7 +295,18 @@ export const translations = {
     bot_not_configured: "Bot token sozlanmagan!",
     message_sent: "Xabar yuborildi!",
     message_failed: "Xabar yuborishda xatolik!",
-    not_linked: "Ulanmagan"
+    not_linked: "Ulanmagan",
+    // Telegram ulanish havolasi
+    copy: "Nusxalash",
+    copied: "Nusxalandi",
+    connect_link: "Ulanish havolasi",
+    copy_connect_link: "Ulanish havolasi",
+    unlinked_students: "Telegramga ulanmagan",
+    unlinked_hint: "ota-onasi xabar olmayapti",
+    all_linked: "Hamma o'quvchi ulangan",
+    bot_not_connected_hint: "Avval Sozlamalarda Telegram botni ulang",
+    print_qr: "QR varaq chop etish",
+    qr_sheet_hint: "Ota-ona QR kodni skanerlaydi va Start bosadi — kod terish shart emas"
   },
   ru: {
     dashboard: "Дашборд",
@@ -592,7 +603,18 @@ export const translations = {
     bot_not_configured: "Бот не настроен!",
     message_sent: "Сообщение отправлено!",
     message_failed: "Ошибка отправки сообщения!",
-    not_linked: "Не подключен"
+    not_linked: "Не подключен",
+    // Ссылка подключения Telegram
+    copy: "Копировать",
+    copied: "Скопировано",
+    connect_link: "Ссылка подключения",
+    copy_connect_link: "Ссылка подключения",
+    unlinked_students: "Не подключены к Telegram",
+    unlinked_hint: "родители не получают уведомления",
+    all_linked: "Все ученики подключены",
+    bot_not_connected_hint: "Сначала подключите Telegram-бота в Настройках",
+    print_qr: "Печать QR-листа",
+    qr_sheet_hint: "Родитель сканирует QR и нажимает Start — код вводить не нужно"
   },
   en: {
     dashboard: "Dashboard",
@@ -889,7 +911,18 @@ export const translations = {
     bot_not_configured: "Bot token not configured!",
     message_sent: "Message sent!",
     message_failed: "Failed to send message!",
-    not_linked: "Not linked"
+    not_linked: "Not linked",
+    // Telegram connect link
+    copy: "Copy",
+    copied: "Copied",
+    connect_link: "Connect link",
+    copy_connect_link: "Connect link",
+    unlinked_students: "Not linked to Telegram",
+    unlinked_hint: "parents receive no notifications",
+    all_linked: "All students are linked",
+    bot_not_connected_hint: "Connect the Telegram bot in Settings first",
+    print_qr: "Print QR sheet",
+    qr_sheet_hint: "The parent scans the QR and taps Start — no code to type"
   }
 };
 

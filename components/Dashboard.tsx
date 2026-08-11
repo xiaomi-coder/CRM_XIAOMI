@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import {
   Users, Activity, Sparkles, Loader2 as LucideLoader2, BrainCircuit, Wallet,
-  UserCheck, FileText, Download, AlertCircle, Layers, TrendingUp, TrendingDown, ArrowUpRight, BarChart3, Banknote, Calendar as CalendarIcon, X, Phone, Search
+  UserCheck, FileText, Download, AlertCircle, Layers, TrendingUp, TrendingDown, ArrowUpRight, BarChart3, Banknote, Calendar as CalendarIcon, X, Phone, Search, Link2, Check
 } from 'lucide-react';
-import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead, LeadStatus } from '../types';
+import { Student, Group, Payment, Attendance, User, UserRole, Expense, AttendanceStatus, Lead, LeadStatus, StudentStatus } from '../types';
 import { analyzeDataWithAI } from '../services/geminiService';
 import { computeChurnRisk } from '../services/churnRisk';
 import { db } from '../services/supabase';
@@ -22,11 +22,15 @@ interface DashboardProps {
   expenses: Expense[];
   users: User[];
   leads: Lead[];
+  /** Bot @username — ota-onaga beriladigan ulanish havolasini yasash uchun */
+  botUsername?: string;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, attendance, user, expenses, users, leads }) => {
+const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, attendance, user, expenses, users, leads, botUsername }) => {
   const [loadingAi, setLoadingAi] = useState(false);
   const [showDebtorsModal, setShowDebtorsModal] = useState(false);
+  const [showUnlinkedModal, setShowUnlinkedModal] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [debtorSearch, setDebtorSearch] = useState('');
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
@@ -119,6 +123,23 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
       return (present / recs.length) * 100 < 70;
     }).length;
   }, [groups, attendance]);
+
+  // Telegram'ga ulanmagan faol o'quvchilar — ota-ona xabar olmayapti
+  const unlinkedStudents = useMemo(
+    () => students.filter(s => s.status === StudentStatus.ACTIVE && !s.tgChatId),
+    [students]
+  );
+
+  const connectLinkFor = (s: Student) =>
+    botUsername && s.tgConnectionCode ? `https://t.me/${botUsername}?start=${s.tgConnectionCode}` : '';
+
+  const copyConnectLink = (s: Student) => {
+    const link = connectLinkFor(s);
+    if (!link) return;
+    navigator.clipboard.writeText(link);
+    setCopiedId(s.id);
+    setTimeout(() => setCopiedId(null), 1800);
+  };
 
   // Oxirgi 6 oy daromadi (grafik uchun)
   const revenueTrend = useMemo(() => {
@@ -317,12 +338,13 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
           <div className="text-[12px] font-bold uppercase tracking-[0.05em] text-[#5B6478] mb-2">
             {t.needs_attention || 'Diqqat talab qiladi'}
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
             {([
               { count: debtorStudents.length, label: t.overdue_payments || "Kechikkan to'lovlar", tone: 'danger' as Tone, onClick: () => setShowDebtorsModal(true) },
               { count: callsToday, label: t.calls_today || "Bugungi qo'ng'iroqlar", tone: 'info' as Tone },
               { count: lowAttendanceGroups, label: t.low_attendance_groups || 'Past davomatli guruhlar', tone: 'warning' as Tone },
               { count: riskStudents.length, label: t.at_risk_students || "Xavf ostidagi o'quvchilar", tone: 'warning' as Tone },
+              { count: unlinkedStudents.length, label: t.unlinked_students || "Telegramga ulanmagan", tone: 'warning' as Tone, onClick: () => setShowUnlinkedModal(true) },
             ]).map((a, i) => (
               <div
                 key={i}
@@ -503,6 +525,57 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
 
 
       {/* ========== Qarzdorlar Modal ========== */}
+      {/* Telegramga ulanmagan o'quvchilar — har biriga tayyor havola */}
+      {showUnlinkedModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowUnlinkedModal(false)}>
+          <div className="bg-white w-full max-w-2xl rounded-lg shadow-e3 overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-5 border-b border-line flex justify-between items-center">
+              <div>
+                <h3 className="text-[15px] font-semibold text-ink">{t.unlinked_students || "Telegramga ulanmagan"}</h3>
+                <p className="text-[12.5px] text-ink-2 mt-0.5">
+                  {unlinkedStudents.length} {t.students?.toLowerCase() || "o'quvchi"} — {t.unlinked_hint || "ota-onasi xabar olmayapti"}
+                </p>
+              </div>
+              <button onClick={() => setShowUnlinkedModal(false)} className="p-2 hover:bg-canvas rounded-md text-ink-2">
+                <X size={20} />
+              </button>
+            </div>
+
+            {!botUsername && (
+              <div className="px-6 py-3 bg-warning-bg text-warning text-[12.5px] font-medium border-b border-line">
+                {t.bot_not_connected_hint || "Avval Sozlamalarda Telegram botni ulang"}
+              </div>
+            )}
+
+            <div className="p-4 max-h-[55vh] overflow-y-auto">
+              {unlinkedStudents.length === 0 ? (
+                <EmptyState title={t.all_linked || "Hamma o'quvchi ulangan"} />
+              ) : (
+                <div className="divide-y divide-line">
+                  {unlinkedStudents.map(s => (
+                    <div key={s.id} className="flex items-center justify-between gap-3 py-3">
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-semibold text-ink truncate">{s.name}</div>
+                        <div className="text-[12px] text-muted truncate">{s.parentName} · {s.parentPhone}</div>
+                      </div>
+                      <button
+                        onClick={() => copyConnectLink(s)}
+                        disabled={!connectLinkFor(s)}
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-field text-[12px] font-semibold transition-all bg-primary-50 text-primary hover:bg-primary-100 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+                      >
+                        {copiedId === s.id
+                          ? <><Check size={13} /> {t.copied || 'Nusxalandi'}</>
+                          : <><Link2 size={13} /> {t.copy_connect_link || 'Ulanish havolasi'}</>}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showDebtorsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDebtorsModal(false)}>
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200" onClick={e => e.stopPropagation()}>

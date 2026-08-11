@@ -252,7 +252,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} />;
+      case 'dashboard': return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} botUsername={currentSettings?.botUsername} />;
       case 'students': return (
         <Students
           t={t}
@@ -278,7 +278,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
           onUpdateStudent={(id, d) => db.update('students', id, d).then(loadAllData)}
         />
       );
-      case 'groups': return <Groups t={t} groups={groups} students={students} users={users} user={currentUser} onAddGroup={g => db.insert('groups', { ...g, id: crypto.randomUUID(), "centerId": centerId, studentIds: [] }).then(loadAllData)} onUpdateGroup={(id, d) => db.update('groups', id, d).then(loadAllData)} onAssignStudent={(gid, sid) => { const g = groups.find(x => x.id === gid); if (g) db.update('groups', gid, { studentIds: [...g.studentIds, sid] }).then(loadAllData); }} onRemoveStudent={(gid, sid) => { const g = groups.find(x => x.id === gid); if (g) db.update('groups', gid, { studentIds: g.studentIds.filter(i => i !== sid) }).then(loadAllData); }} onDeleteGroup={id => db.delete('groups', id).then(loadAllData)} />;
+      case 'groups': return <Groups t={t} groups={groups} students={students} users={users} user={currentUser} onAddGroup={g => db.insert('groups', { ...g, id: crypto.randomUUID(), "centerId": centerId, studentIds: [] }).then(loadAllData)} onUpdateGroup={(id, d) => db.update('groups', id, d).then(loadAllData)} onAssignStudent={(gid, sid) => { const g = groups.find(x => x.id === gid); if (g) db.update('groups', gid, { studentIds: [...g.studentIds, sid] }).then(loadAllData); }} onRemoveStudent={(gid, sid) => { const g = groups.find(x => x.id === gid); if (g) db.update('groups', gid, { studentIds: g.studentIds.filter(i => i !== sid) }).then(loadAllData); }} onDeleteGroup={id => db.delete('groups', id).then(loadAllData)} botUsername={currentSettings?.botUsername} centerName={currentSettings?.centerName} />;
       case 'attendance': return <AttendanceManager t={t} settings={currentSettings || ({} as any)} groups={groups} students={students} attendance={attendance} onSave={a => {
         const id = `${a.date}_${a.studentId}_${a.groupId}`;
         db.upsert('attendance', { ...a, id, "centerId": centerId }).then(loadAllData);
@@ -386,7 +386,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       }} />;
       case 'broadcast': return <BroadcastSystem t={t} />;
       case 'system_logs': return <SystemLogs t={t} settings={allSettings} />;
-      default: return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} />;
+      default: return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} botUsername={currentSettings?.botUsername} />;
     }
   };
 

@@ -1,9 +1,15 @@
 
 import React, { useState } from 'react';
 import { Group, Student, UserRole, User } from '../types';
-import { Plus, Users, BookOpen, Clock, UserPlus, X, Search, Trash2, Edit2, ChevronDown, ChevronUp, User as UserIcon, CheckCircle2 } from 'lucide-react';
+import { Plus, Users, BookOpen, Clock, UserPlus, X, Search, Trash2, Edit2, ChevronDown, ChevronUp, User as UserIcon, CheckCircle2, QrCode } from 'lucide-react';
+import QRCode from 'qrcode';
+import { toast } from '../services/toast';
 import { translations, Language } from '../services/languageContext';
 import { PageHeader, Card, Button, StatusBadge, Avatar, EmptyState } from './ui';
+
+/** Chop etish uchun HTML'ga qo'yiladigan matnni xavfsizlantirish */
+const esc = (v: string) =>
+  String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
 
 interface GroupsProps {
   t: any;
@@ -16,9 +22,12 @@ interface GroupsProps {
   onAssignStudent: (groupId: string, studentId: string) => void;
   onRemoveStudent: (groupId: string, studentId: string) => void;
   onDeleteGroup: (id: string) => void;
+  /** Bot @username — QR varaqdagi ulanish havolasini yasash uchun */
+  botUsername?: string;
+  centerName?: string;
 }
 
-const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAddGroup, onUpdateGroup, onAssignStudent, onRemoveStudent, onDeleteGroup }) => {
+const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAddGroup, onUpdateGroup, onAssignStudent, onRemoveStudent, onDeleteGroup, botUsername, centerName }) => {
   const [showAddGroupModal, setShowAddGroupModal] = useState(false);
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [showAssignModal, setShowAssignModal] = useState<string | null>(null);
@@ -71,6 +80,69 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
   };
 
   const getStudentById = (id: string) => students.find(s => s.id === id);
+
+  // Guruh uchun QR varaq: har o'quvchiga bitta kartochka — ota-ona skanerlab Start bosadi
+  const [printingGroupId, setPrintingGroupId] = useState<string | null>(null);
+
+  const printQrSheet = async (group: Group) => {
+    if (!botUsername) {
+      toast.error(t.bot_not_connected_hint || "Avval Sozlamalarda Telegram botni ulang");
+      return;
+    }
+    const list = group.studentIds
+      .map(getStudentById)
+      .filter((s): s is Student => !!s && !!s.tgConnectionCode);
+
+    if (list.length === 0) {
+      toast.error(t.search_empty || "Ma'lumot topilmadi");
+      return;
+    }
+
+    setPrintingGroupId(group.id);
+    try {
+      const cards = await Promise.all(list.map(async s => {
+        const link = `https://t.me/${botUsername}?start=${s.tgConnectionCode}`;
+        const svg = await QRCode.toString(link, { type: 'svg', margin: 1, width: 150 });
+        return `<div class="c">
+          <div class="n">${esc(s.name)}</div>
+          <div class="p">${esc(s.parentName || '')}</div>
+          <div class="q">${svg}</div>
+          <div class="k">${esc(s.tgConnectionCode)}</div>
+        </div>`;
+      }));
+
+      const html = `<!doctype html><html><head><meta charset="utf-8">
+<title>${esc(group.name)} — QR</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;margin:0;padding:18mm 12mm;color:#101828}
+  h1{font-size:17px;margin:0 0 2px}
+  .sub{font-size:12px;color:#475467;margin-bottom:14px}
+  .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}
+  .c{border:1px solid #E4E7EC;border-radius:8px;padding:8px;text-align:center;break-inside:avoid}
+  .n{font-size:13px;font-weight:600;line-height:1.25}
+  .p{font-size:11px;color:#475467;margin-bottom:4px;min-height:14px}
+  .q svg{width:100%;height:auto;max-width:150px}
+  .k{font-size:10px;color:#98A2B3;letter-spacing:.06em;margin-top:2px}
+  @media print{@page{margin:10mm}}
+</style></head><body>
+<h1>${esc(group.name)} — Telegram</h1>
+<div class="sub">${esc(centerName || '')} · ${esc(t.qr_sheet_hint || 'Ota-ona QR kodni skanerlaydi va Start bosadi')}</div>
+<div class="g">${cards.join('')}</div>
+<script>window.onload=function(){window.print()}<\/script>
+</body></html>`;
+
+      const w = window.open('', '_blank');
+      if (!w) {
+        toast.error('Popup bloklandi — brauzer sozlamasidan ruxsat bering');
+        return;
+      }
+      w.document.write(html);
+      w.document.close();
+    } finally {
+      setPrintingGroupId(null);
+    }
+  };
 
   const getGroupTeacher = (groupId: string) => {
     const assignedTeacher = users.find(u => u.groupIds?.includes(groupId));
@@ -246,13 +318,24 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                   </div>
                 )}
 
-                <Button
-                  variant="secondary"
-                  className="w-full mt-4"
-                  onClick={() => setShowAssignModal(group.id)}
-                >
-                  <UserPlus size={15} /> {t.add_student}
-                </Button>
+                <div className="flex gap-2 mt-4">
+                  <Button
+                    variant="secondary"
+                    className="flex-1"
+                    onClick={() => setShowAssignModal(group.id)}
+                  >
+                    <UserPlus size={15} /> {t.add_student}
+                  </Button>
+                  {/* Ota-onaga tarqatiladigan QR varaq (bitta skan = ulanish) */}
+                  <Button
+                    variant="secondary"
+                    title={t.print_qr || 'QR varaq chop etish'}
+                    disabled={printingGroupId === group.id || group.studentIds.length === 0}
+                    onClick={() => printQrSheet(group)}
+                  >
+                    <QrCode size={15} />
+                  </Button>
+                </div>
               </Card>
             );
           })}
