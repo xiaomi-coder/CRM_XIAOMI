@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { LibraryResource, User, UserRole } from '../types';
 import { FileText, Upload, Download, Trash2, Search, Book, Plus, X, File } from 'lucide-react';
+import { PageHeader, Card, Button, Field, Input, StatusBadge, EmptyState } from './ui';
 
 interface LibraryProps {
   resources: LibraryResource[];
@@ -58,78 +59,77 @@ const Library: React.FC<LibraryProps> = ({ t, resources, user, onAdd, onDelete }
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input
-            type="text"
-            placeholder={t.search_placeholder || "Search..."}
-            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        {user.role !== UserRole.TEACHER && user.role !== UserRole.DIRECTOR ? null : (
-          <button
-            onClick={() => setShowUploadModal(true)}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition-all"
-          >
-            <Upload size={20} />
-            <span>{t.add_resource || 'Upload file'}</span>
-          </button>
+    <div className="animate-in fade-in duration-300">
+      <PageHeader
+        title={t.library}
+        subtitle={`${filteredResources.length} / ${resources.length}`}
+        actions={(user.role === UserRole.TEACHER || user.role === UserRole.DIRECTOR) && (
+          <Button onClick={() => setShowUploadModal(true)}>
+            <Upload size={16} /> {t.add_resource || 'Fayl yuklash'}
+          </Button>
         )}
-      </div>
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredResources.map(resource => (
-          <div key={resource.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col group">
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                {resource.fileType.includes('pdf') ? <FileText size={24} /> : <File size={24} />}
+      <Card className="mb-5">
+        <Field label={t.search_label || 'Qidirish'}>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} />
+            <Input
+              className="pl-9"
+              placeholder={t.search_placeholder}
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </Field>
+      </Card>
+
+      {filteredResources.length === 0 ? (
+        <Card>
+          <EmptyState icon={<Book size={22} />} title={t.search_empty} />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {filteredResources.map(resource => (
+            <Card key={resource.id} className="flex flex-col">
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="p-2 bg-primary-subtle text-primary rounded-md shrink-0">
+                  {resource.fileType.includes('pdf') ? <FileText size={20} /> : <File size={20} />}
+                </div>
+                <StatusBadge label={resource.category} tone="brand" dot={false} />
               </div>
-              <span className="text-[10px] font-black uppercase text-indigo-400 bg-indigo-50 px-2 py-1 rounded-lg">
-                {resource.category}
-              </span>
-            </div>
 
-            <h4 className="font-bold text-gray-800 text-lg mb-1 truncate">{resource.title}</h4>
-            <p className="text-sm text-gray-500 line-clamp-2 mb-6 flex-1">{resource.description}</p>
+              <h3 className="text-[15px] font-semibold text-ink truncate">{resource.title}</h3>
+              <p className="text-[13px] text-ink-2 line-clamp-2 mt-1 flex-1">{resource.description}</p>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-              <span className="text-[10px] text-gray-400 font-medium italic">
-                {new Date(resource.uploadedAt).toLocaleDateString()}
-              </span>
-              <div className="flex gap-2">
-                {user.role === UserRole.DIRECTOR && (
-                  <button
-                    onClick={() => onDelete(resource.id)}
-                    className="p-2 text-gray-300 hover:text-red-600 transition-colors"
+              <div className="flex items-center justify-between gap-2 pt-3 mt-3 border-t border-line">
+                <span className="text-[12px] text-muted">
+                  {new Date(resource.uploadedAt).toLocaleDateString()}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {user.role === UserRole.DIRECTOR && (
+                    <button
+                      onClick={() => onDelete(resource.id)}
+                      title={t.delete_action || "O'chirish"}
+                      className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-md transition-colors"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  )}
+                  <a
+                    href={resource.fileData}
+                    download={resource.title}
+                    className="inline-flex items-center gap-1.5 rounded-field font-semibold text-[12.5px] px-2.5 py-1.5 bg-primary text-white hover:bg-primary-hover transition-colors"
                   >
-                    <Trash2 size={18} />
-                  </button>
-                )}
-                <a
-                  href={resource.fileData}
-                  download={resource.title}
-                  className="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2 text-xs font-bold"
-                >
-                  <Download size={16} />
-                  {t.download}
-                </a>
+                    <Download size={14} /> {t.download}
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
-        {filteredResources.length === 0 && (
-          <div className="col-span-full py-20 text-center text-gray-400">
-            <div className="bg-slate-50 w-16 h-16 rounded-3xl flex items-center justify-center text-slate-200 mx-auto mb-4">
-              <Book size={48} className="mx-auto opacity-20" />
-            </div>
-            <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">{t.search_empty || 'No resources found'}</p>
-          </div>
-        )}
-      </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
 
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">

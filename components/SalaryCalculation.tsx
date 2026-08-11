@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { User, Group, Payment, Student, UserRole } from '../types';
 import { Calculator, User as UserIcon, Calendar, Percent, TrendingUp, BookOpen, Wallet, Users, Target, Activity } from 'lucide-react';
+import { PageHeader, Card, CardHeader, KpiCard, Field, Input, Select, Table, Th, Td, StatusBadge, EmptyState } from './ui';
 
 interface SalaryCalculationProps {
   users: User[];
@@ -91,16 +92,15 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
   }, [selectedTeacherId, selectedMonth, percentage, users, groups, payments, isDirector]);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700">
-      {/* Tanlov Paneli */}
-      <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-wrap items-end gap-6">
-        {isDirector && (
-          <div className="flex-1 min-w-[250px] space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.teacher}</label>
-            <div className="relative">
-              <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
-              <select
-                className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm focus:ring-4 focus:ring-indigo-500/5 transition-all"
+    <div className="animate-in fade-in duration-300">
+      <PageHeader title={t.salary} subtitle={selectedMonth} />
+
+      {/* Tanlov paneli */}
+      <Card className="mb-5">
+        <div className="flex flex-wrap items-end gap-3">
+          {isDirector && (
+            <Field label={t.teacher} className="flex-1 min-w-[220px]">
+              <Select
                 value={selectedTeacherId}
                 onChange={(e) => {
                   const uid = e.target.value;
@@ -110,149 +110,81 @@ const SalaryCalculation: React.FC<SalaryCalculationProps> = ({ t, users, groups,
                 }}
               >
                 <option value="">{t.select_teacher}</option>
-                {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
-            </div>
-          </div>
-        )}
+                {teachers.map(tc => <option key={tc.id} value={tc.id}>{tc.name}</option>)}
+              </Select>
+            </Field>
+          )}
 
-        <div className="w-full md:w-48 space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.month}</label>
-          <div className="relative">
-            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
-            <select
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold text-sm"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-            >
+          <Field label={t.month} className="w-full sm:w-48">
+            <Select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)}>
               {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-        </div>
+            </Select>
+          </Field>
 
-        {isDirector && (
-          <div className="w-full md:w-32 space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">{t.share}</label>
-            <div className="relative">
-              <Percent className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" size={18} />
-              <input
-                type="number"
-                className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-black text-indigo-600"
-                value={percentage}
-                onChange={(e) => setPercentage(Number(e.target.value))}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+          {isDirector && (
+            <Field label={t.share} className="w-full sm:w-32">
+              <Input type="number" value={percentage} onChange={e => setPercentage(Number(e.target.value))} />
+            </Field>
+          )}
+        </div>
+      </Card>
 
       {calculation && calculation.groupsCount > 0 ? (
-        <div className="space-y-6">
-          {/* Statistika Kartalari */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
-              <div className="absolute -right-4 -bottom-4 text-emerald-50 opacity-10 group-hover:scale-110 transition-transform">
-                <Wallet size={100} />
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.salary}</p>
-                <h3 className="text-3xl font-black text-emerald-600 tracking-tighter">{calculation.teacherSalary.toLocaleString()}</h3>
-                <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase italic">UZS</p>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
-              <div className="absolute -right-4 -bottom-4 text-indigo-50 opacity-10 group-hover:scale-110 transition-transform">
-                <Target size={100} />
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.revenue}</p>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{calculation.totalRevenue.toLocaleString()}</h3>
-                <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase italic">UZS</p>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
-              <div className="absolute -right-4 -bottom-4 text-purple-50 opacity-10 group-hover:scale-110 transition-transform">
-                <BookOpen size={100} />
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.groups}</p>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{calculation.groupsCount}</h3>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group">
-              <div className="absolute -right-4 -bottom-4 text-amber-50 opacity-10 group-hover:scale-110 transition-transform">
-                <Users size={100} />
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t.students}</p>
-                <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{calculation.studentsCount}</h3>
-              </div>
-            </div>
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+            <KpiCard label={t.salary} value={calculation.teacherSalary.toLocaleString()} hint="UZS" />
+            <KpiCard label={t.revenue} value={calculation.totalRevenue.toLocaleString()} hint="UZS" />
+            <KpiCard label={t.groups} value={calculation.groupsCount} />
+            <KpiCard label={t.students} value={calculation.studentsCount} />
           </div>
 
-          {/* Tafsilotlar Jadvali */}
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-              <h3 className="font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">
-                <Activity size={20} className="text-indigo-600" />
-                {t.details} ({selectedMonth})
-              </h3>
-              <div className="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-                {t.share}: {calculation.currentPercentage}%
-              </div>
+          <Card padded={false}>
+            <div className="px-5 pt-5">
+              <CardHeader
+                title={`${t.details} (${selectedMonth})`}
+                actions={<StatusBadge label={`${t.share}: ${calculation.currentPercentage}%`} tone="brand" dot={false} />}
+              />
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em]">
-                  <tr>
-                    <th className="px-10 py-5">{t.groups} / {t.subject}</th>
-                    <th className="px-10 py-5 text-right">{t.revenue}</th>
-                    <th className="px-10 py-5 text-right">{t.salary}</th>
+            <Table>
+              <thead>
+                <tr>
+                  <Th>{t.groups} / {t.subject}</Th>
+                  <Th align="right">{t.revenue}</Th>
+                  <Th align="right">{t.salary}</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {calculation.groupDetails.map((group, idx) => (
+                  <tr key={idx} className="hover:bg-[#FAFAFB] transition-colors">
+                    <Td>
+                      <div className="font-semibold text-ink">{group.name}</div>
+                      <div className="text-[12px] text-muted">{group.subject}</div>
+                    </Td>
+                    <Td align="right" className="tabular-nums text-ink-2">{group.revenue.toLocaleString()}</Td>
+                    <Td align="right" className="tabular-nums font-semibold text-success">
+                      +{group.share.toLocaleString()}
+                    </Td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {calculation.groupDetails.map((group, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50 transition-all group">
-                      <td className="px-10 py-6">
-                        <div className="font-black text-slate-800 uppercase tracking-tight">{group.name}</div>
-                        <div className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-0.5">{group.subject}</div>
-                      </td>
-                      <td className="px-10 py-6 text-right font-bold text-slate-600">
-                        {group.revenue.toLocaleString()} <span className="text-[8px] font-black text-slate-400">UZS</span>
-                      </td>
-                      <td className="px-10 py-6 text-right">
-                        <div className="font-black text-emerald-600 text-lg">
-                          +{group.share.toLocaleString()}
-                        </div>
-                        <div className="text-[8px] font-black text-emerald-400 uppercase tracking-widest">UZS</div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot className="bg-slate-900 text-white">
-                  <tr>
-                    <td className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">{t.total}:</td>
-                    <td className="px-10 py-6 text-right font-black text-base">{calculation.totalRevenue.toLocaleString()} UZS</td>
-                    <td className="px-10 py-6 text-right font-black text-xl text-emerald-400">{calculation.teacherSalary.toLocaleString()} UZS</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="bg-[#FAFAFB]">
+                  <Td className="font-semibold">{t.total}</Td>
+                  <Td align="right" className="font-semibold tabular-nums">{calculation.totalRevenue.toLocaleString()} UZS</Td>
+                  <Td align="right" className="font-bold tabular-nums text-success">{calculation.teacherSalary.toLocaleString()} UZS</Td>
+                </tr>
+              </tfoot>
+            </Table>
+          </Card>
+        </>
       ) : (
-        <div className="bg-white p-24 rounded-[3rem] border border-dashed border-slate-200 text-center flex flex-col items-center">
-          <div className="bg-slate-50 w-24 h-24 rounded-full flex items-center justify-center text-slate-200 mb-6">
-            <Calculator size={48} />
-          </div>
-          <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">{t.search_empty}</h3>
-          <p className="text-slate-400 max-w-sm mt-2 text-sm font-medium italic">
-            Iltimos, o'qituvchini tanlang. Uning guruhlari borligiga va ushbu oyda o'quvchilar to'lov qilganiga ishonch hosil qiling.
-          </p>
-        </div>
+        <Card>
+          <EmptyState
+            icon={<Calculator size={22} />}
+            title={t.search_empty}
+            description={t.salary_empty_hint || "O'qituvchini tanlang. Uning guruhlari borligiga va shu oyda to'lov qilinganiga ishonch hosil qiling."}
+          />
+        </Card>
       )}
     </div>
   );
