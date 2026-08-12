@@ -433,6 +433,10 @@ delete + trigger) jonli API'da bir xil ishladi; 13 ta ekran ham dev, ham
 production build'da xatosiz ochildi (konsol toza); QR varaq dinamik import
 bilan ishladi; genai bo'lagi bosh yuklamada UMUMAN kelmasligi tasdiqlandi.
 
+Shu bilan birga `index.html` dagi **o'lik importmap** olib tashlandi
+(esm.sh havolalari: recharts, react, genai, supabase-js) — vite hammasini
+bundle qilgani uchun u hech qachon ishlatilmasdi, faqat chalg'itardi.
+
 📌 `.claude/launch.json` ga `crm-prod` qo'shildi (`vite preview`, 4173) —
 production build'ni sinash uchun; dev server chunk'larni bo'lmaydi.
 
