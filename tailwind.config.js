@@ -10,6 +10,8 @@
  * Ya'ni `bg-${rang}-50` kabi yig'ma nomlar TOPILMAYDI — to'liq yozing
  * (namuna: components/ui/index.tsx dagi ALIGN xaritasi).
  */
+import animate from 'tailwindcss-animate';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -63,5 +65,8 @@ export default {
       },
     },
   },
-  plugins: [],
+  // `animate-in fade-in zoom-in duration-300` kabi klasslar shu plagindan.
+  // Ular kodda 22 ta faylda ishlatilardi, lekin plagin ulanmagani uchun
+  // hech qanday animatsiya bermasdi (CDN davrida ham shunday edi).
+  plugins: [animate],
 };

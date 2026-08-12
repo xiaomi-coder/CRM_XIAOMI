@@ -153,14 +153,16 @@ body {
   box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
 }
 
+/* Foydalanuvchi tizimda "harakatni kamaytirish" ni yoqqan bo'lsa — hamma
+   animatsiya to'xtaydi. Avval bu ro'yxat faqat login sahifasining
+   elementlarini qamrardi; endi `animate-in / fade-in / zoom-in` (butun
+   ilova bo'ylab) ham shu qoidaga bo'ysunadi.
+   Landing sahifasining o'z CSS'ida alohida shunday blok bor. */
 @media (prefers-reduced-motion: reduce) {
-  .login-card,
-  .login-blob,
-  .login-blob-2,
-  .login-logo,
-  .login-grid,
-  .login-glass::before,
-  .login-stagger > * {
-    animation: none !important;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

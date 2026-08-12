@@ -490,7 +490,34 @@ ya'ni u CDN bilan ham ishlamagan — tugmalar bo'shliqsiz, atigi 17px balandlikd
 edi. **`py-4` ga tuzatildi** (16px bo'shliq, balandlik 49px).
 Shu bilan birga `animate-in / fade-in / zoom-in` klasslari ham hech qachon
 ishlamagani aniqlandi (ular `tailwindcss-animate` plaginiga tegishli, plagin
-esa hech qachon ulanmagan) — jonli saytda ham 0 ta qoida bor.
+esa hech qachon ulanmagan) — jonli saytda ham 0 ta qoida bor edi.
+**→ Plagin qo'shildi, pastga qarang.**
+
+## Animatsiyalar yoqildi (tailwindcss-animate) ✅ (2026-08-12)
+
+22 ta faylda `animate-in fade-in duration-300` / `zoom-in` yozilgan edi, lekin
+plagin ulanmagani uchun hech qanday harakat yo'q edi. `tailwindcss-animate@1.0.7`
+qo'shildi (`tailwind.config.js` → `plugins: [animate]`).
+
+CSS: gzip 12.7 → 13.4 KB (+0.7 KB). Endi ekran almashishlari va modallar
+silliq ochiladi.
+
+Ishlatilayotgan klasslar: animate-in (49), duration-300 (34), zoom-in (28),
+fade-in (23), duration-200 (15), slide-in-from-bottom/right.
+
+⚠️ `zoom-in` QIYMATSIZ yozilgan (Tailwind konventsiyasida `zoom-in-95` bo'ladi)
+— bu masshtab **0** dan boshlash degani, ya'ni modal "yo'qdan paydo bo'ladi".
+Ishlaydi va xato emas, lekin yumshoqroq effekt kerak bo'lsa `zoom-in-95` ga
+o'zgartirish mumkin.
+
+**Harakatni kamaytirish:** `index.css` dagi `prefers-reduced-motion` bloki
+kengaytirildi — avval faqat login sahifasi elementlarini qamrardi, endi butun
+ilovadagi animatsiyalar to'xtaydi (bitta global blok, ikkitasi birlashtirildi).
+
+Tekshirildi: ekran o'zagida `animation-name: enter`, `duration 0.3s`
+(avval `none` edi); modal 0.3s da ochilib tabiiy holatda tugaydi; 14 ta
+namuna olib kuzatilganda opacity barqaror 1.00 — miltillash yo'q, hech narsa
+ko'rinmay qolmadi. 5 ta ekran + modal, konsol toza.
 
 Qo'lda ko'zdan kechirildi: 16 ta ekran, login, ro'yxatdan o'tish sahifasi.
 
