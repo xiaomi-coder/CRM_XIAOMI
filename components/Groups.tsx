@@ -455,8 +455,8 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                 </div>
               </div>
               <div className="flex gap-4 pt-8 border-t border-slate-100">
-                <button type="button" onClick={() => setShowAddGroupModal(false)} className="flex-1 py-4.5 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 rounded-[1.5rem]">{t.cancel}</button>
-                <button type="submit" className="flex-1 py-4.5 bg-indigo-600 text-white font-black rounded-[1.5rem] shadow-2xl shadow-indigo-100 uppercase text-[10px] tracking-widest">{t.save}</button>
+                <button type="button" onClick={() => setShowAddGroupModal(false)} className="flex-1 py-4 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 rounded-[1.5rem]">{t.cancel}</button>
+                <button type="submit" className="flex-1 py-4 bg-indigo-600 text-white font-black rounded-[1.5rem] shadow-2xl shadow-indigo-100 uppercase text-[10px] tracking-widest">{t.save}</button>
               </div>
             </form>
           </div>

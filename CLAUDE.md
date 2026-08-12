@@ -484,8 +484,10 @@ to'liq yozildi. Yangi kod yozganda shu qoidaga rioya qiling
 Butun manbadagi (95 fayl) har bir `className` klassi kompilyatsiya qilingan
 CSS bilan solishtirildi — ochilmagan modallar va IELTS imtihon ekranlari ham
 qamrab olindi. Natija: **1 ta** mos kelmagan klass — `py-4.5` (Groups.tsx
-guruh qo'shish modalidagi ikki tugma). Tailwind shkalasida `4.5` YO'Q, ya'ni
-u CDN bilan ham ishlamagan — eski o'lik klass, regressiya emas.
+guruh qo'shish modalidagi "Bekor qilish" va "Saqlash" tugmalari). Tailwind
+shkalasida `4.5` YO'Q (bor: 4=16px, 5=20px; yarim qiymatlar faqat 3.5 gacha),
+ya'ni u CDN bilan ham ishlamagan — tugmalar bo'shliqsiz, atigi 17px balandlikda
+edi. **`py-4` ga tuzatildi** (16px bo'shliq, balandlik 49px).
 Shu bilan birga `animate-in / fade-in / zoom-in` klasslari ham hech qachon
 ishlamagani aniqlandi (ular `tailwindcss-animate` plaginiga tegishli, plagin
 esa hech qachon ulanmagan) — jonli saytda ham 0 ta qoida bor.
