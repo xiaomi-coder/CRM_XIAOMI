@@ -27,9 +27,14 @@ export default defineConfig(({ mode }) => {
           // React oilasi alohida bo'lakda — u deyarli hech qachon o'zgarmaydi,
           // shuning uchun ilova yangilanganda brauzer keshidan olinaveradi.
           manualChunks(id: string) {
-            // Faqat React oilasi — qolgani (genai, qrcode) dinamik import
-            // bo'lgani uchun rollup o'zi ajratadi.
-            if (/[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom)[\\/]/.test(id)) {
+            // React oilasi + lucide ikonkalari — qolgani (genai, qrcode)
+            // dinamik import bo'lgani uchun rollup o'zi ajratadi.
+            //
+            // ⚠️ lucide-react SHU YERDA bo'lishi SHART. Bo'lmasa rollup har
+            // ikonkani alohida faylga ajratadi (33 ta fayl, jami atigi 15 KB)
+            // — telefonda hajm emas, SO'ROVLAR SONI sekinlashtiradi:
+            // o'lchovda bitta 0.3 KB ikonka 3.5 soniya navbatda turdi.
+            if (/[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|lucide-react)[\\/]/.test(id)) {
               return 'vendor';
             }
           },

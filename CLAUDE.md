@@ -440,6 +440,19 @@ bundle qilgani uchun u hech qachon ishlatilmasdi, faqat chalg'itardi.
 📌 `.claude/launch.json` ga `crm-prod` qo'shildi (`vite preview`, 4173) —
 production build'ni sinash uchun; dev server chunk'larni bo'lmaydi.
 
+### ⚠️ Telefonda o'lchash: ortiqcha bo'linish topildi va tuzatildi (2026-08-12)
+
+Mobil rejimda (375px, Android UA) jonli saytda o'lchanganda: rollup **har
+lucide ikonkasini alohida faylga** ajratgan ekan — 33 ta fayl, jami atigi
+15 KB, LEKIN har biri alohida so'rov. O'lchovda bitta 0.3 KB'lik ikonka
+**3.5 soniya** navbatda turdi (telefonda kechikish hajmdan qimmatroq).
+
+→ `lucide-react` **vendor bo'lagiga** kiritildi (vite.config.ts). Natija:
+bo'lak soni 64 → 29, mayda fayllar 0 ta. Bosh yuklama gzip 94 → 102 KB
+(+8 KB), lekin har ekran almashishida ortiqcha so'rovlar yo'qoldi.
+⚠️ Buni orqaga qaytarmang — hajm ko'rsatkichi "yaxshilangandek" ko'rinadi,
+lekin telefonda sekinlashadi.
+
 ## Telegram: havola orqali ulanish ✅ (2026-08-11)
 
 **Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona
