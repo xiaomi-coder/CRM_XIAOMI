@@ -7,6 +7,7 @@ import { Student, Group, Payment, Attendance, User, UserRole, Expense, Attendanc
 import { analyzeDataWithAI } from '../services/geminiService';
 import { computeChurnRisk } from '../services/churnRisk';
 import { db } from '../services/supabase';
+import Onboarding from './Onboarding';
 import {
   PageHeader, Card, CardHeader, Button, KpiCard, StatusBadge,
   Field, Input, Table, Th, Td, EmptyState, TONE, Tone,
@@ -24,9 +25,11 @@ interface DashboardProps {
   leads: Lead[];
   /** Bot @username — ota-onaga beriladigan ulanish havolasini yasash uchun */
   botUsername?: string;
+  /** Boshlang'ich ro'yxatdagi qadamga o'tish uchun */
+  onGoTo?: (tab: string) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, attendance, user, expenses, users, leads, botUsername }) => {
+const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, attendance, user, expenses, users, leads, botUsername, onGoTo }) => {
   const [loadingAi, setLoadingAi] = useState(false);
   const [showDebtorsModal, setShowDebtorsModal] = useState(false);
   const [showUnlinkedModal, setShowUnlinkedModal] = useState(false);
@@ -289,6 +292,22 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
           </>
         }
       />
+
+      {/* Yangi markaz uchun boshlang'ich ro'yxat — hammasi bajarilgach o'zi yo'qoladi.
+          Demo markazda ko'rsatilmaydi (u yerda DemoTour bor). */}
+      {onGoTo && user.centerId !== 'DEMO_CENTER' &&
+        (user.role === UserRole.DIRECTOR || user.role === UserRole.ADMIN) && (
+        <Onboarding
+          t={t}
+          students={students}
+          groups={groups}
+          attendance={attendance}
+          payments={payments}
+          botUsername={botUsername}
+          centerId={user.centerId}
+          onGoTo={onGoTo}
+        />
+      )}
 
       {/* Davr tanlash */}
       <Card className="mb-5">

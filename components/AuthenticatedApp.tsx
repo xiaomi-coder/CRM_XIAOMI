@@ -268,7 +268,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} botUsername={currentSettings?.botUsername} />;
+      case 'dashboard': return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} botUsername={currentSettings?.botUsername} onGoTo={setActiveTab} />;
       case 'students': return (
         <Students
           t={t}
@@ -402,7 +402,7 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
       }} />;
       case 'broadcast': return <BroadcastSystem t={t} />;
       case 'system_logs': return <SystemLogs t={t} settings={allSettings} />;
-      default: return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} botUsername={currentSettings?.botUsername} />;
+      default: return <Dashboard t={t} students={students} groups={groups} payments={payments} attendance={attendance} user={currentUser} expenses={expenses} users={users} leads={leads} botUsername={currentSettings?.botUsername} onGoTo={setActiveTab} />;
     }
   };
 

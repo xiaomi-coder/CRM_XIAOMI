@@ -564,6 +564,35 @@ gorizontal siljish yo'q, konsol toza. Keng jadvallar o'z `overflow-x-auto`
 konteynerida suriladi (sahifa emas) — bu to'g'ri xatti-harakat.
 768px da ham tortma rejimi, 1280px da eski ko'rinish.
 
+## Yangi markaz uchun boshlang'ich ro'yxat ✅ (2026-08-12)
+
+**Nega:** bazadagi holat tekshirilganda ma'lum bo'ldiki, markazlar ro'yxatdan
+o'tib **to'xtab qolgan** — IT Park Bukhara 24 o'quvchi va 8 guruh kiritgan,
+oxirgi davomat 1-iyul; Empire School 14 o'quvchi kiritgan, guruh YARATMAGAN;
+va **birorta ham markaz hech qachon to'lov kiritmagan**. Ya'ni muammo
+yetishmayotgan imkoniyatda emas — direktor bo'sh Boshqaruv panelini ko'radi
+va nimadan boshlashni bilmaydi.
+
+`components/Onboarding.tsx` — Boshqaruv panelining tepasida 6 qadam:
+guruh yaratish → o'quvchi qo'shish → guruhga biriktirish → davomat →
+Telegram bot → birinchi to'lov. Aynan bazada ko'ringan to'xtash nuqtalari.
+
+⚠️ `DemoTour` dan farqi: u shunchaki "qaysi bo'limga kirdingiz" ni sanaydi.
+Bu yerda har qadam **haqiqiy ma'lumotdan** tekshiriladi (`groups.length > 0`,
+`groups.some(g => g.studentIds.length > 0)`, `payments.length > 0` va h.k.) —
+bo'limga kirib chiqish yetarli emas, ish bajarilishi kerak.
+
+- Qadam bosilsa o'sha bo'limga o'tadi; keyingi bajarilmagan qadam ajratiladi.
+- Hammasi bajarilgach blok **o'zi yo'qoladi**. ✕ bilan ham yopiladi
+  (`localStorage: onboarding_hidden_<centerId>`).
+- Faqat DIRECTOR/ADMIN ko'radi, demo markazda ko'rsatilmaydi (u yerda DemoTour).
+- Tarjimalar: `ob_*` (uz/ru/en).
+
+Sinovdan o'tkazildi vaqtinchalik bo'sh markaz yaratib (keyin o'chirildi):
+0/6 ko'rindi → guruh yaratilgach 1/6 va qadam yashil bo'ldi → qolgan
+ma'lumot qo'yilgach blok yo'qoldi → ✕ bosilsa qayta yuklashdan keyin ham
+chiqmadi.
+
 ## Telegram: havola orqali ulanish ✅ (2026-08-11)
 
 **Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona
