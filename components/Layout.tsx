@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard, Users, Wallet, CalendarCheck, Settings as SettingsIcon,
-  BrainCircuit, LogOut, Banknote, Receipt, Archive, UserSquare, Clock, Calendar, Layers, ShieldAlert, Megaphone, UserPlus, FileQuestion, Trophy, GraduationCap, ClipboardList
+  BrainCircuit, LogOut, Banknote, Receipt, Archive, UserSquare, Clock, Calendar, Layers, ShieldAlert, Megaphone, UserPlus, FileQuestion, Trophy, GraduationCap, ClipboardList, Menu, X
 } from 'lucide-react';
 import { User, UserRole } from '../types';
 import { translations, Language } from '../services/languageContext';
@@ -19,11 +19,28 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
   const [lang] = useState<Language>(() => (localStorage.getItem('edu_lang') as Language) || 'uz');
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Tor ekranda yon menyu tortma (drawer) bo'lib ochiladi.
+  // Avval 240px menyu telefonda ham doim ochiq turardi va sahifani
+  // ekrandan chiqarib yuborardi (375px da sahifa 529px bo'lib ketardi).
+  const [navOpen, setNavOpen] = useState(false);
+
+  // Bo'lim tanlangach tortma yopiladi (aks holda tanlangan ekran ko'rinmaydi)
+  const goTo = (tab: string) => {
+    setActiveTab(tab);
+    setNavOpen(false);
+  };
+
   const t = translations[lang];
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 1024) setNavOpen(false); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   const formatClock = (date: Date) => {
@@ -120,13 +137,32 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
 
   return (
     <div className="flex min-h-screen bg-canvas">
+      {/* Tortma ochiq bo'lganda orqa fon — bosilsa yopiladi (faqat tor ekranda) */}
+      {navOpen && (
+        <div
+          onClick={() => setNavOpen(false)}
+          className="fixed inset-0 bg-slate-950/50 z-30 lg:hidden"
+          aria-hidden="true"
+        />
+      )}
+
       {/* ============ Yon menyu ============ */}
-      <aside className="w-60 bg-sidebar text-white flex flex-col fixed h-full z-20">
+      <aside
+        className={`w-60 bg-sidebar text-white flex flex-col fixed h-full z-40 transition-transform duration-200
+          ${navOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:z-20`}
+      >
         <div className="px-4 py-4 flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-[7px] bg-primary flex items-center justify-center shrink-0">
             <BrainCircuit size={16} className="text-white" />
           </div>
-          <span className="font-bold text-[14px] tracking-[-0.01em]">EduControl</span>
+          <span className="font-bold text-[14px] tracking-[-0.01em] flex-1">EduControl</span>
+          <button
+            onClick={() => setNavOpen(false)}
+            className="p-1 rounded-md text-[#98A2B3] hover:text-white hover:bg-white/[0.06] lg:hidden"
+            aria-label={t.close || 'Yopish'}
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2.5 py-1.5 custom-scrollbar">
@@ -140,7 +176,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setActiveTab(item.id)}
+                    onClick={() => goTo(item.id)}
                     className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-[7px] mb-px transition-colors text-left
                       ${on ? 'bg-primary text-white' : 'text-[#98A2B3] hover:bg-white/[0.06] hover:text-white'}`}
                   >
@@ -156,7 +192,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
         <div className="px-2.5 pb-3 pt-2 border-t border-white/[0.08]">
           {hasPermission('settings') && (
             <button
-              onClick={() => setActiveTab('settings')}
+              onClick={() => goTo('settings')}
               className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-[7px] mb-2 transition-colors
                 ${activeTab === 'settings' ? 'bg-primary text-white' : 'text-[#98A2B3] hover:bg-white/[0.06] hover:text-white'}`}
             >
@@ -185,10 +221,18 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
       </aside>
 
       {/* ============ Asosiy qism ============ */}
-      <div className="flex-1 ml-60 min-w-0">
+      <div className="flex-1 lg:ml-60 min-w-0">
         {/* Yuqori panel */}
-        <header className="sticky top-0 z-10 bg-surface border-b border-line px-6 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-[13.5px] min-w-0">
+        <header className="sticky top-0 z-10 bg-surface border-b border-line px-4 lg:px-6 h-14 flex items-center justify-between gap-3">
+          <button
+            onClick={() => setNavOpen(true)}
+            className="p-2 -ml-2 rounded-md text-ink-2 hover:bg-canvas lg:hidden shrink-0"
+            aria-label={t.menu || 'Menyu'}
+          >
+            <Menu size={20} />
+          </button>
+
+          <div className="flex items-center gap-2 text-[13.5px] min-w-0 flex-1">
             <span className="text-muted truncate">{currentSection}</span>
             <span className="text-muted">/</span>
             <span className="font-semibold text-ink truncate">{currentLabel}</span>
@@ -221,7 +265,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, user
           </div>
         </header>
 
-        <main className="p-6">{children}</main>
+        <main className="p-4 lg:p-6">{children}</main>
       </div>
     </div>
   );

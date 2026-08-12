@@ -296,6 +296,9 @@ export const translations = {
     message_sent: "Xabar yuborildi!",
     message_failed: "Xabar yuborishda xatolik!",
     not_linked: "Ulanmagan",
+    // Karkas (yon menyu)
+    menu: "Menyu",
+    close: "Yopish",
     // Telegram ulanish havolasi
     copy: "Nusxalash",
     copied: "Nusxalandi",
@@ -604,6 +607,9 @@ export const translations = {
     message_sent: "Сообщение отправлено!",
     message_failed: "Ошибка отправки сообщения!",
     not_linked: "Не подключен",
+    // Каркас (боковое меню)
+    menu: "Меню",
+    close: "Закрыть",
     // Ссылка подключения Telegram
     copy: "Копировать",
     copied: "Скопировано",
@@ -912,6 +918,9 @@ export const translations = {
     message_sent: "Message sent!",
     message_failed: "Failed to send message!",
     not_linked: "Not linked",
+    // Shell (sidebar)
+    menu: "Menu",
+    close: "Close",
     // Telegram connect link
     copy: "Copy",
     copied: "Copied",

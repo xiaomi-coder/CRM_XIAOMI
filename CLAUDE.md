@@ -511,6 +511,30 @@ padding'ini hisobga olmaydi.
 Natija: 375px'da kesilgan element **17 → 0**. Desktop tegilmagan (hamma
 o'zgarish media query ichida).
 
+## Ilova karkasi telefonda ishlaydigan bo'ldi ✅ (2026-08-12)
+
+Telefon brauzeridan kirgan direktor **desktop karkasini** ko'rardi: 240px yon
+menyu 375px ekranda doim ochiq, sahifa 529px kenglikda gorizontal siljirdi,
+34 ta element kesilardi. `MobileLayout` mavjud edi, lekin u faqat
+`Capacitor.isNativePlatform()` da — ya'ni **APK ichida** ishlardi.
+
+`components/Layout.tsx` (veb karkasi) tuzatildi:
+- **<1024px**: yon menyu tortma (drawer) — chapdan suriladi, orqa fon
+  qoraytiriladi, bosilsa yopiladi. Yuqori panelda gamburger tugmasi.
+- Bo'lim tanlangach tortma AVTOMATIK yopiladi (`goTo`) — aks holda
+  tanlangan ekran menyu ostida qolardi.
+- Ekran kengaysa (≥1024) tortma holati tozalanadi, aks holda desktopga
+  o'tganda ochiq holat qolib ketardi.
+- `ml-60` → `lg:ml-60`, `p-6` → `p-4 lg:p-6`.
+- ≥1024px: HECH NARSA o'zgarmagan (menyu doim ochiq, gamburger yashirin).
+
+Tarjima: `menu`, `close` (uz/ru/en).
+
+Tekshirildi 375px da: 12 ta ekran — hammasida sahifa kengligi aynan 375px,
+gorizontal siljish yo'q, konsol toza. Keng jadvallar o'z `overflow-x-auto`
+konteynerida suriladi (sahifa emas) — bu to'g'ri xatti-harakat.
+768px da ham tortma rejimi, 1280px da eski ko'rinish.
+
 ## Telegram: havola orqali ulanish ✅ (2026-08-11)
 
 **Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona
