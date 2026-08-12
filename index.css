@@ -1,3 +1,10 @@
+/* Tailwind — build vaqtida kompilyatsiya qilinadi.
+   Avval `cdn.tailwindcss.com` (123 KB) brauzerda kompilyatsiya qilardi;
+   sozlama tailwind.config.js ga ko'chirildi. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* EduControl — bazaviy uslublar (index.html unga link beradi) */
 
 :root {

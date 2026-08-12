@@ -453,6 +453,64 @@ bo'lak soni 64 → 29, mayda fayllar 0 ta. Bosh yuklama gzip 94 → 102 KB
 ⚠️ Buni orqaga qaytarmang — hajm ko'rsatkichi "yaxshilangandek" ko'rinadi,
 lekin telefonda sekinlashadi.
 
+## Tailwind CDN'dan build vaqtiga ko'chirildi ✅ (2026-08-12)
+
+Telefonda o'lchaganda ma'lum bo'ldi: eng katta yuk bizning kodimiz emas,
+**`cdn.tailwindcss.com` — 123 KB**. U `<head>` da turardi (render'ni to'sadi)
+va CSS'ni HAR OCHILISHDA foydalanuvchi qurilmasida kompilyatsiya qilardi.
+Tailwind o'zi buni ishlab chiqarishga tavsiya qilmaydi.
+
+**Telefon birinchi kirishda: 232.8 KB → 116.9 KB (50% kam)** — ustiga
+brauzerdagi kompilyatsiya ishi butunlay yo'qoldi.
+
+- `tailwindcss@3.4.17` (CDN bilan AYNAN bir xil versiya) + postcss +
+  autoprefixer devDependency sifatida o'rnatildi.
+- `tailwind.config.js` — sozlama index.html ichidan ko'chirildi, qiymatlar
+  o'zgarmagan. `postcss.config.js` qo'shildi. `@tailwind` direktivalari
+  `index.css` boshiga (u allaqachon index.tsx orqali kirardi).
+- `index.html` dan CDN skripti va inline `tailwind.config` olib tashlandi.
+- Natija: `index.css` 79.6 KB (gzip 12.7 KB) — faqat ISHLATILGAN klasslar.
+
+### ⚠️ Eng muhim tuzoq
+CDN JIT klasslarni **ishlayotgan sahifadan (DOM'dan)** ko'rardi, build esa
+**manba fayllardan matn sifatida** qidiradi. Ya'ni `bg-${rang}-50` kabi
+yig'ma nomlar endi ISHLAMAYDI.
+→ `IELTSSpeaking.tsx` da aynan shunday edi (`bg-${partColor}-50`,
+`text-${partColor}-600`) — `PART_TONE` xaritasiga o'tkazildi, klasslar
+to'liq yozildi. Yangi kod yozganda shu qoidaga rioya qiling
+(namuna: `components/ui/index.tsx` dagi `ALIGN`).
+
+### Tekshiruv usuli (keyin ham ishlatsa bo'ladi)
+Butun manbadagi (95 fayl) har bir `className` klassi kompilyatsiya qilingan
+CSS bilan solishtirildi — ochilmagan modallar va IELTS imtihon ekranlari ham
+qamrab olindi. Natija: **1 ta** mos kelmagan klass — `py-4.5` (Groups.tsx
+guruh qo'shish modalidagi ikki tugma). Tailwind shkalasida `4.5` YO'Q, ya'ni
+u CDN bilan ham ishlamagan — eski o'lik klass, regressiya emas.
+Shu bilan birga `animate-in / fade-in / zoom-in` klasslari ham hech qachon
+ishlamagani aniqlandi (ular `tailwindcss-animate` plaginiga tegishli, plagin
+esa hech qachon ulanmagan) — jonli saytda ham 0 ta qoida bor.
+
+Qo'lda ko'zdan kechirildi: 16 ta ekran, login, ro'yxatdan o'tish sahifasi.
+
+## Landing telefonda kesilishi tuzatildi ✅ (2026-08-12)
+
+Telefonda ochilganda sarlavha ostidagi matn o'ngdan kesilardi
+("...mock examla", "...yagona"), navbardagi "Boshlash" tugmasi chala
+ko'rinardi. 17 ta element ekrandan chiqib ketgan, `body { overflow-x: hidden }`
+ularni yashirgani uchun surib ko'rib ham bo'lmasdi.
+
+Sabab: CSS grid/flex elementlarining standart **`min-width: auto`** qiymati —
+ustun ichidagi eng keng elementga qarab kengayadi va konteynerning
+padding'ini hisobga olmaydi.
+
+- `.landing-hero-grid` → `minmax(0, 1fr)` + bolalarga `min-width: 0`
+- Dashboard maketi (`.landing-dashboard-*`) ham shunday cheklandi
+- ≤768px: navbardan "Boshlash" olib tashlandi (hero'da darrov ko'rinadi),
+  konteyner padding 24 → 16px
+
+Natija: 375px'da kesilgan element **17 → 0**. Desktop tegilmagan (hamma
+o'zgarish media query ichida).
+
 ## Telegram: havola orqali ulanish ✅ (2026-08-11)
 
 **Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona

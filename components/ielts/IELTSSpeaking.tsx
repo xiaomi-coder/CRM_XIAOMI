@@ -293,7 +293,15 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
 
     // Main speaking view (Part 1, 2, 3)
     const partLabel = phase === 'part1' ? 'Part 1' : phase.startsWith('part2') ? 'Part 2' : 'Part 3';
-    const partColor = phase === 'part1' ? 'amber' : phase.startsWith('part2') ? 'orange' : 'red';
+    // ⚠️ Klass nomlari TO'LIQ yozilishi shart. Avval `bg-${partColor}-50` kabi
+    // yig'ib yasalardi — Tailwind CDN buni ishlayotgan sahifadan ko'rgani uchun
+    // ishlardi, build vaqtida esa manbadan qidiriladi va topilmaydi (rang yo'q bo'lib qolardi).
+    const PART_TONE = {
+        part1: { chip: 'bg-amber-50 text-amber-600', badge: 'bg-amber-100 text-amber-600' },
+        part2: { chip: 'bg-orange-50 text-orange-600', badge: 'bg-orange-100 text-orange-600' },
+        part3: { chip: 'bg-red-50 text-red-600', badge: 'bg-red-100 text-red-600' },
+    } as const;
+    const partTone = phase === 'part1' ? PART_TONE.part1 : phase.startsWith('part2') ? PART_TONE.part2 : PART_TONE.part3;
     const phaseHint = phase === 'part2-followup'
         ? (t.rounding_off || 'Qisqa qo\'shimcha savollar')
         : phase === 'part2-speak'
@@ -311,7 +319,7 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
                         {phaseHint && <span className="text-[10px] font-black text-slate-400 uppercase">{phaseHint}</span>}
                     </div>
                     {timeLeft > 0 && (
-                        <div className={`flex items-center gap-2 px-5 py-2 rounded-2xl font-black text-sm ${timeLeft < 15 ? 'bg-red-50 text-red-600 animate-pulse' : `bg-${partColor}-50 text-${partColor}-600`
+                        <div className={`flex items-center gap-2 px-5 py-2 rounded-2xl font-black text-sm ${timeLeft < 15 ? 'bg-red-50 text-red-600 animate-pulse' : partTone.chip
                             }`}>
                             <Clock size={16} />
                             {formatTime(timeLeft)}
@@ -356,7 +364,7 @@ const IELTSSpeaking: React.FC<IELTSSpeakingProps> = ({ t, questions, onComplete,
                 {currentQuestion && phase !== 'part2-prep' && (
                     <div className="bg-white rounded-[2rem] border border-slate-100 p-8 mb-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className={`w-10 h-10 bg-${partColor}-100 rounded-xl flex items-center justify-center text-${partColor}-600 font-black text-xs`}>
+                            <div className={`w-10 h-10 ${partTone.badge} rounded-xl flex items-center justify-center font-black text-xs`}>
                                 Q{currentQuestionIdx + 1}
                             </div>
                             <h3 className="text-lg font-black text-slate-800">{currentQuestion.questionText}</h3>

@@ -1616,9 +1616,17 @@ body {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
+  /* minmax(0, 1fr) SHART: oddiy `1fr` da grid elementining standart
+     `min-width: auto` qiymati ustunni ichidagi eng keng elementga qarab
+     kengaytiradi va u konteynerdan (padding hisobga olinmay) chiqib ketadi.
+     Telefonda aynan shu tufayli sarlavha va matn o'ng tomondan kesilardi. */
   .landing-hero-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     text-align: center;
+  }
+
+  .landing-hero-grid > * {
+    min-width: 0;
   }
 
   .landing-hero p {
@@ -1669,6 +1677,32 @@ body {
 }
 
 @media (max-width: 768px) {
+  /* Telefonda navbar: logo + "Kirish" + menyu tugmasi sig'adi, xolos.
+     "Boshlash" tugmasi olib tashlandi — u hero'ning o'zida darrov
+     ko'rinadi ("Bepul boshlash"), ya'ni yo'qolmaydi. */
+  .landing-btn-primary-sm {
+    display: none;
+  }
+
+  .landing-nav-right {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .landing-container {
+    padding: 0 16px;
+  }
+
+  /* Barcha gridlar uchun bir xil himoya (yuqoridagi izohga qarang) */
+  .landing-features-grid > *,
+  .landing-steps-grid > *,
+  .landing-results-grid > *,
+  .landing-testimonials-grid > *,
+  .landing-pricing-grid > *,
+  .landing-footer-grid > * {
+    min-width: 0;
+  }
+
   .landing-nav-links {
     display: none;
   }
@@ -1713,6 +1747,19 @@ body {
 
   .landing-dashboard-preview {
     transform: none;
+    max-width: 100%;
+  }
+
+  /* Maket ichidagi flex/grid elementlari ham `min-width: auto` tufayli
+     konteynerdan kengroq bo'lib ketardi (o'ngdan 14px kesilardi). */
+  .landing-dashboard-shell,
+  .landing-dashboard-body,
+  .landing-dashboard-body * {
+    min-width: 0;
+  }
+
+  .landing-dashboard-body {
+    padding: 16px;
   }
 
   .landing-dashboard-preview:hover {
