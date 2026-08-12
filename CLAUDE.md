@@ -593,6 +593,48 @@ Sinovdan o'tkazildi vaqtinchalik bo'sh markaz yaratib (keyin o'chirildi):
 ma'lumot qo'yilgach blok yo'qoldi → ✕ bosilsa qayta yuklashdan keyin ham
 chiqmadi.
 
+## Mobil ilova yangi xavfsizlik modeliga o'tkazildi ✅ (2026-08-12)
+
+**Muammo:** `mobile/` (Expo + React Native, 17-iyul) 5-avgustdagi xavfsizlik
+migratsiyasidan oldin yozilgan edi va **butunlay ishlamay qolgan**:
+
+- Anon kalit bilan so'rov yuborardi → RLS tufayli HAR BIR jadval `[]` qaytarardi
+  (jonli API'da tekshirildi: students/users/settings — hammasi bo'sh).
+- Login `users` jadvalidan qatorni yuklab, parolni TELEFONDA solishtirardi
+  (`user.password !== pass`). Qator kelmagani uchun parol to'g'ri bo'lsa ham
+  "Login yoki parol noto'g'ri" chiqardi. Ustiga parollar endi bcrypt hash.
+- ⚠️ `creator` / `xiaomicoder` **kodga yozib qo'yilgan** edi — APK'ni ochgan
+  har kim super admin bo'la olardi (APK bundle'ida `xiaomicoder` topildi).
+
+**Tuzatildi** (veb'dagi `services/supabase.ts` bilan bir xil mantiq):
+- `api.ts`: propusk (JWT) `AsyncStorage` da saqlanadi, `authFetch` orqali har
+  so'rovga qo'yiladi; `db.rpc()` qo'shildi. RN'da `atob` yo'q — JWT payload'ini
+  o'qish uchun kichik base64 dekoder yozildi.
+- `auth.ts`: login endi `login` RPC orqali (parol bazada bcrypt bilan
+  tekshiriladi), kodga yozilgan super admin OLIB TASHLANDI, propusk muddati
+  (12 soat) tugagan bo'lsa sessiya tozalanadi.
+- `login.tsx`: `LICENSE_EXPIRED` xatosi qo'shildi.
+
+Sinovdan o'tkazildi jonli API'da (vaqtinchalik markaz, keyin o'chirildi):
+login OK va propusk qaytdi, parol javobda YO'Q, jadvallar ma'lumot berdi,
+yozish ishladi, boshqa markaz nomidan yozish 42501 bilan to'sildi.
+`npx tsc --noEmit` — 0 xato. Expo web eksporti ham muvaffaqiyatli.
+
+### ⚠️ Mobil ilova veb'dan bir oy orqada
+18-iyuldan beri veb'da 49 ta commit (+8154 qator) bo'lgan, mobil ularni
+ko'rmagan: butun yangi dizayn tizimi, Telegram havolasi va QR varaqlar,
+ketib qolish xavfi, boshlang'ich ro'yxat, to'lov/xarajat tuzatishlari.
+Mobilda YO'Q bo'limlar: IELTS to'plami, Kutubxona, Ro'yxatdan o'tish,
+Qo'llanma, parol o'zgartirish, audit jurnali.
+⚠️ Creator menyusida `/centers`, `/broadcast`, `/logs` bandlari bor, lekin
+o'sha ekran fayllari YO'Q — uchtasi ham o'lik havola.
+
+### Build haqida
+- `~/Desktop/EduControl-native.apk` (17-iyul, 101 MB) — ESKI, ishlamaydi.
+  Debug kaliti bilan imzolangan (`CN=Android Debug`) → Play Store'ga yaramaydi.
+- `mobile/android/` saqlanmaydi (prebuild natijasi). `~/.gradle` keshi 6.5 GB
+  saqlanib qolgan — kutubxonalar qayta yuklanmaydi, lekin `.cxx` (C++) yo'q.
+
 ## Telegram: havola orqali ulanish ✅ (2026-08-11)
 
 **Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona

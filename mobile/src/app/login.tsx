@@ -42,6 +42,9 @@ export default function LoginScreen() {
           BAD_CREDENTIALS: t.login_error,
           CENTER_NOT_FOUND: "O'quv markazi topilmadi.",
           CENTER_BLOCKED: "O'quv markazingiz bloklangan. Creator bilan bog'laning.",
+          LICENSE_EXPIRED: e.detail
+            ? `Litsenziya muddati tugagan (${e.detail}). Davom ettirish uchun bog'laning.`
+            : "Litsenziya muddati tugagan. Davom ettirish uchun bog'laning.",
           NETWORK: t.network_error,
         };
         setError(map[e.code] ?? t.login_error);

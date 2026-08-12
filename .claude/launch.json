@@ -20,6 +20,19 @@
         "4173"
       ],
       "port": 4173
+    },
+    {
+      "name": "mobil-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "-y",
+        "serve",
+        "-s",
+        "/private/tmp/claude-501/-Users-shokhijakhon-project-CRM-XIAOMI/0c3883d9-2994-42df-b8fd-03cd6f5e01fb/scratchpad/webexport",
+        "-l",
+        "8099"
+      ],
+      "port": 8099
     }
   ]
 }
