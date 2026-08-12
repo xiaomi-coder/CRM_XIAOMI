@@ -53,7 +53,7 @@ const TestQuiz: React.FC<TestQuizProps> = ({ t, lead, template, onComplete, onLo
   if (isFinished) {
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6 text-center">
-        <div className="bg-white/95 backdrop-blur-2xl p-12 rounded-[3.5rem] shadow-2xl max-w-md w-full animate-in zoom-in duration-500">
+        <div className="bg-white/95 backdrop-blur-2xl p-12 rounded-[3.5rem] shadow-2xl max-w-md w-full animate-in zoom-in-95 duration-500">
           <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
             <CheckCircle size={48} />
           </div>

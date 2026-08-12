@@ -374,7 +374,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
 
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl p-10 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl p-10 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-8 border-b pb-6">
               <h3 className="text-3xl font-black italic tracking-tighter uppercase text-slate-800">{t.add_student}</h3>
               <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
@@ -403,7 +403,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
 
       {showExitModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-8 animate-in zoom-in-95 duration-300">
             <div className="text-center mb-6">
               <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 ${showExitModal.status === StudentStatus.GRADUATED ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                 {showExitModal.status === StudentStatus.GRADUATED ? <GraduationCap size={32} /> : <UserMinus size={32} />}
@@ -433,7 +433,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
       {/* Send Message Modal */}
       {sendMessageStudent && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl p-8 animate-in zoom-in-95 duration-300">
             <div className="text-center mb-6">
               <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-indigo-100 text-indigo-600">
                 <Send size={32} />
@@ -468,7 +468,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
       {/* Student Progress Modal */}
       {progressStudent && getStudentProgress && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl p-8 animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h3 className="text-2xl font-black text-slate-800 tracking-tighter italic">{progressStudent.name}</h3>
@@ -550,7 +550,7 @@ const Students: React.FC<StudentsProps> = ({ t, students, groups, user, attendan
       {/* Delete Confirmation Modal */}
       {deleteConfirmStudent && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[150] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-8 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-8 animate-in zoom-in-95 duration-300">
             <div className="text-center mb-6">
               <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-red-100 text-red-600">
                 <Trash2 size={32} />

@@ -133,7 +133,7 @@ const Library: React.FC<LibraryProps> = ({ t, resources, user, onAdd, onDelete }
 
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold">{t.add_resource || 'Upload Resource'}</h3>
               <button onClick={() => setShowUploadModal(false)}><X size={24} /></button>

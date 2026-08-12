@@ -578,7 +578,7 @@ const Dashboard: React.FC<DashboardProps> = ({ t, students, groups, payments, at
 
       {showDebtorsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDebtorsModal(false)}>
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200" onClick={e => e.stopPropagation()}>
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="bg-rose-600 p-6 text-white flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <AlertCircle size={24} />

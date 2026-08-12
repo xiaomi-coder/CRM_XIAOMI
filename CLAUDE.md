@@ -505,10 +505,10 @@ silliq ochiladi.
 Ishlatilayotgan klasslar: animate-in (49), duration-300 (34), zoom-in (28),
 fade-in (23), duration-200 (15), slide-in-from-bottom/right.
 
-⚠️ `zoom-in` QIYMATSIZ yozilgan (Tailwind konventsiyasida `zoom-in-95` bo'ladi)
-— bu masshtab **0** dan boshlash degani, ya'ni modal "yo'qdan paydo bo'ladi".
-Ishlaydi va xato emas, lekin yumshoqroq effekt kerak bo'lsa `zoom-in-95` ga
-o'zgartirish mumkin.
+`zoom-in` QIYMATSIZ yozilgan edi — bu masshtab **0** dan boshlash degani
+(modal "yo'qdan paydo bo'lardi", effekt keskin). 15 ta faylda 28 ta joy
+**`zoom-in-95`** ga o'tkazildi (`--tw-enter-scale: .95` — 95% dan boshlaydi).
+⚠️ Yangi modal qilganda `zoom-in` emas, `zoom-in-95` yozing.
 
 **Harakatni kamaytirish:** `index.css` dagi `prefers-reduced-motion` bloki
 kengaytirildi — avval faqat login sahifasi elementlarini qamrardi, endi butun

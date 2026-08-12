@@ -306,7 +306,7 @@ const StaffManagement: React.FC<StaffManagementProps> = ({
       {/* Parolni tiklash */}
       {resetUser && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-8 animate-in zoom-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-8 animate-in zoom-in-95 duration-200">
             <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <KeyRound size={26} />
             </div>

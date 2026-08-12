@@ -345,7 +345,7 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
 
       {showAssignModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300 border border-white/20">
+          <div className="bg-white w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-white/20">
             <div className="p-8 bg-indigo-600 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12"><Users size={120} /></div>
               <div className="relative z-10">
@@ -379,7 +379,7 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
                         <p className="text-[10px] text-slate-400 font-black tracking-widest mt-0.5">{s.phone}</p>
                       </div>
                     </div>
-                    {lastAssignedId === s.id ? <CheckCircle2 size={24} className="text-emerald-500 animate-in zoom-in" /> : <Plus size={20} className="text-slate-300 group-hover:text-indigo-600" />}
+                    {lastAssignedId === s.id ? <CheckCircle2 size={24} className="text-emerald-500 animate-in zoom-in-95" /> : <Plus size={20} className="text-slate-300 group-hover:text-indigo-600" />}
                   </button>
                 ))}
               </div>
@@ -393,7 +393,7 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
 
       {showAddGroupModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[120] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-white/20">
+          <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 border border-white/20">
             <div className="bg-indigo-600 p-8 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12"><BookOpen size={140} /></div>
               <div className="relative z-10">

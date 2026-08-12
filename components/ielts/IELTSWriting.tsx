@@ -247,7 +247,7 @@ const IELTSWriting: React.FC<IELTSWritingProps> = ({ t, tasks, examType, onCompl
             {/* Submit Modal */}
             {showSubmitConfirm && !isGrading && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2rem] p-8 max-w-md w-full shadow-2xl animate-in zoom-in duration-200">
+                    <div className="bg-white rounded-[2rem] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="text-center mb-6">
                             <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                 <Sparkles size={32} className="text-emerald-600" />

@@ -608,7 +608,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
       {/* Lid tarixi — qachon qaysi bosqichga o'tgan */}
       {showHistory && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-start mb-6">
               <div className="min-w-0">
                 <h3 className="text-lg font-black text-slate-800 tracking-tight truncate">{showHistory.name}</h3>
@@ -640,7 +640,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
       {/* O'chirishdan oldin tasdiq — avval savat belgisi bir bosishda o'chirardi */}
       {confirmDelete && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in duration-200">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <Trash2 size={28} />
             </div>
@@ -670,7 +670,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
       {/* PIN yaratildi — nusxalash mumkin (avval alert() ishlatilardi) */}
       {createdPin && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in-95 duration-300">
             <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <Key size={30} />
             </div>
@@ -699,7 +699,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
       {/* Test natijasi */}
       {viewResult && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center animate-in zoom-in-95 duration-300">
             <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <Award size={30} />
             </div>
@@ -722,7 +722,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
       {/* Test tayinlash */}
       {showTestModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-6 pb-5 border-b border-slate-100">
               <div className="min-w-0">
                 <h3 className="text-xl font-black tracking-tight text-slate-800">{t.tests}</h3>
@@ -761,7 +761,7 @@ const Leads: React.FC<LeadsProps> = ({ t, leads, centerId, students = [], onAdd,
       {/* Yangi lid */}
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6 pb-5 border-b border-slate-100">
               <h3 className="text-xl font-black tracking-tight text-slate-800">{t.add_lead}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X size={22} /></button>

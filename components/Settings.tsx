@@ -362,7 +362,7 @@ const Settings: React.FC<SettingsProps> = ({ t, settings, onSave, onRefresh, use
 
       {showAddTestModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-3xl rounded-lg shadow-e1 overflow-hidden animate-in zoom-in duration-300 max-h-[90vh] flex flex-col">
+          <div className="bg-white w-full max-w-3xl rounded-lg shadow-e1 overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] flex flex-col">
             <div className="bg-amber-500 p-8 text-white flex justify-between items-center">
               <h3 className="text-2xl font-semibold uppercase tracking-tight">
                 {editingTestId ? (t.save) : t.add_test}

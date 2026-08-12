@@ -357,7 +357,7 @@ export const CenterControl: React.FC<CenterControlProps> = ({ t, settings, users
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-lg shadow-e1 overflow-hidden animate-in zoom-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-lg shadow-e1 overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="bg-slate-900 p-8 text-white flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-5 rotate-12"><ShieldAlert size={140} /></div>
               <div className="relative z-10">

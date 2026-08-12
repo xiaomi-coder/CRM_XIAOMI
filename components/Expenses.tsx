@@ -293,7 +293,7 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
 
       {deleteConfirmId && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[120] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-8 text-center animate-in zoom-in duration-200 border border-white/20">
+          <div className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-8 text-center animate-in zoom-in-95 duration-200 border border-white/20">
             <div className="bg-red-100 w-16 h-16 rounded-3xl flex items-center justify-center text-red-600 mx-auto mb-6"><AlertTriangle size={32} /></div>
             <h3 className="text-xl font-black text-slate-800 mb-2 uppercase tracking-tighter italic">{t.delete_confirm}</h3>
             <p className="text-slate-500 text-sm mb-8 font-medium italic">{t.confirm_delete_staff}</p>
@@ -307,7 +307,7 @@ const Expenses: React.FC<ExpensesProps> = ({ t, expenses, onAdd, onDelete }) => 
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl p-10 animate-in zoom-in duration-300 border border-white/20">
+          <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl p-10 animate-in zoom-in-95 duration-300 border border-white/20">
             <div className="flex justify-between items-center mb-8 border-b pb-6">
               <div className="flex items-center gap-3">
                 <div className="bg-red-100 p-2.5 rounded-2xl text-red-600">
