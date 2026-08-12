@@ -1,5 +1,6 @@
 
-import { GoogleGenAI } from "@google/genai";
+// @google/genai ~254 KB — bosh sahifada kerak emas. Faqat AI tahlil
+// bosilganda yuklanadi (dinamik import).
 import { Student, Payment, Attendance, Group } from '../types';
 
 export const analyzeDataWithAI = async (
@@ -18,6 +19,7 @@ export const analyzeDataWithAI = async (
     return "AI tahlili uchun API kalit topilmadi. Sozlamalar bo'limidan kalit kiriting yoki Vercel sozlamalarini tekshiring.";
   }
 
+  const { GoogleGenAI } = await import("@google/genai");
   const ai = new GoogleGenAI({ apiKey: activeKey });
 
   const prompt = `

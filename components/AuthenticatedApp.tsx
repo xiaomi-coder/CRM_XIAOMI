@@ -1,35 +1,51 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { db } from '../services/supabase';
+import { lazyWithRetry } from '../services/lazyWithRetry';
 import {
   Student, Group, Payment, Attendance, User, UserRole,
   Expense, Lead, SystemSettings, StudentStatus, LeadStatus, LibraryResource, Result
 } from '../types';
 import Layout from './Layout';
 import MobileLayout from './MobileLayout';
-import Dashboard from './Dashboard';
-import Students from './Students';
-import Groups from './Groups';
-import AttendanceManager from './Attendance';
-import Payments from './Payments';
-import SalaryCalculation from './SalaryCalculation';
-import Expenses from './Expenses';
-import StaffManagement from './StaffManagement';
-import Leads from './Leads';
-import Archive from './Archive';
-import Settings from './Settings';
-import Library from './Library';
-import Results from './Results';
-import { CreatorDashboard, CenterControl, BroadcastSystem, SystemLogs } from './CreatorComponents';
 import DemoTour from './DemoTour';
-import IELTSMain from './ielts/IELTSMain';
-import IELTSAdmin from './ielts/IELTSAdmin';
-import TestsManager from './ielts/TestsManager';
+
+// Har ekran o'z bo'lagiga ajratiladi va faqat ochilganda yuklanadi.
+// Avval hammasi (IELTS imtihon ekranlari va Creator paneli ham) birinchi
+// so'rovda kelardi — direktor hech qachon ochmaydigan ekranlar ham.
+const Dashboard = lazyWithRetry(() => import('./Dashboard'));
+const Students = lazyWithRetry(() => import('./Students'));
+const Groups = lazyWithRetry(() => import('./Groups'));
+const AttendanceManager = lazyWithRetry(() => import('./Attendance'));
+const Payments = lazyWithRetry(() => import('./Payments'));
+const SalaryCalculation = lazyWithRetry(() => import('./SalaryCalculation'));
+const Expenses = lazyWithRetry(() => import('./Expenses'));
+const StaffManagement = lazyWithRetry(() => import('./StaffManagement'));
+const Leads = lazyWithRetry(() => import('./Leads'));
+const Archive = lazyWithRetry(() => import('./Archive'));
+const Settings = lazyWithRetry(() => import('./Settings'));
+const Library = lazyWithRetry(() => import('./Library'));
+const Results = lazyWithRetry(() => import('./Results'));
+const IELTSMain = lazyWithRetry(() => import('./ielts/IELTSMain'));
+const IELTSAdmin = lazyWithRetry(() => import('./ielts/IELTSAdmin'));
+const TestsManager = lazyWithRetry(() => import('./ielts/TestsManager'));
+const CreatorDashboard = lazyWithRetry(() => import('./CreatorComponents').then(m => ({ default: m.CreatorDashboard })));
+const CenterControl = lazyWithRetry(() => import('./CreatorComponents').then(m => ({ default: m.CenterControl })));
+const BroadcastSystem = lazyWithRetry(() => import('./CreatorComponents').then(m => ({ default: m.BroadcastSystem })));
+const SystemLogs = lazyWithRetry(() => import('./CreatorComponents').then(m => ({ default: m.SystemLogs })));
+
 import { Loader2 } from 'lucide-react';
 import { TestTemplate } from '../types';
 import { translations, Language } from '../services/languageContext';
 import { sendTelegramMessage } from '../services/telegramService';
+
+/** Ekran bo'lagi yuklanguncha — joy egallab turadi, sakrash bo'lmasin */
+const TabLoader: React.FC = () => (
+  <div className="flex items-center justify-center py-24">
+    <Loader2 className="animate-spin text-primary" size={26} />
+  </div>
+);
 
 interface AuthenticatedAppProps {
   user: User;
@@ -435,14 +451,14 @@ export const AuthenticatedApp: React.FC<AuthenticatedAppProps> = ({ user: curren
         user={currentUser}
         onLogout={onLogout}
       >
-        {renderContent()}
+        <Suspense fallback={<TabLoader />}>{renderContent()}</Suspense>
       </MobileLayout>
     );
   }
 
   return (
     <Layout activeTab={activeTab} setActiveTab={setActiveTab} user={currentUser} onLogout={onLogout}>
-      {renderContent()}
+      <Suspense fallback={<TabLoader />}>{renderContent()}</Suspense>
       {isDemo && <DemoTour activeTab={activeTab} onGoTo={setActiveTab} />}
     </Layout>
   );

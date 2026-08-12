@@ -390,6 +390,52 @@ qaytib yoziladi).
 - Demoda sinaldi: 6 ta belgilangan o'quvchi to'g'ri topildi.
 
 
+## Bundle hajmi 4 barobar kamaytirildi ✅ (2026-08-12)
+
+Bitta fayl 1272 KB (gzip 324 KB) edi — har bir foydalanuvchi ILOVANING
+HAMMASINI yuklardi: direktor ham IELTS imtihon ekranlarini, landing'ga
+kirgan mehmon ham Creator panelini.
+
+**Bosh yuklama: 1272 KB → 289 KB (gzip 324 → 94 KB, 71% kam).**
+
+Nima qilindi:
+
+1. **`@supabase/supabase-js` → `@supabase/postgrest-js`** (−160 KB).
+   Loyihada faqat PostgREST ishlatiladi (CLAUDE.md boshida ham shunday
+   yozilgan) — auth-js/realtime-js/storage-js/functions-js besh yildan beri
+   bekorga yuklanardi. `.from()` va `.rpc()` API'si AYNAN bir xil, faqat
+   `/rest/v1` prefiksi va `apikey` sarlavhasi endi qo'lda qo'yiladi.
+   ⚠️ `api/*` (Vercel serverless) supabase-js'da qoldi — u bundle'ga kirmaydi.
+2. **`@google/genai` dinamik importga** (−256 KB bosh yuklamadan). Faqat
+   "AI tahlil" bosilganda yuklanadi.
+3. **`qrcode` dinamik importga** (−24 KB). Faqat QR varaq chop etilganda.
+4. **Marshrut va ekranlar `React.lazy` ga** — App.tsx (landing/login/register/
+   guide/quiz/ilova) va AuthenticatedApp.tsx (15 ta ekran + Creator paneli).
+   Jami 66 ta bo'lak.
+5. **`vendor` bo'lagi** (react + react-dom + react-router) — u deyarli hech
+   qachon o'zgarmaydi, ilova yangilanganda brauzer keshidan olinadi.
+6. **`recharts` o'chirildi** — package.json'da turgan-u, hech qayerda
+   ishlatilmagan.
+
+### ⚠️ Yangi tuzoq va uning yechimi
+Kod bo'laklarga bo'lingach: ilova ochiq turganda yangi versiya deploy
+qilinsa, eski bo'lak fayli (`assets/Students-abc123.js`) serverdan yo'qoladi
+va foydalanuvchi o'sha ekranga o'tsa — ekran umuman ochilmaydi.
+→ `services/lazyWithRetry.ts`: bo'lak yuklanmasa sahifa BIR MARTA qayta
+yuklanadi (10 soniyalik qo'riqchi bilan — tarmoq uzilganda cheksiz aylanish
+bo'lmasin). Barcha lazy chaqiruvlar shu orqali o'tadi.
+
+`sw.js` tekshirildi — u index.html'ni keshlamaydi va asset'lar uchun
+network-first, ya'ni yangi bo'lak nomlari bilan muammo yo'q.
+
+Tekshirildi: db qatlamining 7 ta amali (insert/getOne/update/upsert/rpc/
+delete + trigger) jonli API'da bir xil ishladi; 13 ta ekran ham dev, ham
+production build'da xatosiz ochildi (konsol toza); QR varaq dinamik import
+bilan ishladi; genai bo'lagi bosh yuklamada UMUMAN kelmasligi tasdiqlandi.
+
+📌 `.claude/launch.json` ga `crm-prod` qo'shildi (`vite preview`, 4173) —
+production build'ni sinash uchun; dev server chunk'larni bo'lmaydi.
+
 ## Telegram: havola orqali ulanish ✅ (2026-08-11)
 
 **Muammo:** 38 o'quvchidan atigi 7 tasi (18%) ulangan edi. Sabab — ota-ona

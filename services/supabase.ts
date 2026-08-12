@@ -1,5 +1,14 @@
 
-import { createClient } from '@supabase/supabase-js';
+/**
+ * Ma'lumot qatlami — faqat PostgREST.
+ *
+ * Avval to'liq `@supabase/supabase-js` yuklanardi, u o'zi bilan birga
+ * auth-js / realtime-js / storage-js / functions-js ni ham tortib kelardi —
+ * ~160 KB. Bu loyihada ulardan HECH BIRI ishlatilmaydi (login o'z RPC'imiz,
+ * fayl saqlash yo'q, realtime yo'q). Shuning uchun to'g'ridan-to'g'ri
+ * `postgrest-js` ishlatiladi: `.from()` va `.rpc()` API'si AYNAN bir xil.
+ */
+import { PostgrestClient } from '@supabase/postgrest-js';
 import { toast } from './toast';
 
 // Hardcoded fallback for production stability
@@ -46,9 +55,14 @@ const authFetch: typeof fetch = (input: RequestInfo | URL, init: RequestInit = {
   return fetch(input, { ...init, headers });
 };
 
-// Supabase client initialization
+// PostgREST klienti. supabase-js `/rest/v1` prefiksini va apikey sarlavhasini
+// o'zi qo'shardi — endi qo'lda qo'shiladi (server tomonda hech narsa o'zgarmadi).
+// Propusk bo'lsa authFetch Authorization'ni ustidan yozadi.
 export const supabase = (supabaseUrl && supabaseUrl.startsWith('http') && supabaseAnonKey)
-  ? createClient(supabaseUrl, supabaseAnonKey, { global: { fetch: authFetch } })
+  ? new PostgrestClient(`${supabaseUrl}/rest/v1`, {
+      headers: { apikey: supabaseAnonKey, Authorization: `Bearer ${supabaseAnonKey}` },
+      fetch: authFetch,
+    })
   : null;
 
 if (!supabase) {

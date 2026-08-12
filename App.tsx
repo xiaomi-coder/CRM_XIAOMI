@@ -1,17 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { db, getAuthToken, isTokenValid } from './services/supabase';
 import { User, UserRole, Lead, TestTemplate } from './types';
-import LandingPage from './components/LandingPage';
-import Login from './components/Login';
-import Register from './components/Register';
-import GuidePage from './components/GuidePage';
-import AuthenticatedApp from './components/AuthenticatedApp';
 import ProtectedRoute from './components/ProtectedRoute';
-import TestQuiz from './components/TestQuiz';
+import { lazyWithRetry } from './services/lazyWithRetry';
 import Toaster from './components/Toaster';
 import { translations, Language } from './services/languageContext';
 import { Loader2 } from 'lucide-react';
+
+// Marshrutlar talab bo'yicha yuklanadi — kirmagan odam ilova ichidagi
+// 15 ta ekranni, kirgan odam esa landing sahifasini yuklamaydi.
+const LandingPage = lazyWithRetry(() => import('./components/LandingPage'));
+const Login = lazyWithRetry(() => import('./components/Login'));
+const Register = lazyWithRetry(() => import('./components/Register'));
+const GuidePage = lazyWithRetry(() => import('./components/GuidePage'));
+const AuthenticatedApp = lazyWithRetry(() => import('./components/AuthenticatedApp'));
+const TestQuiz = lazyWithRetry(() => import('./components/TestQuiz'));
+
+/** Marshrut bo'lagi yuklanguncha ko'rsatiladi (odatda bir necha yuz millisekund) */
+const PageLoader: React.FC = () => (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-canvas">
+        <Loader2 className="animate-spin text-primary" size={28} />
+        <p className="text-[12px] font-semibold uppercase tracking-widest text-muted">Yuklanmoqda...</p>
+    </div>
+);
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(() => {
@@ -144,6 +156,7 @@ const App: React.FC = () => {
     return (
         <>
         <Toaster />
+        <Suspense fallback={<PageLoader />}>
         <Routes>
             <Route path="/" element={<LandingPage onDemo={handleDemoLogin} />} />
             <Route path="/guide" element={<GuidePage />} />
@@ -216,6 +229,7 @@ const App: React.FC = () => {
             {/* Catch all - redirect to landing */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </Suspense>
         </>
     );
 };

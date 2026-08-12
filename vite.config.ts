@@ -22,7 +22,19 @@ export default defineConfig(({ mode }) => {
       }
     },
     build: {
-      chunkSizeWarningLimit: 1600,
+      rollupOptions: {
+        output: {
+          // React oilasi alohida bo'lakda — u deyarli hech qachon o'zgarmaydi,
+          // shuning uchun ilova yangilanganda brauzer keshidan olinaveradi.
+          manualChunks(id: string) {
+            // Faqat React oilasi — qolgani (genai, qrcode) dinamik import
+            // bo'lgani uchun rollup o'zi ajratadi.
+            if (/[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom)[\\/]/.test(id)) {
+              return 'vendor';
+            }
+          },
+        },
+      },
     }
   };
 });

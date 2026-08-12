@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Group, Student, UserRole, User } from '../types';
 import { Plus, Users, BookOpen, Clock, UserPlus, X, Search, Trash2, Edit2, ChevronDown, ChevronUp, User as UserIcon, CheckCircle2, QrCode } from 'lucide-react';
-import QRCode from 'qrcode';
 import { toast } from '../services/toast';
 import { translations, Language } from '../services/languageContext';
 import { PageHeader, Card, Button, StatusBadge, Avatar, EmptyState } from './ui';
@@ -100,6 +99,8 @@ const Groups: React.FC<GroupsProps> = ({ t, groups, students, users, user, onAdd
 
     setPrintingGroupId(group.id);
     try {
+      // qrcode ~24 KB — faqat varaq chop etilganda yuklanadi
+      const { default: QRCode } = await import('qrcode');
       const cards = await Promise.all(list.map(async s => {
         const link = `https://t.me/${botUsername}?start=${s.tgConnectionCode}`;
         const svg = await QRCode.toString(link, { type: 'svg', margin: 1, width: 150 });
