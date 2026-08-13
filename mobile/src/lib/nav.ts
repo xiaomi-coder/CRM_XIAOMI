@@ -33,14 +33,21 @@ export function hasPermission(user: User, key: string): boolean {
   return false;
 }
 
-/** Drawer (gamburger) — barcha ruxsat etilgan bo'limlar */
+/**
+ * Drawer (gamburger) — barcha ruxsat etilgan bo'limlar.
+ *
+ * ⚠️ Boshqaruv (tabs indeksi) uchun href — guruhning O'ZI (`/(app)/(tabs)`),
+ * `/(app)/(tabs)/index` EMAS. Ikkinchisi expo-router'da ilovani yiqitadi.
+ * Login ham `router.replace('/(app)/(tabs)')` ni ishlatadi — shu sabab
+ * ilovaga kirganda Boshqaruv ochilardi, drawer'dan bosilganda esa crash.
+ */
 export function getDrawerItems(user: User): NavItem[] {
   const T = '/(app)/(tabs)';
   const A = '/(app)';
 
   if (user.role === UserRole.SUPER_ADMIN) {
     return [
-      { href: `${T}/index`, labelKey: 'dashboard', icon: 'grid-outline' },
+      { href: T, labelKey: 'dashboard', icon: 'grid-outline' },
       { href: `${A}/centers`, labelKey: 'centers', icon: 'business-outline' },
       { href: `${A}/broadcast`, labelKey: 'broadcast', icon: 'megaphone-outline' },
       { href: `${A}/logs`, labelKey: 'logs', icon: 'shield-outline' },
@@ -52,7 +59,7 @@ export function getDrawerItems(user: User): NavItem[] {
     if (hasPermission(user, perm)) items.push(item);
   };
 
-  add('dashboard', { href: `${T}/index`, labelKey: 'dashboard', icon: 'grid-outline' });
+  add('dashboard', { href: T, labelKey: 'dashboard', icon: 'grid-outline' });
   add('students', { href: `${T}/students`, labelKey: 'students', icon: 'people-outline' });
   add('groups', { href: `${T}/groups`, labelKey: 'groups', icon: 'layers-outline' });
   add('attendance', { href: `${T}/attendance`, labelKey: 'attendance', icon: 'calendar-outline' });
@@ -87,7 +94,7 @@ export function getTabItems(user: User): NavItem[] {
   }
 
   return [
-    { href: `${T}/index`, labelKey: 'dashboard', icon: 'grid-outline' },
+    { href: T, labelKey: 'dashboard', icon: 'grid-outline' },
     { href: `${T}/students`, labelKey: 'students', icon: 'people-outline' },
     { href: `${T}/attendance`, labelKey: 'attendance', icon: 'calendar-outline' },
     { href: `${T}/groups`, labelKey: 'groups', icon: 'layers-outline' },

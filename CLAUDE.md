@@ -629,6 +629,39 @@ Qo'llanma, parol o'zgartirish, audit jurnali.
 ⚠️ Creator menyusida `/centers`, `/broadcast`, `/logs` bandlari bor, lekin
 o'sha ekran fayllari YO'Q — uchtasi ham o'lik havola.
 
+### Telefonda sinovdan keyingi tuzatishlar (2026-08-13)
+
+Foydalanuvchi APK'ni telefonda sinab, uchta narsani ko'rsatdi — uchchalasi ham
+tuzatildi:
+
+1. **Boshqaruv crash berardi** (gamburgerdan bosilganda; ilovaga kirganda esa
+   ishlardi). Sabab: drawer `('/(app)/(tabs)/index')` ga o'tardi, login esa
+   `('/(app)/(tabs)')` ga. ⚠️ expo-router'da guruh indeksiga `/index` qo'shib
+   murojaat qilish ilovani yiqitadi — `nav.ts` da 3 ta joy tuzatildi.
+2. **Davomatda faqat 2 ta holat bor edi** (keldi/kelmadi). Veb'da 4 ta.
+   `STATUSES` massivi qo'shildi: keldi(yashil) / kechikdi(amber) /
+   kelmadi(qizil) / uyga ketdi(ko'k). Tugmalar 38→34px, oraliq 6px — to'rttasi
+   ism bilan bir qatorga sig'adi.
+   - `status_dismissed` tarjimasi UMUMAN yo'q edi → uz/ru/en qo'shildi.
+   - `insert` → **`upsert`** va id veb bilan bir xil formatga
+     (`sana_oquvchi_guruh`) keltirildi — aks holda bir dars ikki xil yozuv
+     bo'lib qolardi va takror belgilash xato berardi.
+3. **Ota-onaga xabar umuman yuborilmasdi** (veb yuboradi). `src/lib/telegram.ts`
+   qo'shildi, xabar matni veb'dagi `buildStatusMessage` bilan aynan bir xil.
+4. Guruh chipi butun ekran balandligiga cho'zilib ketardi — gorizontal
+   `ScrollView` ga `flexGrow: 0` kerak edi.
+
+### Build tajribasi (8 GB RAM li kompyuterda)
+- ⚠️ `lint` bosqichi xotirani tugatadi (`OutOfMemoryError: Metaspace`).
+  Yechim: `-x lintVitalAnalyzeRelease -x lintVitalReportRelease -x lintVitalRelease`.
+  Ustiga `gradle.properties` da `-Xmx3072m -XX:MaxMetaspaceSize=1024m` va
+  `org.gradle.parallel=false`. ⚠️ Bu fayl `expo prebuild` da qayta yasaladi.
+- ⚠️ Build'ni to'xtatganda `pkill -f gradlew` YETARLI EMAS — ostidagi Java
+  jarayoni tirik qoladi va Gradle keshini qulflab turadi (keyingi build
+  "Timeout waiting to lock journal cache" bilan yiqiladi). GradleDaemon /
+  GradleWorkerMain jarayonlarini ham o'chirish kerak.
+- Vaqtlar: birinchi build (C++ noldan) ~90 daq, keyingilari **45 son – 3.5 daq**.
+
 ### Build haqida
 - `~/Desktop/EduControl-native.apk` (17-iyul, 101 MB) — ESKI, ishlamaydi.
   Debug kaliti bilan imzolangan (`CN=Android Debug`) → Play Store'ga yaramaydi.

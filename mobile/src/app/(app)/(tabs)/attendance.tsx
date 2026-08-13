@@ -6,11 +6,23 @@ import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, V
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 import { db } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
+import { sendTelegramMessage } from '@/lib/telegram';
 import { brand, radius, space } from '@/lib/theme';
-import { AttendanceStatus, Group, Student, UserRole } from '@/lib/types';
+import { AttendanceStatus, Group, Student, SystemSettings, UserRole } from '@/lib/types';
 import { useCenterData } from '@/lib/use-center-data';
 
 const today = () => new Date().toISOString().split('T')[0];
+
+/**
+ * To'rtta holat — veb bilan AYNAN bir xil.
+ * Avval mobilda faqat ikkitasi (keldi/kelmadi) bor edi.
+ */
+const STATUSES = [
+  { key: AttendanceStatus.PRESENT,   icon: 'checkmark' as const,     color: brand.success, labelKey: 'status_present' },
+  { key: AttendanceStatus.LATE,      icon: 'time-outline' as const,  color: brand.warning, labelKey: 'status_late' },
+  { key: AttendanceStatus.ABSENT,    icon: 'close' as const,         color: brand.danger,  labelKey: 'status_absent' },
+  { key: AttendanceStatus.DISMISSED, icon: 'home-outline' as const,  color: '#2563C7',     labelKey: 'status_dismissed' },
+];
 
 /**
  * Davomat — o'qituvchining kundalik ekrani.
@@ -20,6 +32,7 @@ export default function AttendanceScreen() {
   const { t, user } = useAuth();
   const groups = useCenterData<Group>('groups');
   const students = useCenterData<Student>('students');
+  const settings = useCenterData<SystemSettings>('settings');
 
   const [groupId, setGroupId] = useState<string | null>(null);
   const [marks, setMarks] = useState<Record<string, AttendanceStatus>>({});
@@ -41,20 +54,40 @@ export default function AttendanceScreen() {
       .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
   }, [students.data, active]);
 
-  const mark = async (studentId: string, status: AttendanceStatus) => {
+  /** Ota-onaga boradigan xabar — veb'dagi buildStatusMessage bilan bir xil */
+  const buildMessage = (student: Student, status: AttendanceStatus) => {
+    const icons: Record<string, string> = {
+      [AttendanceStatus.PRESENT]: `✅ ${t.status_present}`,
+      [AttendanceStatus.LATE]: `⏳ ${t.status_late}`,
+      [AttendanceStatus.ABSENT]: `❌ ${t.status_absent}`,
+      [AttendanceStatus.DISMISSED]: `🏠 ${t.status_dismissed || 'Dars tugadi'}`,
+    };
+    const d = today().split('-').reverse().join('.');
+    const center = settings.data[0]?.centerName || 'EduControl CRM';
+    return `🔔 <b>${t.notification_title}</b>\n\n👤 ${t.student}: <b>${student.name}</b>\n📅 ${t.date}: ${d}\n📊 ${t.status}: ${icons[status]}\n🏢 ${t.settings}: ${center}`;
+  };
+
+  const mark = async (student: Student, status: AttendanceStatus) => {
     if (!user || !active) return;
+    const studentId = student.id;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setMarks((m) => ({ ...m, [studentId]: status }));
     setSaving(studentId);
     try {
-      await db.insert('attendance', {
-        id: `${active.id}-${studentId}-${today()}`,
+      await db.upsert('attendance', {
+        id: `${today()}_${studentId}_${active.id}`,
         centerId: user.centerId,
         date: today(),
         studentId,
         groupId: active.id,
         status,
       });
+
+      // Ota-onaga xabar — bot ulangan va o'quvchi bog'langan bo'lsagina
+      const botToken = settings.data[0]?.botToken;
+      if (botToken && student.tgChatId) {
+        sendTelegramMessage(botToken, student.tgChatId, buildMessage(student, status));
+      }
     } catch {
       // Xato bo'lsa belgini qaytarish
       setMarks((m) => {
@@ -75,7 +108,14 @@ export default function AttendanceScreen() {
   return (
     <View style={s.root}>
       {/* Guruh tanlash */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chips}>
+      {/* flexGrow:0 SHART — aks holda gorizontal ScrollView bo'sh joyni to'ldirib,
+          chip butun ekran balandligiga cho'zilib ketadi */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={s.chipsWrap}
+        contentContainerStyle={s.chips}
+      >
         {myGroups.map((g) => {
           const on = active?.id === g.id;
           return (
@@ -114,26 +154,18 @@ export default function AttendanceScreen() {
                 <ActivityIndicator size="small" color={brand.primary} />
               ) : (
                 <View style={s.actions}>
-                  <Pressable
-                    onPress={() => mark(item.id, AttendanceStatus.PRESENT)}
-                    style={[s.btn, st === AttendanceStatus.PRESENT && s.btnPresent]}
-                  >
-                    <Ionicons
-                      name="checkmark"
-                      size={18}
-                      color={st === AttendanceStatus.PRESENT ? '#fff' : brand.primary}
-                    />
-                  </Pressable>
-                  <Pressable
-                    onPress={() => mark(item.id, AttendanceStatus.ABSENT)}
-                    style={[s.btn, st === AttendanceStatus.ABSENT && s.btnAbsent]}
-                  >
-                    <Ionicons
-                      name="close"
-                      size={18}
-                      color={st === AttendanceStatus.ABSENT ? '#fff' : brand.danger}
-                    />
-                  </Pressable>
+                  {STATUSES.map((sv) => {
+                    const on = st === sv.key;
+                    return (
+                      <Pressable
+                        key={sv.key}
+                        onPress={() => mark(item, sv.key)}
+                        style={[s.btn, on && { backgroundColor: sv.color, borderColor: sv.color }]}
+                      >
+                        <Ionicons name={sv.icon} size={17} color={on ? '#fff' : sv.color} />
+                      </Pressable>
+                    );
+                  })}
                 </View>
               )}
             </View>
@@ -147,7 +179,8 @@ export default function AttendanceScreen() {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: brand.bg },
 
-  chips: { padding: space.lg, paddingBottom: space.sm, gap: space.sm },
+  chipsWrap: { flexGrow: 0, flexShrink: 0 },
+  chips: { padding: space.lg, paddingBottom: space.sm, gap: space.sm, alignItems: 'center' },
   chip: {
     paddingHorizontal: space.lg,
     paddingVertical: 9,
@@ -182,10 +215,12 @@ const s = StyleSheet.create({
     paddingVertical: space.md,
   },
   name: { flex: 1, color: brand.text, fontSize: 14, fontWeight: '700' },
-  actions: { flexDirection: 'row', gap: space.sm },
+  // 4 ta tugma + ism bitta qatorga sig'ishi kerak (tor telefonlarda ham):
+  // 34*4 + 6*3 = 154px, qolgani ismga (u flex:1 va bir qatorga qisqaradi)
+  actions: { flexDirection: 'row', gap: 6 },
   btn: {
-    width: 38,
-    height: 38,
+    width: 34,
+    height: 34,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
