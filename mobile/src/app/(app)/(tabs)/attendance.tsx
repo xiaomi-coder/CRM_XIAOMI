@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React, { useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 import { db } from '@/lib/api';
@@ -37,6 +37,8 @@ export default function AttendanceScreen() {
   const [groupId, setGroupId] = useState<string | null>(null);
   const [marks, setMarks] = useState<Record<string, AttendanceStatus>>({});
   const [saving, setSaving] = useState<string | null>(null);
+  const [sending, setSending] = useState<string | null>(null);
+  const [sendingAll, setSendingAll] = useState(false);
 
   const myGroups = useMemo(() => {
     if (!user) return [];
@@ -83,10 +85,22 @@ export default function AttendanceScreen() {
         status,
       });
 
-      // Ota-onaga xabar — bot ulangan va o'quvchi bog'langan bo'lsagina
-      const botToken = settings.data[0]?.botToken;
-      if (botToken && student.tgChatId) {
-        sendTelegramMessage(botToken, student.tgChatId, buildMessage(student, status));
+      // ⚠️ Belgilashning O'ZI xabar yubormaydi — veb ham shunday.
+      // Aks holda har bosishda ota-onaga xabar ketib, spam bo'lardi.
+      // FAQAT "uyga ketdi" avtomatik ketadi (bola yo'lga chiqqani muhim xabar).
+      if (status === AttendanceStatus.DISMISSED) {
+        const botToken = settings.data[0]?.botToken;
+        if (botToken && student.tgChatId) {
+          const d = today().split('-').reverse().join('.');
+          const center = settings.data[0]?.centerName || 'EduControl CRM';
+          const msg =
+            `🏠 <b>${t.dismissed_title || 'Dars tugadi'}</b>\n\n` +
+            `👤 ${t.student}: <b>${student.name}</b>\n` +
+            `📅 ${t.date}: ${d}\n\n` +
+            `✅ ${t.dismissed_message || "Farzandingiz darsi tugadi va u uyiga jo'nadi."}\n\n` +
+            `<i>${center}</i>`;
+          sendTelegramMessage(botToken, student.tgChatId, msg);
+        }
       }
     } catch {
       // Xato bo'lsa belgini qaytarish
@@ -99,6 +113,42 @@ export default function AttendanceScreen() {
     } finally {
       setSaving(null);
     }
+  };
+
+  /** Bitta o'quvchiga hozirgi holati haqida xabar (veb'dagi tugma kabi) */
+  const sendOne = async (student: Student) => {
+    const status = marks[student.id];
+    if (!status) return;
+    const botToken = settings.data[0]?.botToken;
+    if (!botToken) return Alert.alert(t.bot_not_configured || 'Bot sozlanmagan');
+    if (!student.tgChatId) return Alert.alert(t.parent_not_linked || "Ota-ona ulanmagan");
+
+    setSending(student.id);
+    const ok = await sendTelegramMessage(botToken, student.tgChatId, buildMessage(student, status));
+    setSending(null);
+    Haptics.notificationAsync(
+      ok ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error
+    );
+    if (!ok) Alert.alert(t.message_failed || 'Xabar yuborilmadi');
+  };
+
+  /** Belgilangan hammaga o'z holati bo'yicha xabar — holatlarga TEGMAYDI */
+  const sendAll = async () => {
+    const botToken = settings.data[0]?.botToken;
+    if (!botToken) return Alert.alert(t.bot_not_configured || 'Bot sozlanmagan');
+
+    const eligible = rows.filter((r) => marks[r.id] && r.tgChatId);
+    const skipped = rows.filter((r) => marks[r.id] && !r.tgChatId).length;
+    if (eligible.length === 0) return Alert.alert(t.no_data || "Yuborish uchun hech kim yo'q");
+
+    setSendingAll(true);
+    let sent = 0;
+    for (const st of eligible) {
+      const ok = await sendTelegramMessage(botToken, st.tgChatId!, buildMessage(st, marks[st.id]));
+      if (ok) sent++;
+    }
+    setSendingAll(false);
+    Alert.alert(`${sent} / ${skipped} ${t.sent_skipped || "yuborildi / o'tkazib yuborildi"}`);
   };
 
   if (groups.loading || students.loading) return <Loading />;
@@ -133,9 +183,25 @@ export default function AttendanceScreen() {
         })}
       </ScrollView>
 
-      <Text style={s.date}>
-        {t.attendance} · {today()}
-      </Text>
+      <View style={s.bar}>
+        <Text style={s.date}>
+          {t.attendance} · {today()}
+        </Text>
+        <Pressable
+          onPress={sendAll}
+          disabled={sendingAll}
+          style={[s.sendAll, sendingAll && { opacity: 0.5 }]}
+        >
+          {sendingAll ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <Ionicons name="paper-plane-outline" size={14} color="#fff" />
+              <Text style={s.sendAllTxt}>{t.send_all_message || 'Barchasiga xabar'}</Text>
+            </>
+          )}
+        </Pressable>
+      </View>
 
       <FlatList
         data={rows}
@@ -162,10 +228,24 @@ export default function AttendanceScreen() {
                         onPress={() => mark(item, sv.key)}
                         style={[s.btn, on && { backgroundColor: sv.color, borderColor: sv.color }]}
                       >
-                        <Ionicons name={sv.icon} size={17} color={on ? '#fff' : sv.color} />
+                        <Ionicons name={sv.icon} size={16} color={on ? '#fff' : sv.color} />
                       </Pressable>
                     );
                   })}
+                  {/* Xabar yuborish — faqat belgilangan o'quvchida ko'rinadi */}
+                  {st &&
+                    (sending === item.id ? (
+                      <View style={s.btn}>
+                        <ActivityIndicator size="small" color={brand.primary} />
+                      </View>
+                    ) : (
+                      <Pressable
+                        onPress={() => sendOne(item)}
+                        style={[s.btn, !item.tgChatId && { opacity: 0.35 }]}
+                      >
+                        <Ionicons name="paper-plane-outline" size={15} color={brand.primary} />
+                      </Pressable>
+                    ))}
                 </View>
               )}
             </View>
@@ -193,14 +273,14 @@ const s = StyleSheet.create({
   chipTxt: { color: brand.textMuted, fontSize: 12, fontWeight: '800' },
   chipTxtOn: { color: '#fff' },
 
+  // paddingHorizontal olib tashlandi — endi u `bar` konteynerida turibdi
   date: {
+    flex: 1,
     color: brand.textMuted,
     fontSize: 10,
     fontWeight: '800',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    paddingHorizontal: space.lg,
-    paddingBottom: space.sm,
   },
 
   list: { padding: space.lg, paddingTop: 0, gap: space.sm, flexGrow: 1 },
@@ -217,10 +297,31 @@ const s = StyleSheet.create({
   name: { flex: 1, color: brand.text, fontSize: 14, fontWeight: '700' },
   // 4 ta tugma + ism bitta qatorga sig'ishi kerak (tor telefonlarda ham):
   // 34*4 + 6*3 = 154px, qolgani ismga (u flex:1 va bir qatorga qisqaradi)
-  actions: { flexDirection: 'row', gap: 6 },
+  bar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: space.lg,
+    paddingBottom: space.sm,
+    gap: space.sm,
+  },
+  sendAll: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: brand.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: radius.md,
+  },
+  sendAllTxt: { color: '#fff', fontSize: 11, fontWeight: '800' },
+
+  // Qatorda 4 ta holat + 1 ta yuborish tugmasi bo'lishi mumkin:
+  // 32*5 + 5*4 = 180px, qolgani ismga (flex:1, bir qatorga qisqaradi)
+  actions: { flexDirection: 'row', gap: 5 },
   btn: {
-    width: 34,
-    height: 34,
+    width: 32,
+    height: 32,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
