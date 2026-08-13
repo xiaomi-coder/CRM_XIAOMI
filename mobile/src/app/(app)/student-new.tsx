@@ -179,7 +179,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: brand.primary,
+    backgroundColor: brand.surface,
     paddingHorizontal: space.lg,
     paddingBottom: space.md,
   },

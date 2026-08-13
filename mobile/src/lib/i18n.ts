@@ -201,7 +201,7 @@ export const translations = {
     status_absent: "kelmadi",
     status_late: "kechikdi",
     status_dismissed: "uyga ketdi",
-    send_all_message: "Barchasiga xabar yuborish",
+    send_all_message: "Barchasiga xabar",
     dismissed_title: "Dars tugadi",
     dismissed_message: "Farzandingiz darsi tugadi va u uyiga jo'nadi.",
     sent_skipped: "yuborildi / o'tkazib yuborildi",

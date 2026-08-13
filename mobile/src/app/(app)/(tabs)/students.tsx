@@ -150,8 +150,8 @@ const s = StyleSheet.create({
   sub: { color: brand.textMuted, fontSize: 12, marginTop: 2 },
 
   badge: { paddingHorizontal: space.md, paddingVertical: 5, borderRadius: 100 },
-  badgeOk: { backgroundColor: 'rgba(5,150,105,0.1)' },
-  badgeDebt: { backgroundColor: 'rgba(220,38,38,0.1)' },
+  badgeOk: { backgroundColor: brand.primarySubtle },
+  badgeDebt: { backgroundColor: brand.dangerBg },
   badgeTxt: { fontSize: 11, fontWeight: '900' },
   badgeTxtOk: { color: brand.primary },
   badgeTxtDebt: { color: brand.danger },

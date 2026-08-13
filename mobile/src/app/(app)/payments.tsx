@@ -192,7 +192,7 @@ const s = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: radius.sm,
-    backgroundColor: 'rgba(5,150,105,0.1)',
+    backgroundColor: brand.primarySubtle,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: space.sm,
@@ -245,9 +245,9 @@ const s = StyleSheet.create({
   amount: { color: brand.text, fontSize: 14, fontWeight: '900' },
 
   badge: { paddingHorizontal: space.sm, paddingVertical: 3, borderRadius: 100 },
-  badgeCash: { backgroundColor: 'rgba(5,150,105,0.1)' },
-  badgeCard: { backgroundColor: 'rgba(45,212,191,0.12)' },
+  badgeCash: { backgroundColor: brand.primarySubtle },
+  badgeCard: { backgroundColor: brand.infoBg },
   badgeTxt: { fontSize: 9, fontWeight: '900', textTransform: 'uppercase' },
   badgeTxtCash: { color: brand.primary },
-  badgeTxtCard: { color: '#0D9488' },
+  badgeTxtCard: { color: brand.info },
 });

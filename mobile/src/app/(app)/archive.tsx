@@ -38,8 +38,8 @@ export default function ArchiveScreen() {
 
   const cfgOf = (st: string) =>
     st === StudentStatus.GRADUATED
-      ? { key: 'graduated', color: brand.primary, bg: 'rgba(5,150,105,0.1)', icon: 'school-outline' }
-      : { key: 'dropped', color: brand.danger, bg: 'rgba(220,38,38,0.1)', icon: 'exit-outline' };
+      ? { key: 'graduated', color: brand.primary, bg: brand.primarySubtle, icon: 'school-outline' }
+      : { key: 'dropped', color: brand.danger, bg: brand.dangerBg, icon: 'exit-outline' };
 
   return (
     <View style={s.root}>

@@ -107,7 +107,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(5,150,105,0.1)',
+    backgroundColor: brand.primarySubtle,
     paddingHorizontal: space.md,
     paddingVertical: 5,
     borderRadius: 100,

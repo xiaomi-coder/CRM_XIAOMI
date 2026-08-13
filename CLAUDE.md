@@ -683,6 +683,35 @@ Bazadagi holatga qarab tanlangan tartib (foydalanuvchi tasdiqladi):
 Yo'l-yo'lakay 11 ta yetishmayotgan tarjima (3 tilda) va `SystemSettings.botUsername`
 tipi qo'shildi — TypeScript ularni o'zi ushlab qoldi.
 
+### Mobil ilova yangi dizayn tizimiga o'tkazildi ✅ (2026-08-13)
+
+Mobil yaxshi tuzilgan edi — deyarli hamma rang `src/lib/theme.ts` orqali
+o'tardi, shuning uchun asosiy ish TOKENLARNI almashtirish bo'ldi, har ekranni
+qayta yozish emas.
+
+- `theme.ts` qiymatlari `tailwind.config.js` dan AYNAN ko'chirildi:
+  brend `#3B4FE0`, karkas `#101828`, fon `#F7F8FA`, chegara `#E4E7EC`,
+  matn `#101828`/`#475467`/`#98A2B3`, radius **6/8/12**, ma'noli ranglar
+  (success/warning/danger/info + `...Bg` juftliklari), `shadow.e1/e2/e3`.
+  ⚠️ Bu qiymatlar o'zgarsa `tailwind.config.js` ham birga o'zgarishi kerak.
+- 16 ta faylda qattiq yozilgan ranglar tokenlarga o'tkazildi (lid holatlari,
+  xodim rollari, xarajat turkumlari, natija turlari). Qattiq rang qolmadi —
+  APK'da `059669` (eski zumrad) **0 marta** uchraydi.
+- Tab-bar faol rangi **oq** qilindi: to'q fonda (#101828) brend ko'ki past
+  kontrast berardi (veb'dagi yon menyu ham shunday ishlaydi).
+- Modal sarlavhalari bir xil `brand.surface` ga keltirildi.
+- Davomat sarlavhasida sana ikki qatorga bo'linib "Barchasiga xabar" tugmasi
+  bilan urishardi → `numberOfLines={1}` + tugmaga `flexShrink: 0`, uzbekcha
+  matn qisqartirildi.
+
+⚠️ **Login ekrani**: tokenlar o'zgargach u ham avtomatik ko'k bo'ldi (ilova
+ichida bir xillik uchun shunday qoldirildi). Lekin **veb'dagi Login/Register
+hali zumrad** — sayt va ilova kirish ekranlari hozir har xil rangda.
+Veb tomonini ham ko'kka o'tkazish kerak.
+
+Tekshirildi Expo web eksporti orqali (375px): Boshqaruv, O'quvchilar,
+Davomat, To'lovlar — hammasi yangi dizaynda, tsc 0 xato.
+
 ### Build tajribasi (8 GB RAM li kompyuterda)
 - ⚠️ `lint` bosqichi xotirani tugatadi (`OutOfMemoryError: Metaspace`).
   Yechim: `-x lintVitalAnalyzeRelease -x lintVitalReportRelease -x lintVitalRelease`.

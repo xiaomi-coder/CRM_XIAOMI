@@ -14,10 +14,10 @@ const money = (n: number) => new Intl.NumberFormat('uz-UZ').format(n ?? 0);
 
 /** Kategoriya -> yorliq/rang/ikonka (web Expenses.tsx bilan bir xil) */
 const CATS: Record<Expense['category'], { key: string; color: string; bg: string; icon: string }> = {
-  RENT: { key: 'cat_rent', color: '#EA580C', bg: 'rgba(234,88,12,0.1)', icon: 'home-outline' },
-  TAX: { key: 'cat_tax', color: '#2563EB', bg: 'rgba(37,99,235,0.1)', icon: 'document-text-outline' },
-  ADVERTISING: { key: 'cat_ad', color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', icon: 'megaphone-outline' },
-  OTHER: { key: 'cat_other', color: '#64748B', bg: 'rgba(100,116,139,0.1)', icon: 'ellipsis-horizontal' },
+  RENT: { key: 'cat_rent', color: brand.warning, bg: brand.warningBg, icon: 'home-outline' },
+  TAX: { key: 'cat_tax', color: brand.info, bg: brand.infoBg, icon: 'document-text-outline' },
+  ADVERTISING: { key: 'cat_ad', color: brand.primary, bg: brand.primarySubtle, icon: 'megaphone-outline' },
+  OTHER: { key: 'cat_other', color: brand.neutral, bg: brand.neutralBg, icon: 'ellipsis-horizontal' },
 };
 
 export default function ExpensesScreen() {
@@ -151,7 +151,7 @@ const s = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: radius.md,
-    backgroundColor: 'rgba(220,38,38,0.1)',
+    backgroundColor: brand.dangerBg,
     alignItems: 'center',
     justifyContent: 'center',
   },

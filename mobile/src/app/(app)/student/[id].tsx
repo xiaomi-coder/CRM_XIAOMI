@@ -13,10 +13,10 @@ import { useCenterData } from '@/lib/use-center-data';
 const money = (n: number) => new Intl.NumberFormat('uz-UZ').format(n ?? 0);
 
 const ATT: Record<string, { key: string; color: string; bg: string }> = {
-  [AttendanceStatus.PRESENT]: { key: 'status_present', color: brand.primary, bg: 'rgba(5,150,105,0.1)' },
-  [AttendanceStatus.LATE]: { key: 'status_late', color: '#D97706', bg: 'rgba(217,119,6,0.1)' },
-  [AttendanceStatus.ABSENT]: { key: 'status_absent', color: brand.danger, bg: 'rgba(220,38,38,0.1)' },
-  [AttendanceStatus.DISMISSED]: { key: 'dropped', color: '#64748B', bg: 'rgba(100,116,139,0.1)' },
+  [AttendanceStatus.PRESENT]: { key: 'status_present', color: brand.primary, bg: brand.primarySubtle },
+  [AttendanceStatus.LATE]: { key: 'status_late', color: brand.warning, bg: brand.warningBg },
+  [AttendanceStatus.ABSENT]: { key: 'status_absent', color: brand.danger, bg: brand.dangerBg },
+  [AttendanceStatus.DISMISSED]: { key: 'dropped', color: brand.neutral, bg: brand.neutralBg },
 };
 
 export default function StudentDetailScreen() {
@@ -167,7 +167,7 @@ export default function StudentDetailScreen() {
               <Text style={s.attLabel}>{t.status_present}</Text>
             </View>
             <View style={s.attStat}>
-              <Text style={[s.attNum, { color: '#D97706' }]}>{attStats.late}</Text>
+              <Text style={[s.attNum, { color: brand.warning }]}>{attStats.late}</Text>
               <Text style={s.attLabel}>{t.status_late}</Text>
             </View>
             <View style={s.attStat}>
@@ -231,8 +231,8 @@ const s = StyleSheet.create({
   name: { color: brand.text, fontSize: 20, fontWeight: '900', marginTop: space.md },
   group: { color: brand.textMuted, fontSize: 13, fontWeight: '700', marginTop: 2 },
   balanceBox: { marginTop: space.md, paddingHorizontal: space.lg, paddingVertical: 8, borderRadius: 100 },
-  balPos: { backgroundColor: 'rgba(5,150,105,0.1)' },
-  balNeg: { backgroundColor: 'rgba(220,38,38,0.1)' },
+  balPos: { backgroundColor: brand.primarySubtle },
+  balNeg: { backgroundColor: brand.dangerBg },
   balTxt: { fontSize: 13, fontWeight: '900' },
   balTxtPos: { color: brand.primary },
   balTxtNeg: { color: brand.danger },

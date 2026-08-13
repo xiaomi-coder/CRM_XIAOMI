@@ -168,7 +168,7 @@ const s = StyleSheet.create({
 
   langRow: { flexDirection: 'row', justifyContent: 'center', gap: space.sm, marginBottom: space.xl },
   langBtn: { paddingVertical: 6, paddingHorizontal: 14, borderRadius: radius.sm },
-  langBtnActive: { backgroundColor: 'rgba(5,150,105,0.25)' },
+  langBtnActive: { backgroundColor: 'rgba(59,79,224,0.3)' },
   langTxt: { color: brand.textMutedOnDark, fontSize: 12, fontWeight: '800' },
   langTxtActive: { color: brand.primaryLight },
 
@@ -185,7 +185,7 @@ const s = StyleSheet.create({
   logoTxt: { color: '#fff', fontSize: 38, fontWeight: '900' },
   brandName: { color: '#fff', fontSize: 26, fontWeight: '900', fontStyle: 'italic' },
   brandSub: {
-    color: 'rgba(52,211,153,0.7)',
+    color: brand.primaryLight,
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 3,
@@ -211,7 +211,7 @@ const s = StyleSheet.create({
     padding: space.md,
     marginBottom: space.lg,
   },
-  errTxt: { color: '#FCA5A5', fontSize: 12, fontWeight: '700', flex: 1 },
+  errTxt: { color: brand.dangerBg, fontSize: 12, fontWeight: '700', flex: 1 },
 
   label: {
     color: 'rgba(255,255,255,0.4)',

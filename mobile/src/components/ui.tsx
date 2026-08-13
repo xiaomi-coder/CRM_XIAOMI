@@ -76,7 +76,7 @@ export const s = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: radius.sm,
-    backgroundColor: 'rgba(5,150,105,0.1)',
+    backgroundColor: brand.primarySubtle,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: space.sm,

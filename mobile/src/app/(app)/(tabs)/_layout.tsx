@@ -35,7 +35,9 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: brand.primaryLight,
+        // To'q fonda (#101828) brend ko'ki past kontrast beradi —
+        // veb'dagi yon menyu kabi faol element OQ bo'ladi
+        tabBarActiveTintColor: '#FFFFFF',
         tabBarInactiveTintColor: brand.textMutedOnDark,
         tabBarStyle: {
           backgroundColor: brand.surface,

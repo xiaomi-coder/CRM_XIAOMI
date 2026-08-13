@@ -12,10 +12,10 @@ import { useCenterData } from '@/lib/use-center-data';
 
 /** Rol -> yorliq/rang */
 const ROLES: Record<string, { key: string; color: string; bg: string }> = {
-  [UserRole.DIRECTOR]: { key: 'role_director', color: brand.primary, bg: 'rgba(5,150,105,0.1)' },
-  [UserRole.ADMIN]: { key: 'role_admin', color: '#2563EB', bg: 'rgba(37,99,235,0.1)' },
-  [UserRole.TEACHER]: { key: 'role_teacher', color: '#D97706', bg: 'rgba(217,119,6,0.1)' },
-  [UserRole.SUPER_ADMIN]: { key: 'role_creator', color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
+  [UserRole.DIRECTOR]: { key: 'role_director', color: brand.primary, bg: brand.primarySubtle },
+  [UserRole.ADMIN]: { key: 'role_admin', color: brand.info, bg: brand.infoBg },
+  [UserRole.TEACHER]: { key: 'role_teacher', color: brand.warning, bg: brand.warningBg },
+  [UserRole.SUPER_ADMIN]: { key: 'role_creator', color: brand.primary, bg: brand.primarySubtle },
 };
 
 export default function StaffScreen() {

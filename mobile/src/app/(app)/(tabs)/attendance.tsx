@@ -21,7 +21,7 @@ const STATUSES = [
   { key: AttendanceStatus.PRESENT,   icon: 'checkmark' as const,     color: brand.success, labelKey: 'status_present' },
   { key: AttendanceStatus.LATE,      icon: 'time-outline' as const,  color: brand.warning, labelKey: 'status_late' },
   { key: AttendanceStatus.ABSENT,    icon: 'close' as const,         color: brand.danger,  labelKey: 'status_absent' },
-  { key: AttendanceStatus.DISMISSED, icon: 'home-outline' as const,  color: '#2563C7',     labelKey: 'status_dismissed' },
+  { key: AttendanceStatus.DISMISSED, icon: 'home-outline' as const,  color: brand.info,     labelKey: 'status_dismissed' },
 ];
 
 /**
@@ -184,7 +184,7 @@ export default function AttendanceScreen() {
       </ScrollView>
 
       <View style={s.bar}>
-        <Text style={s.date}>
+        <Text style={s.date} numberOfLines={1}>
           {t.attendance} · {today()}
         </Text>
         <Pressable
@@ -306,6 +306,7 @@ const s = StyleSheet.create({
     gap: space.sm,
   },
   sendAll: {
+    flexShrink: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,

@@ -279,7 +279,7 @@ const s = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: radius.md,
-    backgroundColor: 'rgba(5,150,105,0.1)',
+    backgroundColor: brand.primarySubtle,
     alignItems: 'center',
     justifyContent: 'center',
   },

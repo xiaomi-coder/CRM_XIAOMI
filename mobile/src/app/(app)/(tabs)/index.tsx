@@ -112,7 +112,7 @@ export default function DashboardScreen() {
         ) : (
           <>
             <Text style={s.profitLabel}>{t.net_profit}</Text>
-            <Text style={[s.profitValue, stats.profit < 0 && { color: '#FCA5A5' }]}>
+            <Text style={[s.profitValue, stats.profit < 0 && { color: brand.dangerBg }]}>
               {money(stats.profit)}
             </Text>
           </>
@@ -213,7 +213,7 @@ const s = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: radius.sm,
-    backgroundColor: 'rgba(5,150,105,0.1)',
+    backgroundColor: brand.primarySubtle,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: space.sm,

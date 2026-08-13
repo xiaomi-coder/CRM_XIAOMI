@@ -305,7 +305,7 @@ const s = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: 'rgba(220,38,38,0.1)',
+    backgroundColor: brand.dangerBg,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -11,10 +11,10 @@ import { useCenterData } from '@/lib/use-center-data';
 
 /** Natija turi -> rang/ikonka */
 const TYPES: Record<Result['type'], { color: string; bg: string; icon: string }> = {
-  IELTS: { color: '#DC2626', bg: 'rgba(220,38,38,0.1)', icon: 'ribbon-outline' },
-  CEFR: { color: '#2563EB', bg: 'rgba(37,99,235,0.1)', icon: 'language-outline' },
-  UNIVERSITY: { color: brand.primary, bg: 'rgba(5,150,105,0.1)', icon: 'school-outline' },
-  OTHER: { color: '#64748B', bg: 'rgba(100,116,139,0.1)', icon: 'trophy-outline' },
+  IELTS: { color: brand.danger, bg: brand.dangerBg, icon: 'ribbon-outline' },
+  CEFR: { color: brand.info, bg: brand.infoBg, icon: 'language-outline' },
+  UNIVERSITY: { color: brand.primary, bg: brand.primarySubtle, icon: 'school-outline' },
+  OTHER: { color: brand.neutral, bg: brand.neutralBg, icon: 'trophy-outline' },
 };
 
 const FILTERS = ['IELTS', 'CEFR', 'UNIVERSITY', 'OTHER'] as const;

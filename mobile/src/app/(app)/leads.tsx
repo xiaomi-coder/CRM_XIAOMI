@@ -11,11 +11,11 @@ import { useCenterData } from '@/lib/use-center-data';
 
 /** Status -> yorliq/rang (web Leads.tsx bilan bir xil) */
 const STATUS: Record<string, { key: string; color: string; bg: string }> = {
-  [LeadStatus.NEW]: { key: 'lead_new', color: '#2563EB', bg: 'rgba(37,99,235,0.1)' },
-  [LeadStatus.CONTACTED]: { key: 'lead_contacted', color: '#D97706', bg: 'rgba(217,119,6,0.1)' },
-  [LeadStatus.TRIAL]: { key: 'lead_trial', color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
-  [LeadStatus.REGISTERED]: { key: 'lead_success', color: brand.primary, bg: 'rgba(5,150,105,0.1)' },
-  [LeadStatus.REJECTED]: { key: 'lead_rejected', color: brand.danger, bg: 'rgba(220,38,38,0.1)' },
+  [LeadStatus.NEW]: { key: 'lead_new', color: brand.info, bg: brand.infoBg },
+  [LeadStatus.CONTACTED]: { key: 'lead_contacted', color: brand.warning, bg: brand.warningBg },
+  [LeadStatus.TRIAL]: { key: 'lead_trial', color: brand.primary, bg: brand.primarySubtle },
+  [LeadStatus.REGISTERED]: { key: 'lead_success', color: brand.primary, bg: brand.primarySubtle },
+  [LeadStatus.REJECTED]: { key: 'lead_rejected', color: brand.danger, bg: brand.dangerBg },
 };
 
 const FILTERS = [

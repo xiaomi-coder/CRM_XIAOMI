@@ -225,9 +225,9 @@ const s = StyleSheet.create({
     marginTop: space.xl,
     paddingVertical: 15,
     borderRadius: radius.lg,
-    backgroundColor: 'rgba(220,38,38,0.08)',
+    backgroundColor: brand.dangerBg,
     borderWidth: 1,
-    borderColor: 'rgba(220,38,38,0.2)',
+    borderColor: brand.danger,
   },
   logoutTxt: {
     color: brand.danger,
