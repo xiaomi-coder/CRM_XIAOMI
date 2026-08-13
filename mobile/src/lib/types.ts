@@ -320,6 +320,8 @@ export interface SystemSettings {
   address: string;
   phone: string;
   botToken: string;
+  /** Bot @username — ota-onaga beriladigan ulanish havolasini yasash uchun */
+  botUsername?: string;
   notifyAttendance: boolean;
   notifyPayment: boolean;
   standardTeacherPercentage: number;

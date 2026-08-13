@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Empty, ErrorBox, Loading } from '@/components/ui';
 import { useAuth } from '@/lib/auth-context';
 import { brand, radius, space } from '@/lib/theme';
-import { Attendance, AttendanceStatus, Student } from '@/lib/types';
+import { Attendance, AttendanceStatus, Student, SystemSettings } from '@/lib/types';
 import { useCenterData } from '@/lib/use-center-data';
 
 const money = (n: number) => new Intl.NumberFormat('uz-UZ').format(n ?? 0);
@@ -27,6 +27,7 @@ export default function StudentDetailScreen() {
 
   const students = useCenterData<Student>('students');
   const attendance = useCenterData<Attendance>('attendance');
+  const settings = useCenterData<SystemSettings>('settings');
 
   const student = useMemo(() => students.data.find((s) => s.id === id), [students.data, id]);
 
@@ -52,6 +53,28 @@ export default function StudentDetailScreen() {
 
   const loading = students.loading || attendance.loading;
   const call = (phone?: string) => phone && Linking.openURL(`tel:${phone}`);
+
+  // Ota-onaga beriladigan havola — bot username Sozlamalarda saqlanadi
+  const botUsername = settings.data[0]?.botUsername;
+  const connectLink =
+    botUsername && student?.tgConnectionCode
+      ? `https://t.me/${botUsername}?start=${student.tgConnectionCode}`
+      : '';
+
+  const shareLink = async () => {
+    if (!connectLink || !student) return;
+    const center = settings.data[0]?.centerName || 'EduControl';
+    try {
+      await Share.share({
+        message:
+          `${center}\n\n${student.name} — ` +
+          `${t.telegram_connect_hint || "farzandingiz davomati va to'lovlari haqida xabar olish uchun havolani bosing va Start tugmasini bosing"}:\n\n` +
+          connectLink,
+      });
+    } catch (e: any) {
+      Alert.alert(String(e?.message ?? e));
+    }
+  };
 
   return (
     <View style={s.root}>
@@ -106,6 +129,34 @@ export default function StudentDetailScreen() {
               <Text style={s.rowLabel}>{t.joined}</Text>
               <Text style={s.rowValue}>{student.joinedDate || '—'}</Text>
             </View>
+          </View>
+
+          {/* Telegram — ota-onani ulash.
+              Telefonda bu eng qulay: havola WhatsApp/Telegram orqali
+              to'g'ridan-to'g'ri ota-onaga yuboriladi (kompyuterda esa
+              nusxalab, keyin qayerdadir yuborish kerak edi). */}
+          <Text style={s.section}>Telegram</Text>
+          <View style={s.card}>
+            {student.tgChatId ? (
+              <View style={[s.row, s.rowLast]}>
+                <Ionicons name="checkmark-circle" size={18} color={brand.success} style={s.rowIcon} />
+                <Text style={s.rowLabel}>{t.parent}</Text>
+                <Text style={[s.rowValue, { color: brand.success }]}>{t.connected || 'Ulangan'}</Text>
+              </View>
+            ) : connectLink ? (
+              <Pressable style={[s.row, s.rowLast]} onPress={shareLink}>
+                <Ionicons name="share-social-outline" size={18} color={brand.primary} style={s.rowIcon} />
+                <Text style={s.rowLabel}>{t.copy_connect_link || 'Ulanish havolasi'}</Text>
+                <Ionicons name="chevron-forward" size={16} color={brand.textMuted} />
+              </Pressable>
+            ) : (
+              <View style={[s.row, s.rowLast]}>
+                <Ionicons name="alert-circle-outline" size={18} color={brand.warning} style={s.rowIcon} />
+                <Text style={[s.rowLabel, { flex: 1 }]}>
+                  {t.bot_not_connected_hint || "Avval Sozlamalarda botni ulang"}
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Davomat statistikasi */}

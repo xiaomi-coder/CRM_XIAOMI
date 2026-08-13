@@ -30,18 +30,27 @@ export default function StudentsScreen() {
 
   return (
     <View style={s.root}>
-      <View style={s.searchWrap}>
-        <Ionicons name="search" size={18} color={brand.textMuted} />
-        <TextInput
-          style={s.search}
-          value={q}
-          onChangeText={setQ}
-          placeholder={t.search || 'Qidirish...'}
-          placeholderTextColor={brand.textMuted}
-        />
-        {q.length > 0 && (
-          <Ionicons name="close-circle" size={18} color={brand.textMuted} onPress={() => setQ('')} />
-        )}
+      <View style={s.topRow}>
+        <View style={[s.searchWrap, { flex: 1 }]}>
+          <Ionicons name="search" size={18} color={brand.textMuted} />
+          <TextInput
+            style={s.search}
+            value={q}
+            onChangeText={setQ}
+            placeholder={t.search || 'Qidirish...'}
+            placeholderTextColor={brand.textMuted}
+          />
+          {q.length > 0 && (
+            <Ionicons name="close-circle" size={18} color={brand.textMuted} onPress={() => setQ('')} />
+          )}
+        </View>
+        <Pressable
+          onPress={() => router.push('/(app)/student-new')}
+          hitSlop={10}
+          style={s.addBtn}
+        >
+          <Ionicons name="add" size={24} color="#fff" />
+        </Pressable>
       </View>
 
       <FlatList
@@ -88,6 +97,20 @@ export default function StudentsScreen() {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: brand.bg },
 
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    paddingRight: space.lg,
+  },
+  addBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: radius.lg,
+    backgroundColor: brand.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',

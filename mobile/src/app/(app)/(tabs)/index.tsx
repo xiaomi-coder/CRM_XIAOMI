@@ -60,7 +60,22 @@ export default function DashboardScreen() {
         salaries += (rev * pct) / 100;
       });
 
-    const debtors = students.data.filter((s) => (s.balance ?? 0) < 0).length;
+    // ⚠️ Mezon veb'dagi Dashboard bilan bir xil bo'lishi SHART
+    // (components/Dashboard.tsx -> debtorStudents). Avval bu yerda
+    // `balance < 0` edi — veb esa to'lov sanasiga qaraydi, natijada
+    // ikki joyda har xil son chiqardi.
+    const td = new Date().toISOString().split('T')[0];
+    const debtors = students.data.filter((st) => {
+      if ((st.status ?? 'ACTIVE') !== 'ACTIVE') return false;
+      if (st.nextPaymentDate && st.nextPaymentDate < td) return true;
+      if (!st.nextPaymentDate) {
+        const mine = payments.data.filter((p) => p.studentId === st.id);
+        if (mine.length === 0) return false;
+        const last = [...mine].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))[0];
+        return Math.floor((Date.now() - new Date(last.date).getTime()) / 86400000) > 30;
+      }
+      return false;
+    }).length;
     const profit = revenue - officeExpenses - salaries;
     return { revenue, officeExpenses, salaries, profit, debtors };
   }, [payments.data, expenses.data, users.data, groups.data, students.data, t]);
@@ -120,7 +135,7 @@ export default function DashboardScreen() {
               color={brand.primary} onPress={() => router.navigate('/(app)/payments')} />
             <Tile label={t.debtors || 'Qarzdorlar'} value={String(stats.debtors)} icon="alert-circle-outline"
               color={stats.debtors > 0 ? brand.danger : brand.text}
-              onPress={() => router.navigate('/(app)/(tabs)/students')} />
+              onPress={() => router.navigate('/(app)/debtors')} />
           </View>
           <View style={s.grid}>
             <Tile label={t.expenses_label} value={money(stats.officeExpenses)} icon="receipt-outline"

@@ -651,6 +651,38 @@ tuzatildi:
 4. Guruh chipi butun ekran balandligiga cho'zilib ketardi — gorizontal
    `ScrollView` ga `flexGrow: 0` kerak edi.
 
+### Mobil ilova: to'rt yo'nalishda kengaytirildi (2026-08-13)
+
+Bazadagi holatga qarab tanlangan tartib (foydalanuvchi tasdiqladi):
+
+1. **To'lov `nextPaymentDate` ni yozmasdi** — eng jiddiy xato. Serverdagi
+   eslatma tizimi (`due_payment_reminders()`, har kuni 09:00) AYNAN shu
+   maydonga qaraydi. Mobildan olingan to'lovdan keyin o'quvchi eslatma
+   olmasdi va Boshqaruvda qarzdor bo'lib turaverardi.
+   → Formaga sana tanlash (+1/+2/+3 oy, standart +1), balans bilan birga
+   yoziladi, ota-onaga chek ketadi (matn veb bilan aynan bir xil).
+   Zanjir jonli API'da tekshirildi: to'lov → sana → `due_payment_reminders()`
+   o'quvchini `days_left: 3` bilan ko'rdi.
+   ⚠️ Topilma: eslatma markazda `botToken` bo'sh bo'lsa UMUMAN ishlamaydi.
+2. **O'quvchi qo'shib bo'lmasdi** (guruh va lid ham) — mobil faqat "ko'rish"
+   quroli edi, telefondan markazni boshlash mumkin emasdi.
+   → `student-new.tsx`; maydonlar veb bilan bir xil, guruhga darrov
+   biriktirish ham bor. `tgConnectionCode: ''` yuboriladi — bazadagi trigger
+   12 belgili kodni o'zi to'ldiradi (tekshirildi).
+3. **Telegram havolasini ulashish** — telefonda bu kompyuterdagidan qulayroq:
+   Android'ning ulashish oynasi orqali WhatsApp/Telegram'ga to'g'ridan-to'g'ri
+   yuboriladi. O'quvchi profilida yangi Telegram bo'limi.
+   (38 o'quvchidan 7 tasi ulangan — 18%; buni ko'tarishning eng arzon yo'li.)
+4. **Qarzdorlar ekrani** (`debtors.tsx`) — Boshqaruvdagi katak bosiladi.
+   Har qatorda ota-ona telefoni va **qo'ng'iroq tugmasi**.
+   ⚠️ Yo'l-yo'lakay topildi: mobil qarzdorni `balance < 0` bo'yicha sanardi,
+   veb esa to'lov sanasi bo'yicha — ikki ekranda har xil son chiqardi.
+   Endi mezon veb'dagi `Dashboard.debtorStudents` bilan AYNAN bir xil.
+   Ikkalasini birga o'zgartirish SHART.
+
+Yo'l-yo'lakay 11 ta yetishmayotgan tarjima (3 tilda) va `SystemSettings.botUsername`
+tipi qo'shildi — TypeScript ularni o'zi ushlab qoldi.
+
 ### Build tajribasi (8 GB RAM li kompyuterda)
 - ⚠️ `lint` bosqichi xotirani tugatadi (`OutOfMemoryError: Metaspace`).
   Yechim: `-x lintVitalAnalyzeRelease -x lintVitalReportRelease -x lintVitalRelease`.

@@ -16,9 +16,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Loading } from '@/components/ui';
 import { db, newId } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
+import { sendTelegramMessage } from '@/lib/telegram';
 import { brand, radius, space } from '@/lib/theme';
-import { Payment, Student } from '@/lib/types';
+import { Payment, Student, SystemSettings } from '@/lib/types';
 import { useCenterData } from '@/lib/use-center-data';
+
+/** Bugundan N oy keyin — keyingi to'lov sanasi uchun */
+const addMonths = (n: number) => {
+  const d = new Date();
+  d.setMonth(d.getMonth() + n);
+  return d.toISOString().split('T')[0];
+};
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const money = (n: number) => new Intl.NumberFormat('uz-UZ').format(n ?? 0);
@@ -28,12 +36,17 @@ export default function NewPaymentScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const students = useCenterData<Student>('students');
+  const settings = useCenterData<SystemSettings>('settings');
 
   const [student, setStudent] = useState<Student | null>(null);
   const [q, setQ] = useState('');
   const [amount, setAmount] = useState('');
   const [monthIdx, setMonthIdx] = useState(new Date().getMonth());
   const [type, setType] = useState<Payment['type']>('CASH');
+  // Keyingi to'lov sanasi — veb'dagi kabi standart +1 oy.
+  // ⚠️ Busiz serverdagi eslatma tizimi (har kuni 09:00) o'sha o'quvchini
+  // umuman ko'rmaydi va u Boshqaruvda qarzdor bo'lib turaveradi.
+  const [nextDate, setNextDate] = useState(addMonths(1));
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -65,8 +78,24 @@ export default function NewPaymentScreen() {
         forMonth: monthName,
       };
       await db.insert('payments', payment);
-      // Balansni oshirish (web AuthenticatedApp.tsx bilan bir xil)
-      await db.update('students', student.id, { balance: (student.balance || 0) + amountNum });
+      // Balans + keyingi to'lov sanasi (veb AuthenticatedApp.tsx bilan bir xil)
+      await db.update('students', student.id, {
+        balance: (student.balance || 0) + amountNum,
+        nextPaymentDate: nextDate,
+      });
+
+      // Ota-onaga chek — veb'dagi matn bilan aynan bir xil
+      const cfg = settings.data[0];
+      if (cfg?.botToken && student.tgChatId && cfg.notifyPayment !== false) {
+        const msg =
+          `<b>${t.accept_payment}!</b>\n\n` +
+          `👤 ${t.students}: <b>${student.name}</b>\n` +
+          `💰 ${t.amount}: <b>${money(amountNum)} UZS</b>\n` +
+          `📅 ${t.for_month}: <b>${monthName}</b>\n` +
+          `⏳ ${t.next_payment_due}: <b>${nextDate}</b>\n\n` +
+          `<i>${cfg.centerName || 'EduControl CRM'}</i>`;
+        sendTelegramMessage(cfg.botToken, student.tgChatId, msg);
+      }
       router.back();
     } catch (e: any) {
       setErr(e?.message ?? String(e));
@@ -157,6 +186,26 @@ export default function NewPaymentScreen() {
               );
             })}
           </ScrollView>
+
+          <Text style={s.label}>{t.next_payment_due}</Text>
+          <View style={s.typeRow}>
+            {[1, 2, 3].map((m) => {
+              const d = addMonths(m);
+              const active = nextDate === d;
+              return (
+                <Pressable
+                  key={m}
+                  onPress={() => setNextDate(d)}
+                  style={[s.typeBtn, active && s.typeBtnActive]}
+                >
+                  <Text style={[s.typeTxt, active && s.typeTxtActive]}>
+                    +{m} {t.month || 'oy'}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <Text style={s.hint}>{nextDate}</Text>
 
           <Text style={s.label}>{t.payment_method}</Text>
           <View style={s.typeRow}>
@@ -293,6 +342,13 @@ const s = StyleSheet.create({
   typeTxt: { fontSize: 13, fontWeight: '800', color: brand.textMuted },
   typeTxtActive: { color: '#fff' },
 
+  hint: {
+    color: brand.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 6,
+    marginLeft: 2,
+  },
   err: { color: brand.danger, fontSize: 12, fontWeight: '700', marginTop: space.sm },
 
   save: {
